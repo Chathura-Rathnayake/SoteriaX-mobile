@@ -15,6 +15,9 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('hello'),
+      ),
       body: SafeArea(
         child: Form(
           key: _formkey,
@@ -60,7 +63,7 @@ class _LoginState extends State<Login> {
                           TextFormField(
                             decoration: InputDecoration(
                               hintText: "Email",
-                              prefixIcon: Icon(Icons.mail),
+                              prefixIcon: Icon(Icons.email),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               )
