@@ -50,13 +50,13 @@ class _LoginState extends State<Login> {
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 0,horizontal: 40),
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(topRight: Radius.circular(50),),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(50),),
                     ),
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: 60,),
+                          SizedBox(height: 60),
                           TextFormField(
                             decoration: InputDecoration(
                               hintText: "Email",
