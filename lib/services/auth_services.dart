@@ -46,7 +46,6 @@ class AuthService with ChangeNotifier{
       setMessage(e.message);
     }
     notifyListeners();
-
   }
 
   Future<void> signOut() async{
@@ -56,6 +55,21 @@ class AuthService with ChangeNotifier{
       print(e.toString());
       return null;
     }
+  }
+
+  Future requestResetPassword(String email) async{
+    setLoading(true);
+    try{
+      await _auth.sendPasswordResetEmail(email: email);
+      setLoading(false);
+    }on SocketException{
+      setLoading(false);
+      setMessage("No internet, Please check your internet connection");
+    }on FirebaseAuthException catch(e){
+      setLoading(false);
+      setMessage(e.message);
+    }
+    notifyListeners();
   }
 
 

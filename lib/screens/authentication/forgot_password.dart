@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:soteriax/services/auth_services.dart';
 
 class ForgotPassword extends StatefulWidget {
   ForgotPassword({this.toggleBWScreens});
@@ -11,8 +13,15 @@ class ForgotPassword extends StatefulWidget {
 
 class _ForgotPasswordState extends State<ForgotPassword> {
   final _formkey=GlobalKey<FormState>();
+
+
+  String email='';
+  String error='';
+
   @override
   Widget build(BuildContext context) {
+    //provider to listen for notifiers on authServices
+    final _auth = Provider.of<AuthService>(context);
     return Scaffold(
       body: SafeArea(
         child: Form(
@@ -66,10 +75,22 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     borderRadius: BorderRadius.circular(10),
                                   )
                               ),
+                              validator: (val)=>val==''? 'Please type in your email' : null,
+                              onChanged: (val){
+                                email=val;
+                              },
                             ),
                             SizedBox(height: 30,),
                             MaterialButton(
-                              onPressed: (){},
+                              onPressed: () async{
+                                if(_formkey.currentState!.validate()){
+                                  try {
+                                    await _auth.requestResetPassword(email);
+                                  } catch(e){
+                                    print(e);
+                                  }
+                                }
+                              },
                               height: 70,
                               minWidth: double.infinity,
                               color: Colors.orange.shade800,
@@ -91,7 +112,26 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   textAlign: TextAlign.center,
                                 ),
                               ],
-                            )
+                            ),
+                            SizedBox(height: 10,),
+                            if(_auth.errorMessage!="")
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5 ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                ),
+                                child: ListTile(
+                                  title: Text(_auth.errorMessage, style: TextStyle(color: Colors.red[900], fontSize: 14), ),
+                                  leading: Icon(Icons.error, color: Colors.red[900],),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.close),
+                                    onPressed: (){
+                                      _auth.setMessage("");
+                                    },
+                                  ),
+                                ),
+                              )
                           ],
                         ),
                       ),
