@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     if(_error){
-      return Error_Page();
+      return MaterialApp(home: Error_Page());
     }
     if(!_initialized){
       return MaterialApp(home: LoadingSpinner());
