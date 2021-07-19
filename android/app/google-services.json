@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "842439281384",
+    "project_id": "soteriax-las",
+    "storage_bucket": "soteriax-las.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842439281384:android:723077bce2693091d1975d",
+        "android_client_info": {
+          "package_name": "com.group40.soteriax"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "842439281384-e7lch10kuvmo6kupnul79p2q9j87cgjv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcSVPQADktwUpK5GedgHRoohMNw15Hx0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "842439281384-e7lch10kuvmo6kupnul79p2q9j87cgjv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
