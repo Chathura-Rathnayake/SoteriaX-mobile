@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
 import 'package:soteriax/screens/home/mainMenu.dart';
 
 class LiveOperations extends StatefulWidget {
@@ -7,9 +8,34 @@ class LiveOperations extends StatefulWidget {
 
   @override
   _LiveOperationsState createState() => _LiveOperationsState();
+
 }
 
+
+
 class _LiveOperationsState extends State<LiveOperations> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp
+    ]);
+    super.dispose();
+  }
   // final _formkey=GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -17,7 +43,6 @@ class _LiveOperationsState extends State<LiveOperations> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-
     return Scaffold(
         appBar: AppBar(
           elevation: 0.0,
@@ -37,79 +62,45 @@ class _LiveOperationsState extends State<LiveOperations> {
           child: Row(
             children: [
               Container(
-                width: MediaQuery.of(context).size.width * 0.65,
+                width: MediaQuery.of(context).size.width * 0.60,
                 color: Colors.black,
-              ),
-              Container(
-                padding: const EdgeInsets.all(2),
-                width: MediaQuery.of(context).size.width * 0.35,
                 child: Column(
                   children: [
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 10,
-                      child: MaterialButton(
-                        onPressed: () {},
-                        height: MediaQuery.of(context).size.height * 0.20,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Container(
-                          child: Row(children: [
-                            Image(
-                              image: AssetImage('assets/icons/binoculars.png'),
-                              width: 60,
-                              height: 60,
-                            ),
-                            SizedBox(
-                              width: 25,
-                            ),
-                            Text(
-                              'Drop Package',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ]),
-                        ),
-                      ),
-                    ),
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 10,
-                      child: MaterialButton(
-                        onPressed: () {},
-                        height: MediaQuery.of(context).size.height * 0.20,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Container(
-                          child: Row(children: [
-                            Image(
-                              image: AssetImage('assets/icons/binoculars.png'),
-                              width: 60,
-                              height: 60,
-                            ),
-                            SizedBox(
-                              width: 25,
-                            ),
-                            Text(
-                              'Drop Package',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ]),
-                        ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      height: 20,
+                      width: double.infinity,
+                      color: Colors.grey[300],
+                      child: Text(
+                        "Live",
+                        style: TextStyle(color: Colors.black),
                       ),
                     )
                   ],
+                ),
+              ),
+              SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  width: MediaQuery.of(context).size.width * 0.40,
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                        height: 25,
+                        width: double.infinity,
+                        color: Colors.red[300],
+                        child: Text(
+                          "Current Status: Reached Victim",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      OperationBtn(btnText: "EMMIT AUDIO", btnImage: "sound_icon", ),
+                      OperationBtn(btnText: "DROP REST-TUBE", btnImage: "lb_drop_icon",),
+                      OperationBtn(btnText: "AUDIO STREAM", btnImage: "mic_icon",),
+                      OperationBtn(btnText: "CONTACT HEAD \nLIFEGUARD", btnImage: "alarm_bulb_icon",)
+                    ],
+                  ),
                 ),
               ),
             ],
