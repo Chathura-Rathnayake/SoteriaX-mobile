@@ -1,13 +1,38 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soteriax/models/lifeguard.dart';
 
 class Profiles extends StatefulWidget {
-  const Profiles({Key? key}) : super(key: key);
-
   @override
   _ProfilesState createState() => _ProfilesState();
 }
 
 class _ProfilesState extends State<Profiles> {
+  Future<SharedPreferences> _prefs=SharedPreferences.getInstance();
+  Lifeguard? lifeguard;
+  Future<void> setLifeguard() async{
+    final SharedPreferences preferences=await _prefs;
+    Map<String, dynamic> ?lifeguardMap;
+    final String lifeguardString=preferences.getString("lifeguardData")?? "";
+    if(lifeguardString!=""){
+      print(lifeguardString);
+      lifeguardMap=jsonDecode(lifeguardString) as Map<String, dynamic>;
+    }
+    if(lifeguardMap!=null){
+      this.lifeguard=Lifeguard.fromJson(lifeguardMap);
+      print(lifeguard!.firstname);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setLifeguard();
+  }
+
   // final _formkey=GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -88,27 +113,10 @@ class _ProfilesState extends State<Profiles> {
                   height: 25,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  child: TextFormField(
-                    readOnly: true,
-                    initialValue: "Ashan-LF03",
-                    decoration: InputDecoration(
-                      icon: Icon(
-                        Icons.bookmark,
-                        size: 30,
-                        color: Colors.orange.shade900,
-                      ),
-                      labelText: 'Username',
-                      // border: OutlineInputBorder(
-                      // ),
-                    ),
-                  ),
-                ),
-                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: "Asanka Silva",
+                    initialValue: lifeguard !=null ? "${lifeguard!.firstname} ${lifeguard!.lastname}" : "Harshana Edirisinghe",
                     decoration: InputDecoration(
                       icon: Icon(Icons.account_circle,
                           size: 30, color: Colors.orange.shade900),
@@ -120,7 +128,7 @@ class _ProfilesState extends State<Profiles> {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: "AsankaSilva@gmail.com ",
+                    initialValue: lifeguard!=null? "${lifeguard!.email}": "husseyhh@gmail.com",
                     decoration: InputDecoration(
                       icon: Icon(Icons.email,
                           size: 30, color: Colors.orange.shade900),
@@ -129,14 +137,19 @@ class _ProfilesState extends State<Profiles> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: "28",
+                    initialValue: lifeguard!=null? "${lifeguard!.certificateLevel}" : "3rd Grade",
                     decoration: InputDecoration(
-                      icon: Icon(Icons.accessibility_outlined,
-                          size: 30, color: Colors.orange.shade900),
-                      labelText: 'Age',
+                      icon: Icon(
+                        Icons.bookmark,
+                        size: 30,
+                        color: Colors.orange.shade900,
+                      ),
+                      labelText: 'Certification Level',
+                      // border: OutlineInputBorder(
+                      // ),
                     ),
                   ),
                 ),
@@ -144,7 +157,19 @@ class _ProfilesState extends State<Profiles> {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: "14",
+                    initialValue: lifeguard!=null? "${lifeguard!.birthDate}": "1997-09-11",
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.accessibility_outlined,
+                          size: 30, color: Colors.orange.shade900),
+                      labelText: 'Birth Date',
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: TextFormField(
+                    readOnly: true,
+                    initialValue: lifeguard!=null ? "${lifeguard!.noOfOperations}": "5",
                     decoration: InputDecoration(
                       icon: Icon(Icons.account_tree_outlined,
                           size: 30, color: Colors.orange.shade900),
@@ -155,22 +180,22 @@ class _ProfilesState extends State<Profiles> {
                 SizedBox(
                   height: 10,
                 ),
-                MaterialButton(
-                  onPressed: () {},
-                  height: 50,
-                  minWidth: 220,
-                  color: Colors.orange.shade800,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(
-                    "Change Password",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white),
-                  ),
-                ),
+                // MaterialButton(
+                //   onPressed: () {},
+                //   height: 50,
+                //   minWidth: 220,
+                //   color: Colors.orange.shade800,
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.circular(5),
+                //   ),
+                //   child: Text(
+                //     "Change Password",
+                //     style: TextStyle(
+                //         fontSize: 18,
+                //         fontWeight: FontWeight.normal,
+                //         color: Colors.white),
+                //   ),
+                // ),
               ],
             ),
           ),

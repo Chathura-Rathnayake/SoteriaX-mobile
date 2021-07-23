@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 class OperationBtn extends StatefulWidget {
-  OperationBtn({this.btnText, this.btnImage, this.onClicked});
+  OperationBtn({this.btnText, this.btnImage, this.onClicked, this.setType, this.type, this.height});
   String? btnImage;
   String? btnText;
+  int? type=0;
   Function? onClicked;
+  Function? setType;
+  double? height;
 
   @override
   _OperationBtnState createState() => _OperationBtnState();
@@ -19,8 +22,11 @@ class _OperationBtnState extends State<OperationBtn> {
       ),
       elevation: 10,
       child: MaterialButton(
-        onPressed: () {},
-        height: MediaQuery.of(context).size.height * 0.20,
+        onPressed: (){
+          widget.setType!(widget.type);
+          widget.onClicked!();
+          },
+        height: widget.height!=null ? widget.height : MediaQuery.of(context).size.height * 0.20,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
