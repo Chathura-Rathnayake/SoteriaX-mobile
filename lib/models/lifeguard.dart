@@ -7,14 +7,33 @@ class Sys_user{
 
 class Lifeguard{
 
-  Lifeguard({this.username, this.email, this.firstname, this.lastname, this.age, this.number_of_ops});
+  Lifeguard({this.uid, this.email, this.firstname, this.lastname, this.birthDate, this.noOfOperations, this.isPilot, this.certificateLevel});
 
-  String? username;
+  String? uid;
   String? firstname;
   String? lastname;
   String? email;
-  int? age;
-  int? number_of_ops;
+  String? certificateLevel;
+  String? birthDate;
+  int? noOfOperations;
+  bool? isPilot;
+
+  Lifeguard.fromJson(Map<String, dynamic> json){
+    uid=json['uid'];
+    firstname=json['firstName'];
+    lastname=json['lastName'];
+    email=json['email'];
+    certificateLevel=json['certificateLevel'];
+    birthDate=json['birthDate'];
+    noOfOperations=json['noOfOperations'];
+    isPilot=json['isPilot'];
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return '{"uid": "$uid","firstName": "$firstname", "lastName": "$lastname", "email": "$email", "certificateLevel": "$certificateLevel", "birthDate": "$birthDate", "noOfOperations": $noOfOperations, "isPilot": $isPilot}';
+  }
 
 
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:soteriax/database/user_database_services.dart';
 import 'package:soteriax/models/lifeguard.dart';
 
 class AuthService with ChangeNotifier{
@@ -36,6 +37,7 @@ class AuthService with ChangeNotifier{
     try{
       UserCredential result=await _auth.signInWithEmailAndPassword(email: email, password: password);
       setLoading(false);
+      UserDatabaseService(userId: result.user!.uid).getUserData();
       return _Sys_UserFromFirebaseUser(result.user);
     }on SocketException{
       setLoading(false);
