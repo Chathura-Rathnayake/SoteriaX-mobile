@@ -4,6 +4,7 @@ import 'package:soteriax/screens/home/engage_mission.dart';
 import 'package:soteriax/screens/home/live_operation.dart';
 import 'package:soteriax/screens/home/profiles.dart';
 import 'package:flutter/services.dart';
+import 'package:soteriax/screens/home/training_overview.dart';
 import 'package:soteriax/screens/home/view_operation.dart';
 import 'package:soteriax/screens/shared/timeline.dart';
 import 'package:soteriax/services/auth_services.dart';
@@ -183,7 +184,7 @@ class _MainMenuState extends State<MainMenu> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context)=>ProcessTimelinePage()),
+                                  builder: (context)=>TrainingOverview()),
                             );
                           },
                           height: 20,
