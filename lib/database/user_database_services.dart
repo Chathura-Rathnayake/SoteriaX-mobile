@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soteriax/models/lifeguard.dart';
+import 'package:soteriax/services/sharedpreference_manager.dart';
 
 class UserDatabaseService{
   final CollectionReference lifeguards=FirebaseFirestore.instance.collection("lifeguards");
@@ -27,8 +28,8 @@ class UserDatabaseService{
             isPilot: documentSnapshot.get("isPilot"),
             birthDate: documentSnapshot.get("birthDate")
         );
-
-        prefs.setString("lifeguardData", lifeguard.toString());
+        SharedPreferenceManager.setString("lifeguardData", lifeguard.toString());
+        // prefs.setString("lifeguardData", lifeguard.toString());
       }else{
         print("Document doesn't exist sorry");
       }
