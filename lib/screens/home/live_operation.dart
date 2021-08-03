@@ -6,6 +6,7 @@ import 'package:soteriax/screens/custom_widgets/drawer_widgets/drop_resttube_dra
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/emmit_audio_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
 import 'package:soteriax/screens/home/main_menu.dart';
+import 'package:video_player/video_player.dart';
 
 class LiveOperations extends StatefulWidget {
   const LiveOperations({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class LiveOperations extends StatefulWidget {
 
 class _LiveOperationsState extends State<LiveOperations> {
   final GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
-
+  late VideoPlayerController _videoPlayerController;
   int? type;
 
   @override
@@ -29,6 +30,15 @@ class _LiveOperationsState extends State<LiveOperations> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    _videoPlayerController=VideoPlayerController.network(
+        'https://github.com/husseyhh/soteriaX_videos/raw/main/example_footage/soteriaX_trimmed_2.mp4'
+    )..initialize().then((_){
+      _videoPlayerController.play();
+      _videoPlayerController.setLooping(true);
+      setState(() {
+
+      });
+    });
     super.initState();
   }
 
@@ -98,6 +108,14 @@ class _LiveOperationsState extends State<LiveOperations> {
                       child: Text(
                         "Live",
                         style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                    Container(
+                      child: Center(
+                        child: _videoPlayerController.value.isInitialized ? AspectRatio(
+                          aspectRatio: _videoPlayerController.value.aspectRatio,
+                          child: VideoPlayer(_videoPlayerController),)
+                            : Container(),
                       ),
                     )
                   ],

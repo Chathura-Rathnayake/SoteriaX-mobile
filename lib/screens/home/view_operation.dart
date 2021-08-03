@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:soteriax/screens/custom_widgets/navigate_button.dart';
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
 import 'package:soteriax/screens/home/emergency_call.dart';
 import 'package:soteriax/screens/shared/timeline.dart';
+import 'package:video_player/video_player.dart';
 
 class ViewOperation extends StatefulWidget {
   const ViewOperation({Key? key}) : super(key: key);
@@ -11,6 +13,31 @@ class ViewOperation extends StatefulWidget {
 }
 
 class _ViewOperationState extends State<ViewOperation> {
+
+  late VideoPlayerController _videoPlayerController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _videoPlayerController=VideoPlayerController.network(
+        'https://github.com/husseyhh/soteriaX_videos/raw/main/example_footage/soteriaX_trimmed_2.mp4')
+    ..initialize().then((_) {
+      _videoPlayerController.play();
+      _videoPlayerController.setLooping(true);
+      setState(() {
+
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _videoPlayerController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
@@ -82,10 +109,14 @@ class _ViewOperationState extends State<ViewOperation> {
               Container(
                 height: MediaQuery.of(context).size.height*0.30,
                 color: Colors.black,
+                child: Center(
+                  child: _videoPlayerController.value.isInitialized ? AspectRatio(
+                      aspectRatio: _videoPlayerController.value.aspectRatio,
+                      child: VideoPlayer(_videoPlayerController),)
+                  : Container(),
+                ),
               ),
-              OperationBtn(btnText: "CONTACT EMERGENCY\nSERVICES", btnImage: "alarm_bulb_icon", height: 100, onClicked: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>EmergencyCall()));
-              },),
+              NavigationButton(image: "alarm_bulb_icon", title: "CONTACT EMERGENCY SERVICES", onPressedFunFlag: 3,),
               SizedBox(height: 20,),
               Container(
                 padding: EdgeInsets.only(left: 50),
