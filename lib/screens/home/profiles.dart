@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soteriax/models/lifeguard.dart';
+import 'package:soteriax/services/sharedpreference_manager.dart';
 
 class Profiles extends StatefulWidget {
   @override
@@ -12,25 +13,19 @@ class Profiles extends StatefulWidget {
 class _ProfilesState extends State<Profiles> {
   Future<SharedPreferences> _prefs=SharedPreferences.getInstance();
   Lifeguard? lifeguard;
-  Future<void> setLifeguard() async{
-    final SharedPreferences preferences=await _prefs;
-    Map<String, dynamic> ?lifeguardMap;
-    final String lifeguardString=preferences.getString("lifeguardData")?? "";
-    if(lifeguardString!=""){
-      print(lifeguardString);
-      lifeguardMap=jsonDecode(lifeguardString) as Map<String, dynamic>;
-    }
-    if(lifeguardMap!=null){
-      this.lifeguard=Lifeguard.fromJson(lifeguardMap);
-      print(lifeguard!.firstname);
-    }
-  }
+  late Map<String, dynamic> lifeguardMap;
+
 
   @override
-  void initState() {
+  void initState()  {
     // TODO: implement initState
+    // setLifeguard();
     super.initState();
-    setLifeguard();
+    final String lifeguardString=SharedPreferenceManager.getString("lifeguardData");
+    print(lifeguardString);
+    lifeguardMap=jsonDecode(lifeguardString) as Map<String, dynamic>;
+    lifeguard=Lifeguard.fromJson(lifeguardMap);
+
   }
 
   // final _formkey=GlobalKey<FormState>();
@@ -116,7 +111,7 @@ class _ProfilesState extends State<Profiles> {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: lifeguard !=null ? "${lifeguard!.firstname} ${lifeguard!.lastname}" : "Harshana Edirisinghe",
+                    initialValue: "${lifeguard!.firstname} ${lifeguard!.lastname}",
                     decoration: InputDecoration(
                       icon: Icon(Icons.account_circle,
                           size: 30, color: Colors.orange.shade900),
@@ -128,7 +123,7 @@ class _ProfilesState extends State<Profiles> {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: lifeguard!=null? "${lifeguard!.email}": "husseyhh@gmail.com",
+                    initialValue: "${lifeguard!.email}",
                     decoration: InputDecoration(
                       icon: Icon(Icons.email,
                           size: 30, color: Colors.orange.shade900),
@@ -140,7 +135,7 @@ class _ProfilesState extends State<Profiles> {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: lifeguard!=null? "${lifeguard!.certificateLevel}" : "3rd Grade",
+                    initialValue: "${lifeguard!.certificateLevel}",
                     decoration: InputDecoration(
                       icon: Icon(
                         Icons.bookmark,
@@ -157,7 +152,7 @@ class _ProfilesState extends State<Profiles> {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: lifeguard!=null? "${lifeguard!.birthDate}": "1997-09-11",
+                    initialValue: "${lifeguard!.birthDate}",
                     decoration: InputDecoration(
                       icon: Icon(Icons.accessibility_outlined,
                           size: 30, color: Colors.orange.shade900),
@@ -169,7 +164,7 @@ class _ProfilesState extends State<Profiles> {
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   child: TextFormField(
                     readOnly: true,
-                    initialValue: lifeguard!=null ? "${lifeguard!.noOfOperations}": "5",
+                    initialValue: "${lifeguard!.noOfOperations}",
                     decoration: InputDecoration(
                       icon: Icon(Icons.account_tree_outlined,
                           size: 30, color: Colors.orange.shade900),
