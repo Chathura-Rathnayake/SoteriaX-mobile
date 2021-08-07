@@ -31,7 +31,7 @@ class _TrainingOverviewState extends State<TrainingOverview> {
                 ),
               ),
               SizedBox(height: 10,),
-              InfoTile(title: "2021-08-10", subtitle: "Date",image: "calendar"),
+              InfoTile(title: "2021-08-05", subtitle: "Date",image: "calendar"),
               InfoTile(title: "12:30pm", subtitle: "Time",image: "clock"),
               InfoTile(title: "Assistant Pilot", subtitle: "Role",image: "role"),
               SizedBox(height: 5),

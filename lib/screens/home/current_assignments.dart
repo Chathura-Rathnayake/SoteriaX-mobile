@@ -20,7 +20,7 @@ class _CurrentAssignmentState extends State<CurrentAssignment> {
         child: Container(
           child: Column(
             children: [
-              CurrentAssignmentItem(date: "2021/08/05", time: "10:30am", role: "Pilot", assignmentId: "546484",),
+              CurrentAssignmentItem(date: "2021/08/10", time: "10:30am", role: "Pilot", assignmentId: "546484",),
               CurrentAssignmentItem(date: "2021/08/12", time: "02:30pm", role: "Assistant Pilot", assignmentId: "986484",),
               CurrentAssignmentItem(date: "2021/08/17", time: "10:30am", role: "Pilot", assignmentId: "0044866",),
               CurrentAssignmentItem(date: "2021/08/20", time: "12:30pm", role: "Swimmer", assignmentId: "765468",),

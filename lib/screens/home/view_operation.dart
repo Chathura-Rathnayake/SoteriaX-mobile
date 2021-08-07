@@ -113,7 +113,11 @@ class _ViewOperationState extends State<ViewOperation> {
                   child: _videoPlayerController.value.isInitialized ? AspectRatio(
                       aspectRatio: _videoPlayerController.value.aspectRatio,
                       child: VideoPlayer(_videoPlayerController),)
-                  : Container(),
+                  : Container(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
                 ),
               ),
               NavigationButton(image: "alarm_bulb_icon", title: "CONTACT EMERGENCY SERVICES", onPressedFunFlag: 3,),
