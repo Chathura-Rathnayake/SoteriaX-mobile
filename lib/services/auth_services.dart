@@ -8,17 +8,31 @@ import 'package:soteriax/models/lifeguard.dart';
 class AuthService with ChangeNotifier{
 
   bool _isLoading=false;
-  String _errorMessage="";
+  String _errorMessageL="";
+  String _errorMessageHL="";
+  String _forgotPwdErrorMessage="";
   bool get isLoading => _isLoading;
-  String get errorMessage => _errorMessage;
+  String get errorMessageL => _errorMessageL;
+  String get errorMessageHL => _errorMessageHL;
+  String get fPwdMessage=>_forgotPwdErrorMessage;
 
   void setLoading(val){
     _isLoading=val;
     notifyListeners();
   }
 
-  void setMessage(message){
-    _errorMessage=message;
+  void setMessageL(message){
+    _errorMessageL=message;
+    notifyListeners();
+  }
+
+  void setMessageHL(message){
+    _errorMessageHL=message;
+    notifyListeners();
+  }
+
+  void setFPwdMessage(message){
+    _forgotPwdErrorMessage=message;
     notifyListeners();
   }
 
@@ -32,23 +46,50 @@ class AuthService with ChangeNotifier{
     }
   }
 
-  Future signInWithEmailAndPassword(String email, String password) async{
+  Future signInWithEmailAndPassword(String email, String password, String userFlag) async{
     setLoading(true);
+    if(userFlag=="l"){
+      bool isHL=await UserDatabaseService().checkLifeguard(email);
+      if(!isHL){
+        setMessageL("The entered email is not registered as a lifeguard");
+        setLoading(false);
+        return;
+      }
+    }else{
+      bool isL=await UserDatabaseService().checkHeadLifeguard(email);
+      if(!isL){
+        setMessageHL("The entered email is not registered as a Head lifeguard");
+        setLoading(false);
+        return;
+      }
+    }
     try{
       UserCredential result=await _auth.signInWithEmailAndPassword(email: email, password: password);
+      if(userFlag=="l"){
+        UserDatabaseService(userId: result.user!.uid).getLifeguardData();
+      }else{
+        UserDatabaseService(userId: result.user!.uid).getHeadLifeguardData();
+      }
       setLoading(false);
-      UserDatabaseService(userId: result.user!.uid).getUserData();
-      return _Sys_UserFromFirebaseUser(result.user);
     }on SocketException{
       setLoading(false);
-      setMessage("No internet, please check your internet connection");
+      if(userFlag=="l"){
+        setMessageL("No internet, please check your internet connection");
+      }else{
+        setMessageHL("No internet, please check your internet connection");
+      }
     }
     on FirebaseAuthException catch(e){
       setLoading(false);
-      setMessage(e.message);
+      if(userFlag=="l"){
+        setMessageL(e.message);
+      }else{
+        setMessageHL(e.message);
+      }
     }
     notifyListeners();
   }
+
 
   Future<void> signOut() async{
     try{
@@ -66,10 +107,10 @@ class AuthService with ChangeNotifier{
       setLoading(false);
     }on SocketException{
       setLoading(false);
-      setMessage("No internet, Please check your internet connection");
+      setFPwdMessage("No internet, Please check your internet connection");
     }on FirebaseAuthException catch(e){
       setLoading(false);
-      setMessage(e.message);
+      setFPwdMessage(e.message);
     }
     notifyListeners();
   }
