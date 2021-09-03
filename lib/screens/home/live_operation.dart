@@ -5,11 +5,12 @@ import 'package:soteriax/screens/custom_widgets/drawer_widgets/audio_stream_draw
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/drop_resttube_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/emmit_audio_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
-import 'package:soteriax/screens/home/main_menu.dart';
 import 'package:video_player/video_player.dart';
 
 class LiveOperations extends StatefulWidget {
-  const LiveOperations({Key? key}) : super(key: key);
+  LiveOperations({this.operationID});
+  String? operationID;
+
 
   @override
   _LiveOperationsState createState() => _LiveOperationsState();
@@ -21,6 +22,7 @@ class LiveOperations extends StatefulWidget {
 class _LiveOperationsState extends State<LiveOperations> {
   final GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
   late VideoPlayerController _videoPlayerController;
+  String? operationId;
   int? type;
 
   @override
