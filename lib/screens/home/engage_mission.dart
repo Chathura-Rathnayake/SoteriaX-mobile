@@ -1,6 +1,13 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:soteriax/screens/home/live_operation.dart';
+import 'package:soteriax/database/operations_database_services.dart';
+import 'package:soteriax/models/lifeguardSingleton.dart';
+import 'package:soteriax/services/engageMission_httpServices.dart';
+
+import 'live_operation.dart';
 
 class EngageMission extends StatefulWidget {
   const EngageMission({Key? key}) : super(key: key);
@@ -10,8 +17,78 @@ class EngageMission extends StatefulWidget {
 }
 
 class _EngageMissionState extends State<EngageMission> {
+  LifeguardSingleton lifeguardSingleton=LifeguardSingleton();
+  OperationDatabaseService _opDB=OperationDatabaseService();
+  EngageMissionHttp _engageHTTP=EngageMissionHttp();
+  Timer? timer;
+  Timer? engageCheckTimer;
+  Map? rpiResponse;
+  String rpiStatus='live';
+  bool waitingForRpiResponse=false;
+
+
+  void rpiStatusCheck(){
+    timer?.cancel();
+    timer=Timer.periodic(Duration(seconds: 10), (timer) async {
+      if(!waitingForRpiResponse){
+        waitingForRpiResponse=true;
+        rpiResponse = await _engageHTTP.checkRPiAvailability();
+        print('response this is: ${rpiResponse!['status']}');
+        waitingForRpiResponse=false;
+        if(mounted){
+          if (rpiResponse!['status'] == 200) {
+            setState(() {
+              rpiStatus = 'live';
+            });
+          } else {
+            print("here");
+            setState(() {
+              rpiStatus = 'off-line';
+            });
+          }
+        }
+      }
+    });
+  }
+
+  void engageChecker(){
+    engageCheckTimer?.cancel();
+    engageCheckTimer=Timer.periodic(Duration(seconds: 10), (timer) async{
+
+    });
+  }
+
+
+  @override
+  // TODO: implement mounted
+  bool get mounted => super.mounted;
+
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(lifeguardSingleton.company.companyId);
+    //rpiStatusCheck();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    this.timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    // TODO: implement deactivate
+    print("canceled");
+    this.timer?.cancel();
+    super.deactivate();
+  }
   @override
   Widget build(BuildContext context) {
+    print('rpi status $rpiStatus');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange[800],
@@ -41,11 +118,12 @@ class _EngageMissionState extends State<EngageMission> {
                         ),
                       ),
                       Container(
-                        color: Colors.green[300],
+                        color: rpiStatus=='live'? Colors.green[300] : Colors.red[300] ,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
                           child: Text(
-                            "Live", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            rpiStatus=='live'? "Live" : "Off-Line",
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ),
                       )
@@ -53,33 +131,67 @@ class _EngageMissionState extends State<EngageMission> {
                   ),
                 ],
               ),
-              Container(
-                child: Card(
-                  margin: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      leading: Image(image: AssetImage("assets/icons/mobile_engagement.png"),),
-                      title: Text("No-Engagement"),
-                      subtitle: Text("Engagement Status"),
+              if(rpiStatus=='live')
+                Container(
+                  child: Card(
+                    margin: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        leading: Image(image: AssetImage("assets/icons/mobile_engagement.png"),),
+                        title: Text("No-Engagement"),
+                        subtitle: Text("Engagement Status"),
+                      ),
                     ),
                   ),
                 ),
-              ),
               SizedBox(height: 30,),
-              MaterialButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations()),);
-                },
-                color: Colors.orange[800],
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  child: Text("ENGAGE MISSION", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),),
+              if(rpiStatus=='live')
+                StreamBuilder<QuerySnapshot?>(
+                  stream:OperationDatabaseService().EngagementStatus,
+                  builder: (context, snapshot) {
+                    print('triggered');
+                    if(snapshot.hasData){
+                      if(snapshot.data!.size>0){
+                        return MaterialButton(
+                          onPressed: () async {
+                            Map operation=await _opDB.getOperation();
+                            if(operation['opId']==null){//no current live operations so we can add one
+                              setState(() {
+                                _opDB.addLiveOperation();
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations()));
+                              });
+                            }else{
+                              if(operation['engaged']){
+                                //already engaged(at the split second window)... check time difference and go inside(can do a async time)
+                              }else{
+                                //not engaged... released.. disengaged..
+
+                              }
+                            }
+                            // int s=await OperationDatabaseService().getLiveOperationStatus("Abans");
+                            // OperationDatabaseService().checkLiveOperation("Abans");
+                            _opDB.addLiveOperation();
+                            // print(s);
+                            // Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations()),);
+                          },
+                          color: Colors.orange[800],
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            child: Text("ENGAGE MISSION", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),),
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)
+                           ),
+                          );
+                        }else{
+                          return Container();
+                        }
+                      }else{
+                        return Container();
+                      }
+                    }
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)
-                ),
-              ),
             ],
           ),
         ),
