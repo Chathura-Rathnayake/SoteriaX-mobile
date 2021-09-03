@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:soteriax/services/auth_services.dart';
 
 class ForgotPassword extends StatefulWidget {
-  ForgotPassword({this.toggleBWScreens});
-  final Function? toggleBWScreens;
 
   @override
   _ForgotPasswordState createState() => _ForgotPasswordState();
@@ -23,6 +21,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     //provider to listen for notifiers on authServices
     final _auth = Provider.of<AuthService>(context);
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.orange.shade900,
+        elevation: 0,
+      ),
       body: SafeArea(
         child: Form(
           key: _formkey,
@@ -30,7 +32,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                  begin: Alignment.topCenter,
+                  begin: Alignment.topRight,
                   colors: [
                     Colors.orange.shade900,
                     Colors.orange.shade500,
@@ -42,7 +44,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20,),
-                IconButton(onPressed: (){ widget.toggleBWScreens!(); }, icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 40,),),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20,30,10,10),
                   child: Column(
@@ -114,7 +115,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               ],
                             ),
                             SizedBox(height: 10,),
-                            if(_auth.errorMessage!="")
+                            if(_auth.fPwdMessage!="")
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5 ),
                                 decoration: BoxDecoration(
@@ -122,12 +123,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
                                 ),
                                 child: ListTile(
-                                  title: Text(_auth.errorMessage, style: TextStyle(color: Colors.red[900], fontSize: 14), ),
+                                  title: Text(_auth.fPwdMessage, style: TextStyle(color: Colors.red[900], fontSize: 14), ),
                                   leading: Icon(Icons.error, color: Colors.red[900],),
                                   trailing: IconButton(
                                     icon: Icon(Icons.close),
                                     onPressed: (){
-                                      _auth.setMessage("");
+                                      _auth.setFPwdMessage("");
                                     },
                                   ),
                                 ),

@@ -22,9 +22,9 @@ class _AuthenticationStateState extends State<AuthenticationState> {
   @override
   Widget build(BuildContext context) {
     if(!toggle){
-      return Login(toggleBWScreens: toggleBWScreens);
+      return Login();
     }else{
-      return ForgotPassword(toggleBWScreens: toggleBWScreens);
+      return ForgotPassword();
     }
   }
 }
