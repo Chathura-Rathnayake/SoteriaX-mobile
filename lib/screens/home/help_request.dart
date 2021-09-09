@@ -23,7 +23,7 @@ class _helpRequestState extends State<helpRequest> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: SingleChildScrollView(
-          child: Column(crossAxisAlignment:CrossAxisAlignment.start,
+          child: Column(
           children: [
             SizedBox(height: 20,),
             Text("Help request form",style: TextStyle(fontSize: 30),),
@@ -85,7 +85,7 @@ class _helpRequestState extends State<helpRequest> {
                 onChanged: (value){
                   age=value;
                 },
-                maxLines: 3,
+                maxLines: 5,
 
               ),
 

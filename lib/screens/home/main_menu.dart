@@ -6,7 +6,6 @@ import 'package:soteriax/models/lifeguard.dart';
 import 'package:soteriax/models/lifeguardSingleton.dart';
 import 'package:soteriax/screens/home/emergency_call.dart';
 import 'package:soteriax/screens/home/engage_mission.dart';
-import 'package:soteriax/screens/home/help_requests.dart';
 import 'package:soteriax/screens/home/profiles.dart';
 import 'package:flutter/services.dart';
 import 'package:soteriax/screens/home/training_operation.dart';
@@ -16,6 +15,8 @@ import 'package:soteriax/screens/initialization/init_loading.dart';
 import 'package:soteriax/screens/shared/timer.dart';
 import 'package:soteriax/screens/shared/webrtc.dart';
 import 'package:soteriax/services/auth_services.dart';
+
+import 'help_request.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({Key? key}) : super(key: key);
@@ -269,7 +270,7 @@ class _MainMenuState extends State<MainMenu> {
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) =>HelpRequests()),
+                                        MaterialPageRoute(builder: (context) =>helpRequest()),
                                       );
                                     },
                                     height: 20,

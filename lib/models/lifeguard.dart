@@ -22,8 +22,6 @@ class Lifeguard{
   bool? isPilot=false;
   String? designation="";
   Company? company;
-  String? nic;
-  String? mobileNo;
 
   Lifeguard.fromJson(Map<String, dynamic> json){
     uid=json['uid'];
