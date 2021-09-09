@@ -70,7 +70,7 @@ class _ViewOperationState extends State<ViewOperation> {
       setState(() {});
     };
 
-    
+
     return peerConnection;
 
   }
