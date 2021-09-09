@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:soteriax/database/live_operations_database_services.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/alert_code_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/audio_stream_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/drop_resttube_drawer.dart';
@@ -8,8 +11,8 @@ import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
 import 'package:video_player/video_player.dart';
 
 class LiveOperations extends StatefulWidget {
-  LiveOperations({this.operationID});
-  String? operationID;
+  LiveOperations({required this.operationID});
+  final String operationID;
 
 
   @override
@@ -22,12 +25,36 @@ class LiveOperations extends StatefulWidget {
 class _LiveOperationsState extends State<LiveOperations> {
   final GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
   late VideoPlayerController _videoPlayerController;
-  String? operationId;
   int? type;
+  late LiveOperationDBServices liveOpDB;
+  Timer? operationPing;
+  bool waitingForOperationPing=false;
+
+  void sendOperationPing(){
+    operationPing?.cancel();
+    operationPing=Timer.periodic(Duration(seconds: 10), (timer) async{
+      if(!waitingForOperationPing){
+       waitingForOperationPing=true;
+       liveOpDB.pingEngagement();
+       waitingForOperationPing=false;
+      }
+    });
+  }
+
+  @override
+  void deactivate() {
+    // TODO: implement deactivate
+    operationPing?.cancel();
+    super.deactivate();
+  }
+
+
 
   @override
   void initState() {
     // TODO: implement initState
+    liveOpDB=LiveOperationDBServices(operationId: widget.operationID);
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -41,12 +68,14 @@ class _LiveOperationsState extends State<LiveOperations> {
 
       });
     });
+    sendOperationPing();
     super.initState();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
+    operationPing?.cancel();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -149,6 +178,7 @@ class _LiveOperationsState extends State<LiveOperations> {
               ),
             ],
           ),
-        ));
+        )
+    );
   }
 }

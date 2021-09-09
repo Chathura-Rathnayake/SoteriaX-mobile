@@ -66,9 +66,9 @@ class AuthService with ChangeNotifier{
     try{
       UserCredential result=await _auth.signInWithEmailAndPassword(email: email, password: password);
       if(userFlag=="l"){
-        UserDatabaseService(userId: result.user!.uid).getLifeguardData();
+        await UserDatabaseService(userId: result.user!.uid).getLifeguardData();
       }else{
-        UserDatabaseService(userId: result.user!.uid).getHeadLifeguardData();
+        await UserDatabaseService(userId: result.user!.uid).getHeadLifeguardData();
       }
       setLoading(false);
     }on SocketException{

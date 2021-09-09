@@ -8,12 +8,14 @@ class Sys_user{
 class Lifeguard{
 
   Lifeguard({this.uid, this.email, this.firstname, this.lastname, this.birthDate, this.designation,
-    this.noOfOperations, this.isPilot, this.certificateLevel, this.company,this.mobileNo, this.nic});
+    this.noOfOperations, this.isPilot, this.certificateLevel, this.company, this.mobileNo, this.nic});
 
   String? uid;
   String? firstname;
   String? lastname;
   String? email;
+  String? nic;
+  String? mobileNo;
   String? certificateLevel="";
   String? birthDate;
   int? noOfOperations=0;

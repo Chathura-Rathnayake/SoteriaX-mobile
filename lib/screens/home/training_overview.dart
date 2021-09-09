@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:soteriax/screens/custom_widgets/lists/tiles/info_tile.dart';
 import 'package:soteriax/screens/custom_widgets/navigate_button.dart';
 import 'package:soteriax/screens/home/main_menu.dart';
+import 'package:soteriax/screens/home/training_operation.dart';
 class TrainingOverview extends StatefulWidget {
   const TrainingOverview({Key? key}) : super(key: key);
 
@@ -9,9 +11,19 @@ class TrainingOverview extends StatefulWidget {
   _TrainingOverviewState createState() => _TrainingOverviewState();
 }
 
+
 class _TrainingOverviewState extends State<TrainingOverview> {
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
+
+    print(DateTime.parse('2014-07-20 20:18'));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange[800],
@@ -37,7 +49,13 @@ class _TrainingOverviewState extends State<TrainingOverview> {
               SizedBox(height: 5),
               MaterialButton(
                 color: Colors.orange[600],
-                onPressed: (){},
+                onPressed: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context)=>TrainingOperation())
+                  );
+                  
+                },
                 disabledElevation: null,
                 disabledTextColor: Colors.black,
                 disabledColor: Colors.grey[500],

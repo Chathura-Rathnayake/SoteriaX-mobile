@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:http/http.dart' as http;
 import 'package:soteriax/database/view_operations_database_services.dart';
 import 'package:soteriax/screens/custom_widgets/navigate_button.dart';
 import 'package:soteriax/screens/custom_widgets/operation_status_tile.dart';
@@ -10,6 +16,7 @@ import 'package:soteriax/screens/home/viewOp/waiting_operation_response.dart';
 import 'package:soteriax/screens/shared/timeline.dart';
 import 'package:video_player/video_player.dart';
 
+
 class ViewOperation extends StatefulWidget {
   const ViewOperation({Key? key}) : super(key: key);
 
@@ -18,35 +25,127 @@ class ViewOperation extends StatefulWidget {
 }
 
 class _ViewOperationState extends State<ViewOperation> {
-
+  final _remoteRenderer=new RTCVideoRenderer();
+  final _localRenderer=new RTCVideoRenderer();
   late VideoPlayerController _videoPlayerController;
   late Future<Map?> _currentLiveOp;
+  RTCPeerConnection? _peerConnection;
+  MediaStream? remoteStream;
+  MediaStream? _localStream;
+
+  void initRenderers() async{
+    // await _localRenderer.initialize();
+    await _remoteRenderer.initialize();
+  }
+
+  Future<RTCPeerConnection> _createPeerConnection() async{
+
+    Map<String, dynamic> configuration = {
+      'iceServers': [
+        {'url': 'stun:stun1.l.google.com:19302'},
+        {'url': 'stun:stun2.l.google.com:19302'},
+        {'url': "stun:stun.stunprotocol.org:3478"},
+        {'url': "stun:stun1.l.google.com:19302"},
+        {'url': "stun:stun2.l.google.com:19302"},
+        {'url': "stun:stun3.l.google.com:19302"},
+        {'url': "stun:stun4.l.google.com:19302"},
+      ],
+      'sdpSemantics': 'unified-plan'
+    };
+
+    final Map<String,dynamic> offerSdpConstraints={
+      'mandatory':{
+        'OfferToReceiveAudio':false,
+        'OfferToReceiveVideo': true,
+      },
+      'optional':[],
+    };
+    RTCPeerConnection peerConnection=await createPeerConnection(configuration, offerSdpConstraints);
+    // peerConnection.onTrack=handleTrackEvent;
+    peerConnection.onRenegotiationNeeded=()=>handleNegotiationNeededEvent(peerConnection);
+    peerConnection.onConnectionState=(con)=>{print("on Connection State: $con")};
+    peerConnection.onAddStream=(stream){
+      print('here on add stream: ${stream.id}');
+      _remoteRenderer.srcObject=stream;
+      setState(() {});
+    };
+
+
+    return peerConnection;
+
+  }
+
+
+
+  void handleNegotiationNeededEvent(RTCPeerConnection peer) async{
+    RTCSessionDescription offer=await peer.createOffer();
+    await peer.setLocalDescription(offer);
+    var d=await peer.getLocalDescription();
+    Map<String, dynamic> payLoad={
+      'sdp': jsonEncode(d!.toMap())
+    };
+    var url=Uri.parse("http://192.168.43.5:5000/consumer");
+    http.Response uriResponse=await http.post(url, body: payLoad);
+    print(jsonDecode(uriResponse.body)['sdp']['type']);
+    RTCSessionDescription description=RTCSessionDescription(jsonDecode(uriResponse.body)['sdp']['sdp'], jsonDecode(uriResponse.body)['sdp']['type']);
+    peer.setRemoteDescription(description).catchError((e)=>print('error: ${e.toString()}'));
+    var r=await peer.getRemoteDescription();
+    log('remote sdp: ${r!.sdp}');
+
+
+  }
+  void handleTrackEvent(RTCTrackEvent e){
+    print(e.streams[0]);
+    _remoteRenderer.srcObject=e.streams[0];
+    setState(() {});
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    initRenderers();
+    initWebrtc();
     _currentLiveOp=ViewOperationDBServices().getCurrentLiveOp();
-    _videoPlayerController=VideoPlayerController.network(
-        'https://github.com/husseyhh/soteriaX_videos/raw/main/example_footage/soteriaX_trimmed_2.mp4')
-    ..initialize().then((_) {
-      _videoPlayerController.play();
-      _videoPlayerController.setLooping(true);
-      setState(() {
+  }
 
-      });
-    });
+  void initWebrtc()async{
+    RTCPeerConnection peer=await _createPeerConnection();
+    await peer.addTransceiver(kind: RTCRtpMediaType.RTCRtpMediaTypeVideo, init: RTCRtpTransceiverInit(direction: TransceiverDirection.RecvOnly));
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     // TODO: implement dispose
     super.dispose();
-    _videoPlayerController.dispose();
+    // _remoteRenderer.dispose();
+    await _remoteRenderer.dispose();
+    // _videoPlayerController.dispose();
+    // _localStream?.dispose();
   }
+
+  // disconnect
+
+
+  _getUserMedia() async {
+    print('getusermeadia');
+    final Map<String, dynamic> mediaConstraints = {
+      'audio': false,
+      'video': true,
+    };
+
+    _localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    _localRenderer.srcObject = _localStream;
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
+    // initWebrtc();
+
+
     GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
     return FutureBuilder<Map?>(
         future: _currentLiveOp,
@@ -64,6 +163,7 @@ class _ViewOperationState extends State<ViewOperation> {
                   return NoCurrentOP();
                 }else{
                   print("hera");
+                  print(snapshot.data!["currentOp"].id);
                   print(snapshot.data!['currentOp'].data().toString());
                   return Scaffold(
                     key: _scaffoldKey,
@@ -102,7 +202,7 @@ class _ViewOperationState extends State<ViewOperation> {
                               height: 20,
                               color: Colors.redAccent.shade700,
                             ),
-                            OperationStatusTile(operationId: snapshot.data!["currentOp"].id),
+                            OperationStatusTile(operationId: snapshot.data!["currentOp"].id, operationFlag: snapshot.data!["opFlag"],),
                             Container(
                               color: Colors.grey,
                               width: double.infinity,
@@ -112,19 +212,11 @@ class _ViewOperationState extends State<ViewOperation> {
                               ),
                             ),
                             Container(
+                              key: new Key('remote'),
+                              width: double.infinity,
                               height: MediaQuery.of(context).size.height*0.30,
-                              color: Colors.black,
-                              child: Center(
-                                child: _videoPlayerController.value.isInitialized ? AspectRatio(
-                                  aspectRatio: _videoPlayerController.value.aspectRatio,
-                                  child: VideoPlayer(_videoPlayerController),)
-                                    : Container(
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
+                              child: RTCVideoView(_remoteRenderer, objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover, ),
                               ),
-                            ),
                             StreamBuilder<DocumentSnapshot?>(
                                 stream: snapshot.data!["opFlag"]=="live" ? ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentLiveOpdata : ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentTrainingOpdata,
                                 builder: (context, snap){
@@ -201,3 +293,14 @@ class _ViewOperationState extends State<ViewOperation> {
       );
   }
 }
+
+// Center(
+// child: _videoPlayerController.value.isInitialized ? AspectRatio(
+// aspectRatio: _videoPlayerController.value.aspectRatio,
+// child: VideoPlayer(_videoPlayerController),)
+// : Container(
+// child: Center(
+// child: CircularProgressIndicator(),
+// ),
+// )
+// ),
