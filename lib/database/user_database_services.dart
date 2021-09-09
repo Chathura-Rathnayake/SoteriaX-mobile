@@ -15,7 +15,7 @@ class UserDatabaseService{
   String? userId;
   Future<SharedPreferences> _pref=SharedPreferences.getInstance();
 
-  void getLifeguardData() async{
+  Future<void> getLifeguardData() async{
     final SharedPreferences prefs=await _pref;
     await lifeguards.doc(userId).get().then((DocumentSnapshot documentSnapshot) async {
       if(documentSnapshot.exists){
@@ -28,14 +28,14 @@ class UserDatabaseService{
             firstname: documentSnapshot.get("firstName"),
             lastname: documentSnapshot.get("lastName"),
             email: documentSnapshot.get("email"),
+            nic: documentSnapshot.get('NIC'),
+            mobileNo: documentSnapshot.get('phone_number'),
             certificateLevel: documentSnapshot.get("certificateLevel"),
-            noOfOperations: documentSnapshot.get("noOfOperations"),
-            isPilot: documentSnapshot.get("isPilot"),
             birthDate: documentSnapshot.get("birthDate"),
             designation: "Lifeguard",
             company: company
         );
-         prefs.setString("lifeguardData", lifeguard.toString());
+         await prefs.setString("lifeguardData", lifeguard.toString());
          print("lifeguardData:  ${lifeguard.toString()}");
       }else{
         print("Document doesn't exist sorry");
@@ -43,7 +43,7 @@ class UserDatabaseService{
     });
   }
 
-  void getHeadLifeguardData() async{
+  Future<void> getHeadLifeguardData() async{
     final SharedPreferences prefs=await _pref;
     await headLifeguards.doc(userId).get().then((DocumentSnapshot documentSnapshot) async {
       if(documentSnapshot.exists){
@@ -58,7 +58,7 @@ class UserDatabaseService{
             company: company,
             designation: "Head Lifeguard"
         );
-        prefs.setString("lifeguardData", lifeguard.toString());
+        await prefs.setString("lifeguardData", lifeguard.toString());
         print("headLifeguardData:  ${lifeguard.toString()}");
       }else{
         print("Document doesn't exist sorry");

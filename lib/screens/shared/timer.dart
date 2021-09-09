@@ -16,7 +16,7 @@ class CountUpTimerPage extends StatefulWidget {
 }
 
 class _State extends State<CountUpTimerPage> {
-  final _isHours = true;
+  final _isHours = false;
 
   final StopWatchTimer _stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countUp,
@@ -321,91 +321,6 @@ class _State extends State<CountUpTimerPage> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: RaisedButton(
-                            padding: const EdgeInsets.all(4),
-                            color: Colors.pinkAccent,
-                            shape: const StadiumBorder(),
-                            onPressed: () async {
-                              _stopWatchTimer.setPresetHoursTime(1);
-                            },
-                            child: const Text(
-                              'Set Hours',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: RaisedButton(
-                            padding: const EdgeInsets.all(4),
-                            color: Colors.pinkAccent,
-                            shape: const StadiumBorder(),
-                            onPressed: () async {
-                              _stopWatchTimer.setPresetMinuteTime(59);
-                            },
-                            child: const Text(
-                              'Set Minute',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: RaisedButton(
-                            padding: const EdgeInsets.all(4),
-                            color: Colors.pinkAccent,
-                            shape: const StadiumBorder(),
-                            onPressed: () async {
-                              _stopWatchTimer.setPresetSecondTime(10);
-                            },
-                            child: const Text(
-                              'Set Second',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: RaisedButton(
-                      padding: const EdgeInsets.all(4),
-                      color: Colors.pinkAccent,
-                      shape: const StadiumBorder(),
-                      onPressed: () async {
-                        _stopWatchTimer.setPresetTime(mSec: 3599 * 1000);
-                      },
-                      child: const Text(
-                        'Set PresetTime',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.pinkAccent,
-                        onPrimary: Colors.white,
-                        shape: const StadiumBorder(),
-                      ),
-                      onPressed: () async {
-                        _stopWatchTimer.clearPresetTime();
-                      },
-                      child: const Text(
-                        'Clear PresetTime',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             )
@@ -415,3 +330,10 @@ class _State extends State<CountUpTimerPage> {
     );
   }
 }
+
+
+// _stopWatchTimer.setPresetHoursTime(1);
+// _stopWatchTimer.setPresetMinuteTime(59);
+// _stopWatchTimer.setPresetSecondTime(10);
+// _stopWatchTimer.setPresetTime(mSec: 3599 * 1000);
+// _stopWatchTimer.clearPresetTime();

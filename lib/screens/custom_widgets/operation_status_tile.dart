@@ -21,27 +21,32 @@ class _OperationStatusTileState extends State<OperationStatusTile> {
         stream: widget.operationFlag=="live" ? ViewOperationDBServices(operationId: widget.operationId).currentLiveOpdata : ViewOperationDBServices(operationId: widget.operationId).currentTrainingOpdata,
         builder: (context, snapshot){
           if(snapshot.hasData){
-            return Container(
-              child: Row(
-                children: [
-                  SizedBox(width: 30,),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                        child: Text("CURRENT STATUS: ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                        child: Text("${snapshot.data!.get("currentStatus")}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),),
-                      )
-                    ],
-                  ),
-                  SizedBox(width: 50,),
-                  Image(image: AssetImage("assets/images/process_timeline/status${snapshot.data!.get("currentStage")}.png"), width: 60, height: 60,)
-                ],
-              ),
-            );
+            if(snapshot.data!.data()==null){
+              return Container();
+            }else{
+              print(snapshot.data!.data().toString());
+              return Container(
+                child: Row(
+                  children: [
+                    SizedBox(width: 30,),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                          child: Text("CURRENT STATUS: ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                          child: Text("${snapshot.data!.get("currentStatus")}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),),
+                        )
+                      ],
+                    ),
+                    SizedBox(width: 50,),
+                    Image(image: AssetImage("assets/images/process_timeline/status${snapshot.data!.get("currentStage")}.png"), width: 60, height: 60,)
+                  ],
+                ),
+              );
+            }
           }else{
             return CircularProgressIndicator();
           }

@@ -14,23 +14,6 @@ class OperationDatabaseService{
 
   DateTime now =new DateTime.now();
 
-
-  Future<int> getLiveOperationStatus(String companyId) async{
-    int status=-1;
-    operations.doc("lDRGm5pwmrEvHXXgMEUu").get().then((DocumentSnapshot snapshot){
-      if(snapshot.exists){
-        print("exists ${snapshot.data()} ${snapshot.get("currentStage")}");
-        status= snapshot.get('currentStage');
-        print(status);
-      }else{
-        print("nada");
-      }
-    });
-    return status;
-  }
-
-
-
   Future<String?> addLiveOperation() async{
      DocumentSnapshot? operation=await operations.where("companyId", isEqualTo: this.companyId).where("operationStatus", isEqualTo: 'live').get().then((QuerySnapshot snapshot){
       if(snapshot.size!=0){
@@ -39,8 +22,6 @@ class OperationDatabaseService{
         return null;
       }
     });
-
-
     bool isEngaged=await operations.where("companyId", isEqualTo: this.companyId).where("engaged", isEqualTo: true).get().then((QuerySnapshot snapshot){
       if(snapshot.size==0){
         return false;
@@ -48,10 +29,8 @@ class OperationDatabaseService{
         return true;
       }
     });
-    print(isEngaged);
-
     if(!isEngaged){
-      var docX= operations.add({
+      var docX= await operations.add({
         'companyId': this.companyId,
         'startDate': DateFormat('yMd').format(now),
         'startTime': DateFormat('kk:mm:ss').format(now),
@@ -60,11 +39,19 @@ class OperationDatabaseService{
         'currentStage': 1,
         'engaged_lifeguard':lifeguardSingleton.uid.toString(),
       }).then((value) =>  value.id)
-          .catchError((e)=>print(e.toString()));
+          .catchError((e) {
+        print(e.toString());
+        return 'error';
+      });
       
-      return docX;
+      if(docX=="error"){
+        return null;
+      }else{
+        return docX;
+      }
     }else{
       print("already engaged");
+      return null;
     }
   }
 
@@ -102,19 +89,44 @@ class OperationDatabaseService{
         }else{
           temp['opId']=querySnapshot.docs[0].id;
           temp['status']=querySnapshot.docs[0].get('operationStatus');
-          temp['engaged']=querySnapshot.docs[0].get('isEngaged');
+          temp['engaged']=querySnapshot.docs[0].get('engaged');
           return temp;
         }
     });
     return op;
   } 
   
-  Future<void> checkDisengagement() async{
-    Map op={'operationDoc': null, 'isLive': false};
+  Future<bool> checkDisengagement() async{ // will also return if it was disengaged
+    bool disEngaged=await operations.where('companyId', isEqualTo: this.companyId).
+    where('operationStatus', isEqualTo: 'live').where('engaged', isEqualTo: true).get().then((QuerySnapshot snapshot) async{
+      if(snapshot.size>0){
+        Timestamp t=snapshot.docs[0].get('engagementPing');
+        var pingTime=DateTime.fromMillisecondsSinceEpoch(t.millisecondsSinceEpoch);
+        var diff=DateTime.now().difference(pingTime);
+        print('Difference in seconds: ${diff.inSeconds}');
+        print(snapshot.docs[0].get('engagementPing'));
+        if(diff.inSeconds>30){
+          bool done=await operations.doc(snapshot.docs[0].id).update({'engaged': false}).
+          then((value){
+            print('disengaged');
+            return true;
+          }).catchError((error){
+            print(error.toString());
+            return false;
+          });
+          return done;
+        }else{
+          return false;
+        }
+      }else{
+        return false;
+      }
+    });
+    return disEngaged;
   }
 
 
-  Stream<DocumentSnapshot> get liveOpdata{
+  Stream<DocumentSnapshot> get liveOpData{
     return operations.doc(lifeguardSingleton.company.companyId).snapshots();
   }
   

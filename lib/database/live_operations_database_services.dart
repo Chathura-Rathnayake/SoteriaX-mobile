@@ -13,8 +13,8 @@ class LiveOperationDBServices{
   final CollectionReference operations=FirebaseFirestore.instance.collection("operations");
 
   Future<void> pingEngagement() async{
-    return operations.doc(operationId).update({'engagementPing': DateTime.now().millisecondsSinceEpoch}).
-      then((value) => print("pinged")).catchError((error)=>print("Failed to ping: $error"));
+    return operations.doc(operationId).update({'engagementPing': Timestamp.now()}).
+      then((value) => print("pinged")).catchError((error)=>print("Failed to ping: $error, $operationId"));
   }
 
   Future<void> setEngaged() async{

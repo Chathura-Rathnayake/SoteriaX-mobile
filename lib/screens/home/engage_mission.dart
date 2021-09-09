@@ -25,6 +25,8 @@ class _EngageMissionState extends State<EngageMission> {
   Map? rpiResponse;
   String rpiStatus='live';
   bool waitingForRpiResponse=false;
+  bool waitingForEngagementCheck=false;
+  String? feedbackMessage="";
 
 
   void rpiStatusCheck(){
@@ -51,10 +53,16 @@ class _EngageMissionState extends State<EngageMission> {
     });
   }
 
+
+
   void engageChecker(){
     engageCheckTimer?.cancel();
     engageCheckTimer=Timer.periodic(Duration(seconds: 10), (timer) async{
-
+      if(!waitingForEngagementCheck){
+          waitingForEngagementCheck=true;
+          await _opDB.checkDisengagement();
+          waitingForEngagementCheck=false;
+      }
     });
   }
 
@@ -68,14 +76,16 @@ class _EngageMissionState extends State<EngageMission> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(lifeguardSingleton.company.companyId);
-    //rpiStatusCheck();
+    rpiStatusCheck();
+    engageChecker();
+
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     this.timer?.cancel();
+    this.engageCheckTimer?.cancel();
     super.dispose();
   }
 
@@ -84,11 +94,13 @@ class _EngageMissionState extends State<EngageMission> {
     // TODO: implement deactivate
     print("canceled");
     this.timer?.cancel();
+    this.engageCheckTimer?.cancel();
     super.deactivate();
   }
   @override
   Widget build(BuildContext context) {
     print('rpi status $rpiStatus');
+    _opDB.checkDisengagement();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange[800],
@@ -156,24 +168,64 @@ class _EngageMissionState extends State<EngageMission> {
                         return MaterialButton(
                           onPressed: () async {
                             Map operation=await _opDB.getOperation();
+                            print('button op: $operation');
                             if(operation['opId']==null){//no current live operations so we can add one
-                              setState(() {
-                                _opDB.addLiveOperation();
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations()));
-                              });
+                              rpiResponse = await _engageHTTP.checkRPiAvailability();
+                              if(rpiResponse!['status']==200){
+                                String? opId=await _opDB.addLiveOperation();
+                                if(opId==null){
+                                  setState(() {
+                                    feedbackMessage="Something went wrong Couldn't create operation..";
+                                  });
+                                }else{
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations(operationID: opId,)));
+                                }
+                              }else{
+                                setState(() {
+                                  feedbackMessage="Drone module unresponsive please try again";
+                                });
+                                return;
+                              }
                             }else{
                               if(operation['engaged']){
                                 //already engaged(at the split second window)... check time difference and go inside(can do a async time)
+                                bool ifDisengaged=await _opDB.checkDisengagement();
+                                if(ifDisengaged){
+                                  rpiResponse = await _engageHTTP.checkRPiAvailability();
+                                  if(rpiResponse!['status']==200){
+                                    String? opId=await _opDB.addLiveOperation();
+                                    if(opId==null){
+                                      setState(() {
+                                        feedbackMessage="Something went wrong Couldn't create operation..";
+                                      });
+                                    }else{
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations(operationID: opId,)));
+                                    }
+                                  }else{
+                                    setState(() {
+                                      feedbackMessage="Drone module unresponsive please try again";
+                                    });
+                                    return;
+                                  }
+                                }else{
+                                  setState(() {
+                                    feedbackMessage="Currently engaged";
+                                  });
+                                }
                               }else{
                                 //not engaged... released.. disengaged..
-
+                                rpiResponse = await _engageHTTP.checkRPiAvailability();
+                                if(rpiResponse!['status']==200){
+                                  print('you can engage continuing engagement');
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations(operationID: operation['opId'])));
+                                }else{
+                                  setState(() {
+                                    feedbackMessage="Drone module unresponsive please try again";
+                                  });
+                                  return;
+                                }
                               }
                             }
-                            // int s=await OperationDatabaseService().getLiveOperationStatus("Abans");
-                            // OperationDatabaseService().checkLiveOperation("Abans");
-                            _opDB.addLiveOperation();
-                            // print(s);
-                            // Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations()),);
                           },
                           color: Colors.orange[800],
                           child: Padding(
@@ -192,6 +244,28 @@ class _EngageMissionState extends State<EngageMission> {
                       }
                     }
                 ),
+              SizedBox(height: 20,),
+              if(feedbackMessage!="")
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 30),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5 ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  ),
+                  child: ListTile(
+                    title: Text(feedbackMessage.toString(), style: TextStyle(color: Colors.red[900], fontSize: 14), overflow: TextOverflow.visible, ),
+                    leading: Icon(Icons.error, color: Colors.red[900],),
+                    trailing: IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: (){
+                        setState(() {
+                          feedbackMessage="";
+                        });
+                      },
+                    ),
+                  ),
+                )
             ],
           ),
         ),

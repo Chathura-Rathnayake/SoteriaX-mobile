@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OperationBtn extends StatefulWidget {
@@ -30,41 +31,18 @@ class _OperationBtnState extends State<OperationBtn> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Container(
-          child: Row(
-              children: [
-                Image(
-                  image: AssetImage('assets/icons/${widget.btnImage}.png'),
-                  width: 50,
-                  height: 50,
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  widget.btnText!,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(width: 20,),
-                Container(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Image(
-                      image: AssetImage('assets/icons/right_arrow_icon.png'),
-                      width: 50,
-                      height: 50,
-                    ),
-                    ]
-                  ),
-                )
-              ]
+        child: ListTile(
+          leading: Image(
+            image: AssetImage('assets/icons/${widget.btnImage}.png'),
           ),
+          title: Text(widget.btnText!, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),),
+          trailing: Icon(CupertinoIcons.chevron_right, color: Colors.black, size: 30,),
         ),
       ),
     );
   }
 }
+// 'assets/icons/${widget.btnImage}.png'
+// 'assets/icons/right_arrow_icon.png'
+// widget.btnText!
+

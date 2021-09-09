@@ -9,7 +9,8 @@ class LifeguardSingleton{
   String? _email;
   String? _certificateLevel="";
   String? _birthDate;
-  int? _noOfOperations=0;
+  String? _mobileNo;
+  String? _nic;
   bool? _isPilot=false;
   String? _designation="";
   Company? _company;
@@ -41,11 +42,20 @@ class LifeguardSingleton{
     _isPilot = value;
   }
 
-  int get noOfOperations => _noOfOperations!;
 
-  set noOfOperations(int value) {
-    _noOfOperations = value;
+  String get mobileNo => _mobileNo!;
+
+  set mobileNo(String value) {
+    _mobileNo = value;
   }
+
+  String get nic => _nic!;
+
+  set nic(String value) {
+    _nic = value;
+  }
+
+
 
   String get birthDate => _birthDate!;
 
@@ -82,6 +92,5 @@ class LifeguardSingleton{
   set uid(String value) {
     _uid = value;
   }
-
 
 }
