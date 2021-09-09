@@ -28,9 +28,9 @@ class UserDatabaseService{
             firstname: documentSnapshot.get("firstName"),
             lastname: documentSnapshot.get("lastName"),
             email: documentSnapshot.get("email"),
+            nic: documentSnapshot.get('NIC'),
+            mobileNo: documentSnapshot.get('phone_number'),
             certificateLevel: documentSnapshot.get("certificateLevel"),
-            noOfOperations: documentSnapshot.get("noOfOperations"),
-            isPilot: documentSnapshot.get("isPilot"),
             birthDate: documentSnapshot.get("birthDate"),
             designation: "Lifeguard",
             company: company

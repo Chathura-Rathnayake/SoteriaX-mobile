@@ -8,7 +8,7 @@ class Sys_user{
 class Lifeguard{
 
   Lifeguard({this.uid, this.email, this.firstname, this.lastname, this.birthDate, this.designation,
-    this.noOfOperations, this.isPilot, this.certificateLevel, this.company});
+    this.noOfOperations, this.isPilot, this.certificateLevel, this.company,this.mobileNo, this.nic});
 
   String? uid;
   String? firstname;
@@ -20,6 +20,8 @@ class Lifeguard{
   bool? isPilot=false;
   String? designation="";
   Company? company;
+  String? nic;
+  String? mobileNo;
 
   Lifeguard.fromJson(Map<String, dynamic> json){
     uid=json['uid'];

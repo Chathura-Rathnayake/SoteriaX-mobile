@@ -6,6 +6,7 @@ import 'package:soteriax/models/lifeguard.dart';
 import 'package:soteriax/models/lifeguardSingleton.dart';
 import 'package:soteriax/screens/home/emergency_call.dart';
 import 'package:soteriax/screens/home/engage_mission.dart';
+import 'package:soteriax/screens/home/help_request.dart';
 import 'package:soteriax/screens/home/live_operation.dart';
 import 'package:soteriax/screens/home/profiles.dart';
 import 'package:flutter/services.dart';
@@ -223,7 +224,7 @@ class _MainMenuState extends State<MainMenu> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context)=>CountUpTimerPage()),
+                                            builder: (context)=>TrainingOverview()),
                                       );
                                     },
                                     height: 20,
@@ -262,7 +263,7 @@ class _MainMenuState extends State<MainMenu> {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => EmergencyCall()),
+                                      MaterialPageRoute(builder: (context) => helpRequest()),
                                     );
                                   },
                                   height: 20,
