@@ -16,7 +16,7 @@ class _helpRequestState extends State<helpRequest> {
   String? formType;
   Widget build(BuildContext context) {
     return Scaffold(appBar: AppBar(backgroundColor: Colors.orange.shade800,
-    title: Center(child: Text("Help request")),),
+    title: Center(child: Text("Help")),),
     body: Container(
       child: Form(
       key: _formKey,
@@ -26,7 +26,13 @@ class _helpRequestState extends State<helpRequest> {
           child: Column(
           children: [
             SizedBox(height: 20,),
-            Text("Help request form",style: TextStyle(fontSize: 30),),
+            Text("Submit to SoteriaX Team",style: TextStyle(fontSize: 30),),
+            SizedBox(height: 20,),
+            Image(
+              image: AssetImage('assets/icons/soteriax_logo.png'),
+              width: 200,
+              height: 150,
+            ),
             SizedBox(height: 20,),
             Row(
               children: [
@@ -89,7 +95,7 @@ class _helpRequestState extends State<helpRequest> {
 
               ),
 
-              SizedBox(height: 40,),
+              SizedBox(height: 20,),
               // TextField(
               //   maxLines: 3,
               //   decoration: InputDecoration(
@@ -105,8 +111,14 @@ class _helpRequestState extends State<helpRequest> {
                       print("Not validated");
                     }
                   },
-                  color: Colors.orange,
-                  child: Text("Click me"),
+                  // color: Colors.orange,
+                  child: Text("Submit",style: TextStyle(color: Colors.white,fontSize: 20,),),
+                height: 50,
+                minWidth: double.maxFinite,
+                color: Colors.orange.shade800,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
 
 

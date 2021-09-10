@@ -5,7 +5,11 @@ import 'package:intl/intl.dart';
 
 class HelpRequestDBServices{
   LifeguardSingleton lifeguardSingleton=LifeguardSingleton();
-  final CollectionReference helpRequest=FirebaseFirestore.instance.collection("helpRequest");
+  final CollectionReference helpRequest=FirebaseFirestore.instance.collection("helpRequests");
+  final CollectionReference complaints=FirebaseFirestore.instance.collection("complaints");
+  final CollectionReference suggestion=FirebaseFirestore.instance.collection("suggestions");
+
+
   Future<void> addRequest(String name,String age,String formType){
     final DateTime now = DateTime.now();
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -17,18 +21,52 @@ class HelpRequestDBServices{
     }else{
       designation="lifeguard";
     }
-    return helpRequest.add(
-        {"headline": name,
-          "msg": age,
-          "name": '${lifeguardSingleton.firstname} ${lifeguardSingleton.lastname}',
-          "type": formType,
-          "status":0,
-          "viewed":0,
-          "date":formatted,
-          "accountType": '${designation}',
-          "companyID":'${lifeguardSingleton.company.companyId}',
-          "companyName":'${lifeguardSingleton.company.companyName}',
-        }
-        ).then((value) => print(value.id)).catchError((e) => print(e.toString()));
+
+    if(formType=="Help Request"){
+      return helpRequest.add(
+          {"headline": name,
+            "msg": age,
+            "name": '${lifeguardSingleton.firstname} ${lifeguardSingleton.lastname}',
+            "status":0,
+            "viewed":0,
+            "date":formatted,
+            "accountType": '${designation}',
+            "companyID":'${lifeguardSingleton.company.companyId}',
+            "companyName":'${lifeguardSingleton.company.companyName}',
+          }
+      ).then((value) => print(value.id))
+          .catchError((e) => print(e.toString()));
+    }
+    else if(formType=="Complaints"){
+      return complaints.add(
+          {"headline": name,
+            "msg": age,
+            "name": '${lifeguardSingleton.firstname} ${lifeguardSingleton.lastname}',
+            "status":0,
+            "viewed":0,
+            "date":formatted,
+            "accountType": '${designation}',
+            "companyID":'${lifeguardSingleton.company.companyId}',
+            "companyName":'${lifeguardSingleton.company.companyName}',
+          }
+      ).then((value) => print(value.id))
+          .catchError((e) => print(e.toString()));
+    }
+    else{
+      return suggestion.add(
+          {"headline": name,
+            "msg": age,
+            "name": '${lifeguardSingleton.firstname} ${lifeguardSingleton.lastname}',
+            "status":0,
+            "viewed":0,
+            "date":formatted,
+            "accountType": '${designation}',
+            "companyID":'${lifeguardSingleton.company.companyId}',
+            "companyName":'${lifeguardSingleton.company.companyName}',
+          }
+      ).then((value) => print(value.id))
+          .catchError((e) => print(e.toString()));
+    }
+
   }
 }
