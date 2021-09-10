@@ -119,12 +119,15 @@ class _ViewOperationState extends State<ViewOperation> {
   @override
   void dispose() async {
     // TODO: implement dispose
+    _remoteRenderer.dispose();
     super.dispose();
     // _remoteRenderer.dispose();
-    await _remoteRenderer.dispose();
+
     // _videoPlayerController.dispose();
     // _localStream?.dispose();
   }
+
+
 
   // disconnect
 
