@@ -4,16 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soteriax/models/lifeguard.dart';
 import 'package:soteriax/models/lifeguardSingleton.dart';
-import 'package:soteriax/screens/home/emergency_call.dart';
 import 'package:soteriax/screens/home/engage_mission.dart';
 import 'package:soteriax/screens/home/profiles.dart';
-import 'package:flutter/services.dart';
-import 'package:soteriax/screens/home/training_operation.dart';
 import 'package:soteriax/screens/home/training_overview.dart';
 import 'package:soteriax/screens/home/view_operation.dart';
-import 'package:soteriax/screens/initialization/init_loading.dart';
-import 'package:soteriax/screens/shared/timer.dart';
-import 'package:soteriax/screens/shared/webrtc.dart';
 import 'package:soteriax/services/auth_services.dart';
 
 import 'help_request.dart';
@@ -29,14 +23,13 @@ class _MainMenuState extends State<MainMenu> {
   // final _formkey=GlobalKey<FormState>();
   Future<SharedPreferences> _prefs=SharedPreferences.getInstance();
   Lifeguard? lifeguard;
-  late Future<String?> _lifeguardString;
   late Map<String, dynamic> _lifeguardMap;
   LifeguardSingleton lifeguardSingleton=LifeguardSingleton();
 
   AuthService _auth=AuthService();
   
-  Future<String?> getSharedPrefLifeguard()async{
-    String? lifeguardDetails=await Future<String?>.delayed(Duration(seconds: 5), ()=> _prefs.then((SharedPreferences prefs){
+  Future<String?> getSharedPrefLifeguard() async{
+    String? lifeguardDetails=await Future<String?>.delayed(Duration(seconds: 1), ()=> _prefs.then((SharedPreferences prefs){
       return (prefs.getString("lifeguardData"));
     }));
     _lifeguardMap=jsonDecode(lifeguardDetails!) as Map<String, dynamic>;
@@ -55,9 +48,6 @@ class _MainMenuState extends State<MainMenu> {
     // TODO: implement initState
     super.initState();
     getSharedPrefLifeguard();
-    _lifeguardString=_prefs.then((SharedPreferences prefs){
-      return (prefs.getString("lifeguardData"));
-    });
   }
 
   @override
