@@ -12,7 +12,7 @@ class HelpRequestDBServices{
 
   Future<void> addRequest(String name,String age,String formType){
     final DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final DateFormat formatter = DateFormat('yyyy-M-d');
     final String formatted = formatter.format(now);
     print(formatted);
     final String designation;
@@ -33,6 +33,7 @@ class HelpRequestDBServices{
             "accountType": '${designation}',
             "companyID":'${lifeguardSingleton.company.companyId}',
             "companyName":'${lifeguardSingleton.company.companyName}',
+            "userID":'${lifeguardSingleton.uid}',
           }
       ).then((value) => print(value.id))
           .catchError((e) => print(e.toString()));
