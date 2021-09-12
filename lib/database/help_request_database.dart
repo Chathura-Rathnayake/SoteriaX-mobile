@@ -12,7 +12,7 @@ class HelpRequestDBServices{
 
   Future<void> addRequest(String name,String age,String formType){
     final DateTime now = DateTime.now();
-    final DateFormat formatter = DateFormat('yyyy-M-d');
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
     final String formatted = formatter.format(now);
     print(formatted);
     final String designation;
