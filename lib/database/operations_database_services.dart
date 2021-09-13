@@ -11,6 +11,7 @@ class OperationDatabaseService{
     companyId=lifeguardSingleton.company.companyId!;
   }
   final CollectionReference operations=FirebaseFirestore.instance.collection("operations");
+  final CollectionReference headLifeguards=FirebaseFirestore.instance.collection("headLifeguards");
 
   DateTime now =new DateTime.now();
 
@@ -131,7 +132,11 @@ class OperationDatabaseService{
   }
   
   Stream<QuerySnapshot?> get EngagementStatus{
-    return operations.where('companyId', isEqualTo: this.companyId).where('operationStatus', isEqualTo: 'live').where('engaged', isEqualTo: false).snapshots();
+    return operations.where('companyId', isEqualTo: this.companyId).where('operationStatus', isEqualTo: 'live').snapshots();
+  }
+
+  Stream<DocumentSnapshot?> get getRpiStatus{
+    return headLifeguards.doc(this.companyId).snapshots();
   }
 
 
