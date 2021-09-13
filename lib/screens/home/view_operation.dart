@@ -38,7 +38,7 @@ class _ViewOperationState extends State<ViewOperation> {
     await _remoteRenderer.initialize();
   }
 
-  Future<RTCPeerConnection> _createPeerConnection() async{
+  Future<RTCPeerConnection> _createPeerConnection(String missionId, String missionType) async{
 
     Map<String, dynamic> configuration = {
       'iceServers': [
@@ -62,7 +62,7 @@ class _ViewOperationState extends State<ViewOperation> {
     };
     RTCPeerConnection peerConnection=await createPeerConnection(configuration, offerSdpConstraints);
     // peerConnection.onTrack=handleTrackEvent;
-    peerConnection.onRenegotiationNeeded=()=>handleNegotiationNeededEvent(peerConnection);
+    peerConnection.onRenegotiationNeeded=()=>handleNegotiationNeededEvent(peerConnection, missionId, missionType);
     peerConnection.onConnectionState=(con)=>{print("on Connection State: $con")};
     peerConnection.onAddStream=(stream){
       print('here on add stream: ${stream.id}');
@@ -79,12 +79,14 @@ class _ViewOperationState extends State<ViewOperation> {
 
 
 
-  void handleNegotiationNeededEvent(RTCPeerConnection peer) async{
+  void handleNegotiationNeededEvent(RTCPeerConnection peer, String missionId, String missionType) async{
     RTCSessionDescription offer=await peer.createOffer();
     await peer.setLocalDescription(offer);
     var d=await peer.getLocalDescription();
     Map<String, dynamic> payLoad={
-      'sdp': jsonEncode(d!.toMap())
+      'sdp': jsonEncode(d!.toMap()),
+      'missionType': missionType,
+      'missionId': missionId,
     };
     var url=Uri.parse("http://192.168.43.5:5000/consumer");
     http.Response uriResponse=await http.post(url, body: payLoad);
@@ -107,12 +109,12 @@ class _ViewOperationState extends State<ViewOperation> {
     // TODO: implement initState
     super.initState();
     initRenderers();
-    initWebrtc();
+    // initWebrtc();
     _currentLiveOp=ViewOperationDBServices().getCurrentLiveOp();
   }
 
-  void initWebrtc()async{
-    RTCPeerConnection peer=await _createPeerConnection();
+  void initWebrtc(String missionId, String missionType)async{
+    RTCPeerConnection peer=await _createPeerConnection(missionId, missionType);
     await peer.addTransceiver(kind: RTCRtpMediaType.RTCRtpMediaTypeVideo, init: RTCRtpTransceiverInit(direction: TransceiverDirection.RecvOnly));
   }
 
@@ -170,6 +172,7 @@ class _ViewOperationState extends State<ViewOperation> {
                   print("hera");
                   print(snapshot.data!["currentOp"].id);
                   print(snapshot.data!['currentOp'].data().toString());
+                  initWebrtc(snapshot.data!["currentOp"].id, snapshot.data!['opFlag'] == 'live' ? 'operation' : 'training' );
                   return Scaffold(
                     key: _scaffoldKey,
                     drawer: Drawer(
