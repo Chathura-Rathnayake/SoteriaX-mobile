@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:soteriax/screens/custom_widgets/lists/tiles/contact_tile.dart';
+import 'package:soteriax/screens/custom_widgets/list_widgets/tiles/contact_tile.dart';
 
 class EmergencyCall extends StatelessWidget {
   const EmergencyCall({Key? key}) : super(key: key);

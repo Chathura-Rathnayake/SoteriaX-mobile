@@ -21,8 +21,6 @@ class UserDatabaseService{
       if(documentSnapshot.exists){
         print(documentSnapshot.data());
         Company company=await getCompanyDetails(documentSnapshot.get("companyID")!);
-        // Company company=new Company(companyId: documentSnapshot.get("id"), companyEmail: documentSnapshot.get("companyName"),
-        // companyAddress: documentSnapshot.get("companyAddress"), companyName: documentSnapshot.get("companyName"));
         Lifeguard lifeguard =Lifeguard(
             uid: userId,
             firstname: documentSnapshot.get("firstName"),

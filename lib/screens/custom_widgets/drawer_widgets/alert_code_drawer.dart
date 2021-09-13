@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:soteriax/screens/custom_widgets/lists/tiles/code_tile.dart';
+import 'package:soteriax/screens/custom_widgets/list_widgets/tiles/code_tile.dart';
 
 class AlertCodeDrawer extends StatefulWidget {
   const AlertCodeDrawer({Key? key}) : super(key: key);

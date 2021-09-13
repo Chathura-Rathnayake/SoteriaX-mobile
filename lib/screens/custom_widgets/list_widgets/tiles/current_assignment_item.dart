@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 
 class CurrentAssignmentItem extends StatelessWidget {
-  CurrentAssignmentItem({this.date, this.time, this.role, this.assignmentId});
+  CurrentAssignmentItem({this.date, this.time, this.roleNo, this.assignmentId}){
+    if(roleNo!=null){
+      switch(roleNo){
+        case 0:
+          role="Mobile Handler";
+          break;
+        case 1:
+          role="Drone Pilot";
+          break;
+        case 2:
+          role= "Swimmer";
+          break;
+      }
+    }
+  }
   String? date;
   String? time;
+  int? roleNo;
   String? role;
   String? assignmentId;
   String? image;
