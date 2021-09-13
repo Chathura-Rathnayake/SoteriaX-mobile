@@ -17,7 +17,7 @@ class ViewOperationDBServices{
         Map temp={"currentOp": snapshot.docs[0], "opFlag":"live"};
         return temp;
       }else{
-        Map? trainOp=await trainingOp.where("companyId", isEqualTo: this.companyId).where("operationStatus",isEqualTo: "live").get().then((QuerySnapshot snapshot){
+        Map? trainOp=await trainingOp.where("companyID", isEqualTo: this.companyId).where("operationStatus",isEqualTo: "live").get().then((QuerySnapshot snapshot){
           if(snapshot.size>0){
             Map temp={"currentOp": snapshot.docs[0], "opFlag":"training"};
             return temp;
