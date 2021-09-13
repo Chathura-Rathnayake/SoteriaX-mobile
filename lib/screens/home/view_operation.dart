@@ -67,6 +67,8 @@ class _ViewOperationState extends State<ViewOperation> {
     peerConnection.onAddStream=(stream){
       print('here on add stream: ${stream.id}');
       _remoteRenderer.srcObject=stream;
+      print('Stream on add track: $stream');
+      print('srcpbject on add track: ${_remoteRenderer.srcObject}');
       setState(() {});
     };
 
@@ -117,12 +119,15 @@ class _ViewOperationState extends State<ViewOperation> {
   @override
   void dispose() async {
     // TODO: implement dispose
+    _remoteRenderer.dispose();
     super.dispose();
     // _remoteRenderer.dispose();
-    await _remoteRenderer.dispose();
+
     // _videoPlayerController.dispose();
     // _localStream?.dispose();
   }
+
+
 
   // disconnect
 
