@@ -94,7 +94,7 @@ class _DropRTDrawerState extends State<DropRTDrawer> {
             if (dropVal == 900)
               RaisedButton.icon(
                   onPressed: () {
-                    var status = lock.RPiLock();
+                    var status = lock.RPiUnlock();
                   },
                   color: Colors.lightGreen[900],
                   icon: Icon(
