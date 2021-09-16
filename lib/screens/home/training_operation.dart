@@ -12,8 +12,8 @@ import 'package:soteriax/services/webrtc_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class TrainingOperation extends StatefulWidget {
-  TrainingOperation({this.trainingOpId});
-  final String? trainingOpId;
+  TrainingOperation({required this.trainingOpId});
+  final String trainingOpId;
 
   @override
   _TrainingOperationState createState() => _TrainingOperationState();
@@ -83,7 +83,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
     ]);
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: type==2 ? DropRTDrawer() : type==1 ? AudioStreamDrawer() : type==4 ? AlertCodeDrawer() : type==5? TimeLapDrawer(stopWatchTimer: _stopWatchTimer,) : EmmitAudioDrawer(isEmmitSuccesful: true),
+      endDrawer: type==2 ? DropRTDrawer() : type==1 ? AudioStreamDrawer() : type==4 ? AlertCodeDrawer(operationId: widget.trainingOpId,) : type==5? TimeLapDrawer(stopWatchTimer: _stopWatchTimer,) : EmmitAudioDrawer(isEmmitSuccesful: true),
       appBar: AppBar(
         leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back),),
         actions: [
