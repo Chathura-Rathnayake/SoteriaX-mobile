@@ -12,8 +12,12 @@ class TrainingOperationsDBServices{
     companyId=lifeguardSingleton.company.companyId;
   }
 
-  Stream<DocumentSnapshot?> get getRpiStatus{
-    return headLifeguards.doc(this.companyId).snapshots();
+  Future<int> getRPILastTimestamp() async{
+    int rpiTimeStamp=await headLifeguards.doc(this.companyId).get().then((doc){
+      return doc.get('piLastOnlineTime');
+    });
+
+    return rpiTimeStamp;
   }
 
 }
