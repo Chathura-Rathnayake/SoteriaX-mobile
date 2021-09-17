@@ -4,9 +4,9 @@ import 'package:soteriax/database/live_operations_database_services.dart';
 import 'package:soteriax/screens/custom_widgets/list_widgets/tiles/code_tile.dart';
 
 class EmmitAudioDrawer extends StatefulWidget {
-  EmmitAudioDrawer({this.isEmmitSuccesful, required this.operationId });
+  EmmitAudioDrawer({this.isEmmitSuccesful, required this.operationId});
   final String operationId;
-  bool? isEmmitSuccesful=false;
+  bool? isEmmitSuccesful = false;
   @override
   _EmmitAudioDrawerState createState() => _EmmitAudioDrawerState();
 }
@@ -17,7 +17,7 @@ class _EmmitAudioDrawerState extends State<EmmitAudioDrawer> {
   @override
   void initState() {
     // TODO: implement initState
-    _liveOpDB=LiveOperationDBServices(operationId: widget.operationId);
+    _liveOpDB = LiveOperationDBServices(operationId: widget.operationId);
     super.initState();
   }
 

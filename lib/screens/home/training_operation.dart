@@ -26,28 +26,33 @@ class TrainingOperation extends StatefulWidget {
 class _TrainingOperationState extends State<TrainingOperation> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int? type;
-  WebRTCServices webRTCServices=WebRTCServices();
-  RTCVideoRenderer remoteRenderer=RTCVideoRenderer();
+  WebRTCServices webRTCServices = WebRTCServices();
+  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   Timer? stopWatchTimeStampTimer;
-  bool isWaitingStopWatchPing=false;
+  bool isWaitingStopWatchPing = false;
 
-  void pingStopWatchTime(){
-    stopWatchTimeStampTimer=Timer.periodic(Duration(seconds: 5), (timer) async {
-      if(!isWaitingStopWatchPing){
-        isWaitingStopWatchPing=true;
-        await TrainingOperationsDBServices(operationId: widget.trainingOpId).stopWatchPing(_stopWatchTimer.rawTime.value);
-        isWaitingStopWatchPing=false;
+  void pingStopWatchTime() {
+    stopWatchTimeStampTimer =
+        Timer.periodic(Duration(seconds: 5), (timer) async {
+      if (!isWaitingStopWatchPing) {
+        isWaitingStopWatchPing = true;
+        await TrainingOperationsDBServices(operationId: widget.trainingOpId)
+            .stopWatchPing(_stopWatchTimer.rawTime.value);
+        isWaitingStopWatchPing = false;
       }
     });
   }
 
-  void setPresetStopWatchTime()async{
-    var currTime=Timestamp.now();
-    var latestTimePings= await TrainingOperationsDBServices(operationId: widget.trainingOpId).getLastestTimePing();
+  void setPresetStopWatchTime() async {
+    var currTime = Timestamp.now();
+    var latestTimePings =
+        await TrainingOperationsDBServices(operationId: widget.trainingOpId)
+            .getLastestTimePing();
 
-    if(latestTimePings!['stopWatch']>0){
-      var timeDiff=currTime.millisecondsSinceEpoch-latestTimePings['timePing'].millisecondsSinceEpoch;
-      int timeToAdd=latestTimePings['stopWatch']+timeDiff;
+    if (latestTimePings!['stopWatch'] > 0) {
+      var timeDiff = currTime.millisecondsSinceEpoch -
+          latestTimePings['timePing'].millisecondsSinceEpoch;
+      int timeToAdd = latestTimePings['stopWatch'] + timeDiff;
       _stopWatchTimer.setPresetTime(mSec: timeToAdd);
     }
   }
@@ -85,14 +90,12 @@ class _TrainingOperationState extends State<TrainingOperation> {
     webRTCServices.startConnection(remoteRenderer);
   }
 
-
   @override
   void deactivate() {
     // TODO: implement deactivate
     super.deactivate();
     stopWatchTimeStampTimer?.cancel();
   }
-
 
   @override
   void dispose() async {
@@ -117,9 +120,23 @@ class _TrainingOperationState extends State<TrainingOperation> {
     ]);
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: type==2 ? DropRTDrawer(operationId: widget.trainingOpId,) : type==1 ? AudioStreamDrawer(operationId: widget.trainingOpId) :
-        type==4 ? AlertCodeDrawer(operationId: widget.trainingOpId,) : type==5? TimeLapDrawer(stopWatchTimer: _stopWatchTimer,) :
-            EmmitAudioDrawer(isEmmitSuccesful: true, operationId: widget.trainingOpId),
+      endDrawer: type == 2
+          ? DropRTDrawer(
+              operationId: widget.trainingOpId,
+            )
+          : type == 1
+              ? AudioStreamDrawer(operationId: widget.trainingOpId)
+              : type == 4
+                  ? AlertCodeDrawer(
+                      operationId: widget.trainingOpId,
+                    )
+                  : type == 5
+                      ? TimeLapDrawer(
+                          stopWatchTimer: _stopWatchTimer,
+                        )
+                      : EmmitAudioDrawer(
+                          isEmmitSuccesful: true,
+                          operationId: widget.trainingOpId),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {

@@ -80,6 +80,7 @@ class _LiveOperationsState extends State<LiveOperations> {
     ]);
     super.dispose();
   }
+
   // final _formkey=GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -98,10 +99,25 @@ class _LiveOperationsState extends State<LiveOperations> {
         this.type = type;
       });
     }
+
     return Scaffold(
-      key: _scaffoldKey,
-      endDrawer: type==2 ? DropRTDrawer(operationId: widget.operationID,) : type==1 ? AudioStreamDrawer(operationId: widget.operationID,) :
-                type==4 ? AlertCodeDrawer(operationId: widget.operationID,) : EmmitAudioDrawer(isEmmitSuccesful: true, operationId: widget.operationID,) ,
+        key: _scaffoldKey,
+        endDrawer: type == 2
+            ? DropRTDrawer(
+                operationId: widget.operationID,
+              )
+            : type == 1
+                ? AudioStreamDrawer(
+                    operationId: widget.operationID,
+                  )
+                : type == 4
+                    ? AlertCodeDrawer(
+                        operationId: widget.operationID,
+                      )
+                    : EmmitAudioDrawer(
+                        isEmmitSuccesful: true,
+                        operationId: widget.operationID,
+                      ),
         appBar: AppBar(
           leading: IconButton(
               onPressed: () {
@@ -109,19 +125,25 @@ class _LiveOperationsState extends State<LiveOperations> {
               },
               icon: Icon(Icons.arrow_back)),
           actions: [
-            Container(child: PopupMenuButton<String>(
-              onSelected: (value)async{
-                if(value=="ForceEnd"){
-                  await liveOpDB.forceEndOperation();
-                  Navigator.pop(context);
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>MainMenu()));
-                }
-              },
-              itemBuilder: (BuildContext context){
-                return [PopupMenuItem(value: "ForceEnd",child: Text("Force End Mission"))];
-              },
-            ),),
-            ],
+            Container(
+              child: PopupMenuButton<String>(
+                onSelected: (value) async {
+                  if (value == "ForceEnd") {
+                    await liveOpDB.forceEndOperation();
+                    Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MainMenu()));
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return [
+                    PopupMenuItem(
+                        value: "ForceEnd", child: Text("Force End Mission"))
+                  ];
+                },
+              ),
+            ),
+          ],
           elevation: 0.0,
           flexibleSpace: Container(
             decoration: BoxDecoration(
@@ -187,38 +209,61 @@ class _LiveOperationsState extends State<LiveOperations> {
                         ),
                       ),
                       StreamBuilder<DocumentSnapshot?>(
-                        stream: liveOpDB.getOperation,
-                        builder: (context, snapshot) {
-                          if(snapshot.hasError){
-                            return Container();
-                          }else if(snapshot.hasData){
-                            if(snapshot.data==null){
+                          stream: liveOpDB.getOperation,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
                               return Container();
-                            }else{
-                              if(snapshot.data!.get('currentStage')==4){
-                                return MaterialButton(
-                                  onPressed: ()async{
-                                    await liveOpDB.endOperation();
-                                  },
-                                  color: Colors.red[800],
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)
-                                  ),
-                                  child: Text("End Mission"),
-                                );
-                              }else{
+                            } else if (snapshot.hasData) {
+                              if (snapshot.data == null) {
                                 return Container();
+                              } else {
+                                if (snapshot.data!.get('currentStage') == 4) {
+                                  return MaterialButton(
+                                    onPressed: () async {
+                                      await liveOpDB.endOperation();
+                                    },
+                                    color: Colors.red[800],
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Text("End Mission"),
+                                  );
+                                } else {
+                                  return Container();
+                                }
                               }
-                             }
-                           }else{
-                            return Container();
-                          }
-                        }
+                            } else {
+                              return Container();
+                            }
+                          }),
+                      OperationBtn(
+                        btnText: "EMMIT AUDIO",
+                        btnImage: "sound_icon",
+                        onClicked: showDrawerWithBtns,
+                        setType: setType,
+                        type: 3,
                       ),
-                      OperationBtn(btnText: "EMMIT AUDIO", btnImage: "sound_icon", onClicked: showDrawerWithBtns, setType: setType, type: 3,),
-                      OperationBtn(btnText: "DROP REST-TUBE", btnImage: "lb_drop_icon", onClicked: showDrawerWithBtns, setType: setType, type: 2,),
-                      OperationBtn(btnText: "AUDIO STREAM", btnImage: "mic_icon", onClicked: showDrawerWithBtns, setType: setType, type: 1,),
-                      OperationBtn(btnText: "CONTACT HEAD \nLIFEGUARD", btnImage: "alarm_bulb_icon", onClicked: showDrawerWithBtns, setType: setType, type: 4,),
+                      OperationBtn(
+                        btnText: "DROP REST-TUBE",
+                        btnImage: "lb_drop_icon",
+                        onClicked: showDrawerWithBtns,
+                        setType: setType,
+                        type: 2,
+                      ),
+                      OperationBtn(
+                        btnText: "AUDIO STREAM",
+                        btnImage: "mic_icon",
+                        onClicked: showDrawerWithBtns,
+                        setType: setType,
+                        type: 1,
+                      ),
+                      OperationBtn(
+                        btnText: "CONTACT HEAD \nLIFEGUARD",
+                        btnImage: "alarm_bulb_icon",
+                        onClicked: showDrawerWithBtns,
+                        setType: setType,
+                        type: 4,
+                      ),
                     ],
                   ),
                 ),
