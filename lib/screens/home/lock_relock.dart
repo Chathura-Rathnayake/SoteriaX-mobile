@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soteriax/database/operations_database_services.dart';
 import 'package:soteriax/models/lifeguard.dart';
 import 'package:soteriax/screens/initialization/init_loading.dart';
 
@@ -11,21 +13,11 @@ class Lock extends StatefulWidget {
 }
 
 class _LockState extends State<Lock> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Lifeguard? lifeguard;
-  late Future<String?> _lifeguardString;
-  late Map<String, dynamic> _lifeguardMap;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _lifeguardString = _prefs.then((SharedPreferences prefs) {
-      print("hellllo");
-      return (prefs.getString("lifeguardData"));
-    });
-
-    print(_lifeguardString);
   }
 
   // final _formkey=GlobalKey<FormState>();
@@ -55,95 +47,88 @@ class _LockState extends State<Lock> {
           ),
         ),
         body: SafeArea(
-          child: FutureBuilder<String?>(
-            future: _lifeguardString,
-            builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return const LoadingSpinner();
-                default:
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    print(snapshot.data);
-                    _lifeguardMap =
-                        jsonDecode(snapshot.data!) as Map<String, dynamic>;
-                    lifeguard = Lifeguard.fromJson(_lifeguardMap);
-                    return Container(
+          child: Container(
+          width: double.infinity,
+          margin: EdgeInsets.all(0),
+          color: Colors.white,
+          child: Container(
+            child: Column(
+              children: [
+                Card(
+                  elevation: 0,
+                  margin: EdgeInsets.zero,
+                  child: Container(
                       width: double.infinity,
                       margin: EdgeInsets.all(0),
-                      color: Colors.white,
-                      child: Container(
-                        child: Column(
-                          children: [
-                            Card(
-                              elevation: 0,
-                              margin: EdgeInsets.zero,
-                              child: Container(
-                                  width: double.infinity,
-                                  margin: EdgeInsets.all(0),
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.8),
-                                          spreadRadius: 3,
-                                          blurRadius: 3,
-                                          offset: Offset(0,
-                                              3), // changes position of shadow
-                                        ),
-                                      ],
-                                      gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.orange.shade700,
-                                            Colors.orange.shade600,
-                                            // Colors.orange.shade400
-                                          ]),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(120),
-                                      )),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Text(
-                                        'Re-arming',
-                                        style: TextStyle(
-                                            fontSize: 40,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  )),
+                      height: 80,
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.8),
+                              spreadRadius: 3,
+                              blurRadius: 3,
+                              offset: Offset(0,
+                                  3), // changes position of shadow
                             ),
-                            Expanded(
-                              child: GridView.count(
-                                primary: false,
+                          ],
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.orange.shade700,
+                                Colors.orange.shade600,
+                                // Colors.orange.shade400
+                              ]),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(120),
+                          )),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            'Re-arming',
+                            style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ],
+                      )),
+                ),
+                StreamBuilder<QuerySnapshot?>(
+                  stream: OperationDatabaseService().getLiveOperationData,
+                  builder: (context, snapshot) {
+                    if(snapshot.hasError){
+                      return Container(child: Text("Error occurred while connecting to Database"),);
+                    }else if(snapshot.hasData){
+                      if(snapshot.data==null){
+                        return Expanded(
+                          child: GridView.count(
+                            primary: false,
+                            padding: const EdgeInsets.only(
+                                top: 30, left: 80, right: 80, bottom: 10),
+                            crossAxisSpacing: 0,
+                            mainAxisSpacing: 20,
+                            crossAxisCount: 1,
+                            children: <Widget>[
+                              Container(
                                 padding: const EdgeInsets.only(
-                                    top: 30, left: 80, right: 80, bottom: 10),
-                                crossAxisSpacing: 0,
-                                mainAxisSpacing: 20,
-                                crossAxisCount: 1,
-                                children: <Widget>[
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                        top: 0, left: 10, right: 10, bottom: 0),
-                                    child: (MaterialButton(
-                                      onPressed: () {},
-                                      height: 20,
-                                      minWidth: 20,
-                                      elevation: 10,
-                                      color: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
+                                    top: 0, left: 10, right: 10, bottom: 0),
+                                child: (MaterialButton(
+                                  onPressed: () {},
+                                  height: 20,
+                                  minWidth: 20,
+                                  elevation: 10,
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
                                           Image(
                                             image: AssetImage(
                                               'assets/icons/lock.png',
@@ -160,25 +145,25 @@ class _LockState extends State<Lock> {
                                             ),
                                           ),
                                         ]),
-                                      ),
-                                    )),
                                   ),
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                        top: 0, left: 10, right: 10, bottom: 0),
-                                    child: (MaterialButton(
-                                      onPressed: () {},
-                                      height: 10,
-                                      minWidth: 20,
-                                      elevation: 10,
-                                      color: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Container(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
+                                )),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.only(
+                                    top: 0, left: 10, right: 10, bottom: 0),
+                                child: (MaterialButton(
+                                  onPressed: () {},
+                                  height: 10,
+                                  minWidth: 20,
+                                  elevation: 10,
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
                                           Image(
                                             image: AssetImage(
                                               'assets/icons/unlock.png',
@@ -196,20 +181,24 @@ class _LockState extends State<Lock> {
                                             ),
                                           ),
                                         ]),
-                                      ),
-                                    )),
                                   ),
-                                ],
+                                )),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                            ],
+                          ),
+                        );
+                      }else{
+                        return Container(child: Text("Ongoing live operation", ),);
+                      }
+                    }else{
+                      return Container(child: Text("Something went wrong"));
+                    }
                   }
-              }
-            },
+                ),
+              ],
+            ),
           ),
-        ));
+        ),
+      ));
   }
 }
