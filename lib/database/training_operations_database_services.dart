@@ -32,16 +32,18 @@ class TrainingOperationsDBServices {
   }
 
   Future<Map?> getLastestTimePing() async{
-    Map? lastestTimePings=trainingOperations.doc(operationId).get().then((DocumentSnapshot snap){
-      var temp={'stopWatch': 0, 'timePing': null}
+    Map? lastestTimePings;
+    lastestTimePings=await trainingOperations.doc(operationId).get().then((DocumentSnapshot snap){
+      var temp={};
       if(snap.exists){
-        temp['stopWatch']=snap.get('lastestTimePings')['stopWatch'];
-        temp['timePing']=snap.get('lastestTimePings')['timePing'];
+        temp['stopWatch']=snap.get('lastestTimePing')['stopWatch'];
+        var stamp=snap.get('lastestTimePing')['timePing'];
+        temp['timePing']=stamp;
         return temp;
       }else{
         return temp;
       }
-    }) as Map?;
+    });
 
     return lastestTimePings;
   }

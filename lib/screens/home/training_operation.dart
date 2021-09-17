@@ -80,6 +80,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
       DeviceOrientation.landscapeLeft,
     ]);
 
+    setPresetStopWatchTime();
     remoteRenderer.initialize();
     webRTCServices.onAddRemoteStream = ((stream) {
       remoteRenderer.srcObject = stream;
@@ -118,6 +119,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: type == 2

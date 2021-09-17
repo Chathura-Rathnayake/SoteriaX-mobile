@@ -16,8 +16,7 @@ class _EmmitAudioDrawerState extends State<EmmitAudioDrawer> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    _liveOpDB = LiveOperationDBServices(operationId: widget.operationId);
+    _liveOpDB=LiveOperationDBServices(operationId: widget.operationId);
     super.initState();
   }
 
