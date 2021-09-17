@@ -103,7 +103,7 @@ class _LockState extends State<Lock> {
                     if(snapshot.hasError){
                       return Container(child: Text("Error occurred while connecting to Database"),);
                     }else if(snapshot.hasData){
-                      if(snapshot.data==null){
+                      if(snapshot.data!.size==0){
                         return Expanded(
                           child: GridView.count(
                             primary: false,
