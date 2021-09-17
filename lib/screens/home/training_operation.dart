@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:soteriax/database/training_operations_database_services.dart';
 import 'package:soteriax/screens/custom_widgets/counter_tile.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/alert_code_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/audio_stream_drawer.dart';
@@ -12,8 +15,9 @@ import 'package:soteriax/services/webrtc_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class TrainingOperation extends StatefulWidget {
-  TrainingOperation({required this.trainingOpId});
+  TrainingOperation({required this.trainingOpId, this.startTime});
   final String trainingOpId;
+  int? startTime;
 
   @override
   _TrainingOperationState createState() => _TrainingOperationState();
@@ -22,8 +26,31 @@ class TrainingOperation extends StatefulWidget {
 class _TrainingOperationState extends State<TrainingOperation> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int? type;
-  WebRTCServices webRTCServices = WebRTCServices();
-  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
+  WebRTCServices webRTCServices=WebRTCServices();
+  RTCVideoRenderer remoteRenderer=RTCVideoRenderer();
+  Timer? stopWatchTimeStampTimer;
+  bool isWaitingStopWatchPing=false;
+
+  void pingStopWatchTime(){
+    stopWatchTimeStampTimer=Timer.periodic(Duration(seconds: 5), (timer) async {
+      if(!isWaitingStopWatchPing){
+        isWaitingStopWatchPing=true;
+        await TrainingOperationsDBServices(operationId: widget.trainingOpId).stopWatchPing(_stopWatchTimer.rawTime.value);
+        isWaitingStopWatchPing=false;
+      }
+    });
+  }
+
+  void setPresetStopWatchTime()async{
+    var currTime=Timestamp.now();
+    var latestTimePings= await TrainingOperationsDBServices(operationId: widget.trainingOpId).getLastestTimePing();
+
+    if(latestTimePings!['stopWatch']>0){
+      var timeDiff=currTime.millisecondsSinceEpoch-latestTimePings['timePing'].millisecondsSinceEpoch;
+      int timeToAdd=latestTimePings['stopWatch']+timeDiff;
+      _stopWatchTimer.setPresetTime(mSec: timeToAdd);
+    }
+  }
 
   final StopWatchTimer _stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countUp,
@@ -42,7 +69,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
 
   @override
   void initState() {
-    _stopWatchTimer.setPresetSecondTime(189);
+    print('training op id: ${widget.trainingOpId}');
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -53,14 +80,25 @@ class _TrainingOperationState extends State<TrainingOperation> {
       remoteRenderer.srcObject = stream;
       setState(() {});
     });
+    pingStopWatchTime();
     super.initState();
     webRTCServices.startConnection(remoteRenderer);
   }
+
+
+  @override
+  void deactivate() {
+    // TODO: implement deactivate
+    super.deactivate();
+    stopWatchTimeStampTimer?.cancel();
+  }
+
 
   @override
   void dispose() async {
     // TODO: implement dispose
     super.dispose();
+    stopWatchTimeStampTimer?.cancel();
     await remoteRenderer.dispose();
     await webRTCServices.endConnection();
     SystemChrome.setPreferredOrientations([
@@ -79,17 +117,9 @@ class _TrainingOperationState extends State<TrainingOperation> {
     ]);
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: type == 2
-          ? DropRTDrawer()
-          : type == 1
-              ? AudioStreamDrawer()
-              : type == 4
-                  ? AlertCodeDrawer(operationId: widget.trainingOpId)
-                  : type == 5
-                      ? TimeLapDrawer(
-                          stopWatchTimer: _stopWatchTimer,
-                        )
-                      : EmmitAudioDrawer(isEmmitSuccesful: true),
+      endDrawer: type==2 ? DropRTDrawer(operationId: widget.trainingOpId,) : type==1 ? AudioStreamDrawer(operationId: widget.trainingOpId) :
+        type==4 ? AlertCodeDrawer(operationId: widget.trainingOpId,) : type==5? TimeLapDrawer(stopWatchTimer: _stopWatchTimer,) :
+            EmmitAudioDrawer(isEmmitSuccesful: true, operationId: widget.trainingOpId),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:soteriax/services/raspberryPi/drop_package.dart';
 
 class DropRTDrawer extends StatefulWidget {
-  DropRTDrawer({this.title, this.type});
+  DropRTDrawer({this.title, this.type, required this.operationId });
+  final String operationId;
   String? title = '';
   int? type;
 

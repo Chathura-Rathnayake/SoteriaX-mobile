@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AudioStreamDrawer extends StatefulWidget {
-  const AudioStreamDrawer({Key? key}) : super(key: key);
+  AudioStreamDrawer({required this.operationId});
+  final String operationId;
 
   @override
   _AudioStreamDrawerState createState() => _AudioStreamDrawerState();

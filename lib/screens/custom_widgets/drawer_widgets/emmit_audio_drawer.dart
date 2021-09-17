@@ -1,17 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:soteriax/database/live_operations_database_services.dart';
 import 'package:soteriax/screens/custom_widgets/list_widgets/tiles/code_tile.dart';
 
 class EmmitAudioDrawer extends StatefulWidget {
-  EmmitAudioDrawer({this.isEmmitSuccesful});
-
-  bool? isEmmitSuccesful = false;
-
+  EmmitAudioDrawer({this.isEmmitSuccesful, required this.operationId });
+  final String operationId;
+  bool? isEmmitSuccesful=false;
   @override
   _EmmitAudioDrawerState createState() => _EmmitAudioDrawerState();
 }
 
 class _EmmitAudioDrawerState extends State<EmmitAudioDrawer> {
+  late LiveOperationDBServices _liveOpDB;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _liveOpDB=LiveOperationDBServices(operationId: widget.operationId);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isEmmitSuccessful = widget.isEmmitSuccesful!;

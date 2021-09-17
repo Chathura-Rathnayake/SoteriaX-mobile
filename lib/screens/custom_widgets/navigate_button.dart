@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:soteriax/screens/home/current_assignments.dart';
 import 'package:soteriax/screens/home/emergency_call.dart';
-import 'package:soteriax/screens/home/main_menu.dart';
 import 'package:soteriax/screens/home/past_assignments.dart';
-import 'package:soteriax/screens/home/profiles.dart';
 
 class NavigationButton extends StatelessWidget {
   String? title="";

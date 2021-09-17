@@ -10,20 +10,23 @@ class OperationDatabaseService{
   OperationDatabaseService(){
     companyId=lifeguardSingleton.company.companyId!;
   }
+
+  final _processes = [
+    'Mission Initiated',
+    'Reached Victim',
+    'Rest-Tube Dropped',
+    'Lifeguard Reached',
+    'Mission Completed',
+  ];
+
   final CollectionReference operations=FirebaseFirestore.instance.collection("operations");
   final CollectionReference headLifeguards=FirebaseFirestore.instance.collection("headLifeguards");
 
   DateTime now =new DateTime.now();
 
   Future<String?> addLiveOperation() async{
-     DocumentSnapshot? operation=await operations.where("companyId", isEqualTo: this.companyId).where("operationStatus", isEqualTo: 'live').get().then((QuerySnapshot snapshot){
-      if(snapshot.size!=0){
-        return snapshot.docs[0];
-      }else{
-        return null;
-      }
-    });
-    bool isEngaged=await operations.where("companyId", isEqualTo: this.companyId).where("engaged", isEqualTo: true).get().then((QuerySnapshot snapshot){
+    bool isEngaged=await operations.where("companyId", isEqualTo: this.companyId).where('operationStatus', isEqualTo: 'live').
+    where("engaged", isEqualTo: true).get().then((QuerySnapshot snapshot){
       if(snapshot.size==0){
         return false;
       }else{
@@ -33,12 +36,16 @@ class OperationDatabaseService{
     if(!isEngaged){
       var docX= await operations.add({
         'companyId': this.companyId,
+        'currentStage': 1,
+        'currentStatus': _processes[0],
+        'date': DateFormat('yMd').format(now),
+        'engaged':true,
+        'engagedLifeguard': {'userFlag': lifeguardSingleton.designation, 'userId': lifeguardSingleton.uid},
+        'engagementPing': Timestamp.now(),
+        'operationStatus':'live',
         'startDate': DateFormat('yMd').format(now),
         'startTime': DateFormat('kk:mm:ss').format(now),
-        'operationStatus':'live',
-        'engaged':true,
-        'currentStage': 1,
-        'engaged_lifeguard':lifeguardSingleton.uid.toString(),
+        'timeline': [Timestamp.now().millisecondsSinceEpoch,"","","",""],
       }).then((value) =>  value.id)
           .catchError((e) {
         print(e.toString());
@@ -125,19 +132,25 @@ class OperationDatabaseService{
     });
     return disEngaged;
   }
+  
+  Future<int> getRPILastTimestamp() async{
+    int rpiTimeStamp=await headLifeguards.doc(this.companyId).get().then((doc){
+      return doc.get('piLastOnlineTime');
+    });
+
+    return rpiTimeStamp;
+  }
 
 
   Stream<DocumentSnapshot> get liveOpData{
     return operations.doc(lifeguardSingleton.company.companyId).snapshots();
   }
   
-  Stream<QuerySnapshot?> get EngagementStatus{
+  Stream<QuerySnapshot> get getLiveOperationData{
     return operations.where('companyId', isEqualTo: this.companyId).where('operationStatus', isEqualTo: 'live').snapshots();
   }
 
-  Stream<DocumentSnapshot?> get getRpiStatus{
-    return headLifeguards.doc(this.companyId).snapshots();
-  }
+
 
 
 
