@@ -5,11 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soteriax/models/lifeguard.dart';
 import 'package:soteriax/models/lifeguardSingleton.dart';
 import 'package:soteriax/screens/home/engage_mission.dart';
+import 'package:soteriax/screens/home/lock_relock.dart';
 import 'package:soteriax/screens/home/profiles.dart';
-import 'package:soteriax/screens/home/training_overview.dart';
+// import 'package:soteriax/screens/home/training_overview.dart';
 import 'package:soteriax/screens/home/view_operation.dart';
 import 'package:soteriax/services/auth_services.dart';
-
+import 'package:soteriax/screens/home/training_operation.dart';
 import 'help_request.dart';
 
 class MainMenu extends StatefulWidget {
@@ -21,24 +22,26 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
   // final _formkey=GlobalKey<FormState>();
-  Future<SharedPreferences> _prefs=SharedPreferences.getInstance();
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Lifeguard? lifeguard;
   late Map<String, dynamic> _lifeguardMap;
-  LifeguardSingleton lifeguardSingleton=LifeguardSingleton();
+  LifeguardSingleton lifeguardSingleton = LifeguardSingleton();
 
-  AuthService _auth=AuthService();
-  
-  Future<String?> getSharedPrefLifeguard() async{
-    String? lifeguardDetails=await Future<String?>.delayed(Duration(seconds: 1), ()=> _prefs.then((SharedPreferences prefs){
-      return (prefs.getString("lifeguardData"));
-    }));
-    _lifeguardMap=jsonDecode(lifeguardDetails!) as Map<String, dynamic>;
-    lifeguard=Lifeguard.fromJson(_lifeguardMap);
-    lifeguardSingleton.uid=lifeguard!.uid!;
-    lifeguardSingleton.email=lifeguard!.email!;
-    lifeguardSingleton.company=lifeguard!.company!;
-    lifeguardSingleton.firstname=lifeguard!.firstname!;
-    lifeguardSingleton.lastname=lifeguard!.lastname!;
+  AuthService _auth = AuthService();
+
+  Future<String?> getSharedPrefLifeguard() async {
+    String? lifeguardDetails = await Future<String?>.delayed(
+        Duration(seconds: 1),
+        () => _prefs.then((SharedPreferences prefs) {
+              return (prefs.getString("lifeguardData"));
+            }));
+    _lifeguardMap = jsonDecode(lifeguardDetails!) as Map<String, dynamic>;
+    lifeguard = Lifeguard.fromJson(_lifeguardMap);
+    lifeguardSingleton.uid = lifeguard!.uid!;
+    lifeguardSingleton.email = lifeguard!.email!;
+    lifeguardSingleton.company = lifeguard!.company!;
+    lifeguardSingleton.firstname = lifeguard!.firstname!;
+    lifeguardSingleton.lastname = lifeguard!.lastname!;
 
     print('got singleton of ${lifeguardSingleton.firstname}');
   }
@@ -166,7 +169,7 @@ class _MainMenuState extends State<MainMenu> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context)=>ViewOperation()),
+                                builder: (context) => ViewOperation()),
                           );
                         },
                         height: 20,
@@ -207,7 +210,9 @@ class _MainMenuState extends State<MainMenu> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context)=>TrainingOverview()),
+                                  builder: (context) => TrainingOperation(
+                                        trainingOpId: "WuAArb3cGaHTWpMMxrdG",
+                                      )),
                             );
                           },
                           height: 20,
@@ -246,7 +251,8 @@ class _MainMenuState extends State<MainMenu> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) =>helpRequest()),
+                            MaterialPageRoute(
+                                builder: (context) => helpRequest()),
                           );
                         },
                         height: 20,
@@ -262,7 +268,8 @@ class _MainMenuState extends State<MainMenu> {
                               height: 20,
                             ),
                             Image(
-                              image: AssetImage('assets/icons/emergency_call.png'),
+                              image:
+                                  AssetImage('assets/icons/emergency_call.png'),
                               width: 200,
                               height: 70,
                             ),
@@ -287,7 +294,8 @@ class _MainMenuState extends State<MainMenu> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Profiles()),
+                            // MaterialPageRoute(builder: (context) => Profiles()),
+                            MaterialPageRoute(builder: (context) => Lock()),
                           );
                         },
                         height: 20,
@@ -324,7 +332,7 @@ class _MainMenuState extends State<MainMenu> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       child: (MaterialButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           await _auth.signOut();
                         },
                         height: 20,

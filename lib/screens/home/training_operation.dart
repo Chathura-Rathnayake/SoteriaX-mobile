@@ -12,34 +12,31 @@ import 'package:soteriax/services/webrtc_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class TrainingOperation extends StatefulWidget {
-  TrainingOperation({this.trainingOpId});
-  final String? trainingOpId;
+  TrainingOperation({required this.trainingOpId});
+  final String trainingOpId;
 
   @override
   _TrainingOperationState createState() => _TrainingOperationState();
 }
 
 class _TrainingOperationState extends State<TrainingOperation> {
-  final GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int? type;
-  WebRTCServices webRTCServices=WebRTCServices();
-  RTCVideoRenderer remoteRenderer=RTCVideoRenderer();
+  WebRTCServices webRTCServices = WebRTCServices();
+  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
 
-
-
-  final StopWatchTimer _stopWatchTimer=StopWatchTimer(
+  final StopWatchTimer _stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countUp,
-    onChangeRawSecond: (val)=> print('onChangedRawSecond: $val'),
+    onChangeRawSecond: (val) => print('onChangedRawSecond: $val'),
   );
 
-
-  void showDrawerWithBtns(){
+  void showDrawerWithBtns() {
     _scaffoldKey.currentState!.openEndDrawer();
   }
 
-  void setType(int type){
+  void setType(int type) {
     setState(() {
-      this.type=type;
+      this.type = type;
     });
   }
 
@@ -52,18 +49,16 @@ class _TrainingOperationState extends State<TrainingOperation> {
     ]);
 
     remoteRenderer.initialize();
-    webRTCServices.onAddRemoteStream=((stream){
-      remoteRenderer.srcObject=stream;
-      setState(() {
-
-      });
+    webRTCServices.onAddRemoteStream = ((stream) {
+      remoteRenderer.srcObject = stream;
+      setState(() {});
     });
     super.initState();
     webRTCServices.startConnection(remoteRenderer);
   }
 
   @override
-  void dispose() async{
+  void dispose() async {
     // TODO: implement dispose
     super.dispose();
     await remoteRenderer.dispose();
@@ -75,17 +70,33 @@ class _TrainingOperationState extends State<TrainingOperation> {
       DeviceOrientation.portraitDown
     ]);
   }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
     ]);
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: type==2 ? DropRTDrawer() : type==1 ? AudioStreamDrawer() : type==4 ? AlertCodeDrawer() : type==5? TimeLapDrawer(stopWatchTimer: _stopWatchTimer,) : EmmitAudioDrawer(isEmmitSuccesful: true),
+      endDrawer: type == 2
+          ? DropRTDrawer()
+          : type == 1
+              ? AudioStreamDrawer()
+              : type == 4
+                  ? AlertCodeDrawer(operationId: widget.trainingOpId)
+                  : type == 5
+                      ? TimeLapDrawer(
+                          stopWatchTimer: _stopWatchTimer,
+                        )
+                      : EmmitAudioDrawer(isEmmitSuccesful: true),
       appBar: AppBar(
-        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back),),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         actions: [
           Container(),
         ],
@@ -94,71 +105,101 @@ class _TrainingOperationState extends State<TrainingOperation> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.orange.shade800,
-              Colors.orange.shade700,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.orange.shade800,
+                Colors.orange.shade700,
               ],
             ),
           ),
         ),
       ),
       body: SafeArea(
-        child: Row(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width*0.60,
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                    height: 20,
-                    width: double.infinity,
-                    color: Colors.grey[300],
-                    child: Text(
-                      "Live",
-                      style: TextStyle(color: Colors.black),
-                    ),
+          child: Row(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * 0.60,
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  height: 20,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: Text(
+                    "Live",
+                    style: TextStyle(color: Colors.black),
                   ),
-                  Container(
-                    child: Expanded(
-                      child: RTCVideoView(remoteRenderer),
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Container(
+                  child: Expanded(
+                    child: RTCVideoView(remoteRenderer),
+                  ),
+                )
+              ],
             ),
-            SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                width: MediaQuery.of(context).size.width *0.40,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                        width: double.infinity,
-                        height: 25,
-                        color: Colors.red[300],
-                        child: Text(
-                          "Current Status: Reached Victim",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
+          ),
+          SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              width: MediaQuery.of(context).size.width * 0.40,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      width: double.infinity,
+                      height: 25,
+                      color: Colors.red[300],
+                      child: Text(
+                        "Current Status: Reached Victim",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      CounterTile(onClicked: showDrawerWithBtns,setType: setType,type: 5, stopWatchTimer: _stopWatchTimer,),
-                      OperationBtn(btnText: "EMMIT AUDIO", btnImage: "sound_icon", onClicked: showDrawerWithBtns, setType: setType, type: 3,),
-                      OperationBtn(btnText: "DROP REST-TUBE", btnImage: "lb_drop_icon", onClicked: showDrawerWithBtns, setType: setType, type: 2,),
-                      OperationBtn(btnText: "AUDIO STREAM", btnImage: "mic_icon", onClicked: showDrawerWithBtns, setType: setType, type: 1,),
-                      OperationBtn(btnText: "CONTACT HEAD \nLIFEGUARD", btnImage: "alarm_bulb_icon", onClicked: showDrawerWithBtns, setType: setType, type: 4,),
-                    ],
-                  ),
+                    ),
+                    CounterTile(
+                      onClicked: showDrawerWithBtns,
+                      setType: setType,
+                      type: 5,
+                      stopWatchTimer: _stopWatchTimer,
+                    ),
+                    OperationBtn(
+                      btnText: "EMMIT AUDIO",
+                      btnImage: "sound_icon",
+                      onClicked: showDrawerWithBtns,
+                      setType: setType,
+                      type: 3,
+                    ),
+                    OperationBtn(
+                      btnText: "DROP REST-TUBE",
+                      btnImage: "lb_drop_icon",
+                      onClicked: showDrawerWithBtns,
+                      setType: setType,
+                      type: 2,
+                    ),
+                    OperationBtn(
+                      btnText: "AUDIO STREAM",
+                      btnImage: "mic_icon",
+                      onClicked: showDrawerWithBtns,
+                      setType: setType,
+                      type: 1,
+                    ),
+                    OperationBtn(
+                      btnText: "CONTACT HEAD \nLIFEGUARD",
+                      btnImage: "alarm_bulb_icon",
+                      onClicked: showDrawerWithBtns,
+                      setType: setType,
+                      type: 4,
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        )
-      ),
+          ),
+        ],
+      )),
     );
   }
 }
