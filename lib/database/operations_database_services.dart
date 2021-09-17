@@ -45,7 +45,7 @@ class OperationDatabaseService{
         'operationStatus':'live',
         'startDate': DateFormat('yMd').format(now),
         'startTime': DateFormat('kk:mm:ss').format(now),
-        'timeline': ["","","","",""],
+        'timeline': [Timestamp.now().millisecondsSinceEpoch,"","","",""],
       }).then((value) =>  value.id)
           .catchError((e) {
         print(e.toString());

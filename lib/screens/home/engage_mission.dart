@@ -162,7 +162,7 @@ class _EngageMissionState extends State<EngageMission> {
                                        padding: const EdgeInsets.all(8.0),
                                        child: ListTile(
                                          leading: Image(image: AssetImage("assets/icons/mobile_engagement.png"),),
-                                         title: Text(liveOpSnapshot.data!.docs.isEmpty ? "No Current life operations" :
+                                         title: Text(liveOpSnapshot.data!.docs.isEmpty ? "No Current live operations" :
                                                         liveOpSnapshot.data!.docs[0].get('engaged') ? "Engaged"
                                                             : "Not Engaged" ),
                                          subtitle: Text("Engagement Status"),
