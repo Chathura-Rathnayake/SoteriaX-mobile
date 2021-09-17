@@ -6,9 +6,9 @@ import 'package:soteriax/database/training_operations_database_services.dart';
 import 'package:soteriax/screens/home/training_operation.dart';
 
 class TrainingButtonSection extends StatefulWidget {
-  TrainingButtonSection({required this.trainingTimeStamp});
-  Timestamp trainingTimeStamp;
-
+  TrainingButtonSection({required this.trainingOpID, required this.trainingTimeStamp});
+  Timestamp trainingTimeStamp; //when does training start
+  String trainingOpID;
 
   @override
   _TrainingButtonSectionState createState() => _TrainingButtonSectionState();
@@ -50,7 +50,6 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
   void checkIfTrainingTimeReached(){
     trainingTimeChecker = Timer.periodic(Duration(seconds: 5), (timer) {
       currentTimeStamp= Timestamp.now();
-      print(currentTimeStamp.seconds-widget.trainingTimeStamp.seconds);
       if(currentTimeStamp.seconds-widget.trainingTimeStamp.seconds>=0){ //no difference training time has come
         if(!isTrainingTime){
           setState(() {
@@ -94,7 +93,7 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
           onPressed: (){
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context)=>TrainingOperation(trainingOpId: "v",))
+                MaterialPageRoute(builder: (context)=>TrainingOperation(trainingOpId: widget.trainingOpID,))
             );
           },
           disabledElevation: null,

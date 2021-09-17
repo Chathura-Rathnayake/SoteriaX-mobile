@@ -92,7 +92,7 @@ class _TrainingOverviewState extends State<TrainingOverview> {
                                   subtitle: "Role",image: "role"),
                                 SizedBox(height: 5),
                                 if(roleNo==0) //only show if the user is the mobile handler only that assigned user can engage
-                                  TrainingButtonSection(trainingTimeStamp: trainingTimeStamp!),
+                                  TrainingButtonSection(trainingOpID: assignment.id,trainingTimeStamp: trainingTimeStamp!),
                                 Text("Button will be automatically activated at the aforementioned time",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.grey[600]),
