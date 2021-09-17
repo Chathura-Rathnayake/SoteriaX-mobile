@@ -141,13 +141,16 @@ class _LockState extends State<Lock> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Container(
-                                        child: Column(children: <Widget>[
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
                                           Image(
                                             image: AssetImage(
                                               'assets/icons/lock.png',
                                             ),
-                                            height: 20,
+                                            height: 75,
                                           ),
+                                          SizedBox(height: 20,),
                                           Text(
                                             'Engage Mission',
                                             textAlign: TextAlign.center,
@@ -173,14 +176,17 @@ class _LockState extends State<Lock> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Container(
-                                        child: Column(children: <Widget>[
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
                                           Image(
                                             image: AssetImage(
                                               'assets/icons/unlock.png',
                                             ),
-                                            height: 100,
+                                            height: 75,
                                             alignment: Alignment.center,
                                           ),
+                                          SizedBox(height: 20,),
                                           Text(
                                             'Engage Mission',
                                             textAlign: TextAlign.center,
