@@ -8,22 +8,41 @@ class CurrentAssignmentDB{
   LifeguardSingleton lifeguardSingleton=LifeguardSingleton();
 
   Stream<QuerySnapshot?> get getCurrentAssignments{
-    print('comp: ${lifeguardSingleton.company.companyId}, user: ${lifeguardSingleton.uid}');
     return trainingOperations.where('companyID', isEqualTo: lifeguardSingleton.company.companyId).
       where("participantIDs", arrayContains: lifeguardSingleton.uid).where('operationStatus', isEqualTo: 'Pending')
         .orderBy('dateTime').snapshots();
   }
 
   Future<DocumentSnapshot?> getLatestAssignment() async{
-    DocumentSnapshot? latestAssignment=await trainingOperations.where('companyID', isEqualTo: lifeguardSingleton.company.companyId).
-    where("participantIDs", arrayContains: lifeguardSingleton.uid).where('operationStatus', isEqualTo: 'Pending')
-        .orderBy('dateTime').get().then((snap){
-           if(snap.size>0){
-             return snap.docs[0];
-           }else{
-             return null;
-           }
+    DocumentSnapshot? latestAssignment;
+    DocumentSnapshot? ongoingLiveAssignment;
+    var currDate=DateTime.now();
+    var currDateString=DateFormat('yyyy-MM-dd').format(currDate);
+
+    ongoingLiveAssignment=await trainingOperations.where('companyID', isEqualTo: lifeguardSingleton.company.companyId).
+      where("participantIDs", arrayContains: lifeguardSingleton.uid).where('operationStatus', isEqualTo: 'live')
+        .where('dateTime', isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime.parse('$currDateString 00:00:00.000'))).orderBy('dateTime').get().then((snap){
+          if(snap.size==0){
+            return null;
+          }else{
+            return snap.docs[0];
+          }
     });
+
+    if(ongoingLiveAssignment==null){
+      print('nolive');
+      latestAssignment=await trainingOperations.where('companyID', isEqualTo: lifeguardSingleton.company.companyId).
+      where("participantIDs", arrayContains: lifeguardSingleton.uid).where('operationStatus', isEqualTo: 'Pending')
+          .where('dateTime', isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime.parse('$currDateString 00:00:00.000'))).orderBy('dateTime').get().then((snap){
+        if(snap.size>0){
+          return snap.docs[0];
+        }else{
+          return null;
+        }
+      });
+    }else{
+      return ongoingLiveAssignment;
+    }
 
     return latestAssignment;
   }
