@@ -105,19 +105,23 @@ class _LiveOperationsState extends State<LiveOperations> {
         endDrawer: type == 2
             ? DropRTDrawer(
                 operationId: widget.operationID,
+                operationType: 'live',
               )
             : type == 1
                 ? AudioStreamDrawer(
                     operationId: widget.operationID,
+                    operationType: 'live',
                   )
                 : type == 4
                     ? AlertCodeDrawer(
                         operationId: widget.operationID,
+                        operationType: 'live',
                       )
                     : EmmitAudioDrawer(
                         isEmmitSuccesful: true,
                         operationId: widget.operationID,
-                      ),
+                        operationType: 'live',
+                          ),
         appBar: AppBar(
           leading: IconButton(
               onPressed: () {

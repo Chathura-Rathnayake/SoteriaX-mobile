@@ -39,6 +39,7 @@ class OperationDatabaseService{
         'currentStage': 1,
         'currentStatus': _processes[0],
         'date': DateFormat('yMd').format(now),
+        'emergencyCode': [],
         'engaged':true,
         'engagedLifeguard': {'userFlag': lifeguardSingleton.designation, 'userId': lifeguardSingleton.uid},
         'engagementPing': Timestamp.now(),

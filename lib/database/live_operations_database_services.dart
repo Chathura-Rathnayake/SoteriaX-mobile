@@ -12,6 +12,8 @@ class LiveOperationDBServices {
     'Rest-Tube Dropped',
     'Lifeguard Reached',
     'Mission Completed',
+    'Video is being uploaded',
+    'Mission Ended',
   ];
 
   LiveOperationDBServices({this.operationId}) {
@@ -150,6 +152,29 @@ class LiveOperationDBServices {
         .onError((error, stackTrace) => print('error'));
   }
 
+  Future<void> setCodes(msg) async {
+    var codeArray = [];
+    var a = msg;
+    operations
+        .doc(operationId)
+
+    /// TODO need to add the doc id in startup
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        codeArray = documentSnapshot.get('emergencyCode');
+        print('Document data: ${codeArray}');
+        codeArray = [a, ...codeArray];
+        operations
+            .doc(operationId)
+            .update({'emergencyCode': codeArray})
+            .then((value) => print("worked"))
+            .catchError((error) => print("Failed to Connect"));
+      } else {
+        print('Document does not exist on the database');
+      }
+    });
+  }
   Stream<DocumentSnapshot?> get getOperation {
     return operations.doc(operationId).snapshots();
   }
