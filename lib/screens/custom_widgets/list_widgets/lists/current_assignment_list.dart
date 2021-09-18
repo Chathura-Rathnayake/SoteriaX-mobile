@@ -23,7 +23,8 @@ class _CurrentAssignmentListState extends State<CurrentAssignmentList> {
           return ListView.builder(
             itemBuilder: (context, index){
               print(snapshot.data!.docs[index].get('dateTime').seconds>Timestamp.now().seconds);
-              return CurrentAssignmentItem(assignmentId: snapshot.data!.docs[index].id,
+              return CurrentAssignmentItem(
+                assignmentId: snapshot.data!.docs[index].id,
                 date: snapshot.data!.docs[index].get('date'),
                 roleNo: snapshot.data!.docs[index].get('participantIDs').indexOf(LifeguardSingleton().uid),
                 time: snapshot.data!.docs[index].get('startTime'),);

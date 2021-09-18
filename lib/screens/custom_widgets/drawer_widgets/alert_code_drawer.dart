@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:soteriax/screens/custom_widgets/list_widgets/tiles/code_tile.dart';
 
 class AlertCodeDrawer extends StatefulWidget {
-  AlertCodeDrawer({required this.operationId});
+  AlertCodeDrawer({required this.operationId, required this.operationType});
+  final String operationType;
   final String operationId;
 
   @override
@@ -75,25 +76,29 @@ class _AlertCodeDrawerState extends State<AlertCodeDrawer> {
                         code: "001",
                         subTitle: "Drone has failed",
                         operationID: widget.operationId,
-                        endpoint: "0"),
+                        endpoint: "0",
+                        operationType: widget.operationType,),
                     CodeTile(
                         codeName: "TECH FAILURE",
                         code: "002",
                         subTitle: "Technical problem",
                         operationID: widget.operationId,
-                        endpoint: "0"),
+                        endpoint: "0",
+                        operationType: widget.operationType),
                     CodeTile(
                         codeName: "LOW BATTERY",
                         code: "003",
                         subTitle: "Low Drone Battery Power",
                         operationID: widget.operationId,
-                        endpoint: "0"),
+                        endpoint: "0",
+                        operationType: widget.operationType),
                     CodeTile(
                         codeName: "DROP PROBLEM",
                         code: "004",
                         subTitle: "Dropping machanism failed",
                         operationID: widget.operationId,
-                        endpoint: "0"),
+                        endpoint: "0",
+                        operationType: widget.operationType),
                   ]),
                 ),
               ),

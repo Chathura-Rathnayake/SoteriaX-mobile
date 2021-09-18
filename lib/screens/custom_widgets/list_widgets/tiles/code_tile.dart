@@ -1,22 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:soteriax/database/live_operations_database_services.dart';
 import 'package:soteriax/database/training_operations_database_services.dart';
 import 'package:soteriax/services/raspberryPi/pre_recorded_audio.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class CodeTile extends StatelessWidget {
-  TrainingOperationsDBServices trainingDB = TrainingOperationsDBServices();
+  // TrainingOperationsDBServices trainingDB = TrainingOperationsDBServices();
   CodeTile({
     this.codeName,
     this.code,
     this.subTitle,
     this.endpoint,
     required this.operationID,
-  });
+    required this.operationType,
+    this.stopWatchTimer
+  }){
+    if(operationType=='live'){
+      _liveOpDB=LiveOperationDBServices(operationId: operationID);
+    }else{
+      _trainingOpDB=TrainingOperationsDBServices(operationId: operationID);
+    }
+  }
+  LiveOperationDBServices? _liveOpDB;
+  TrainingOperationsDBServices? _trainingOpDB;
   String? codeName;
   String? code;
   String? subTitle;
   String? endpoint;
-  String? operationID;
+  String operationID;
+  String operationType;
+  StopWatchTimer? stopWatchTimer;
 
   RecordedAudioRPI play = RecordedAudioRPI();
   @override
@@ -30,13 +44,13 @@ class CodeTile extends StatelessWidget {
             if (endpoint == "0") {
               print("firebase call");
               if (codeName == "DRONE FAILURE") {
-                trainingDB.setCodes("100 : DRONE FAILURE");
+                operationType == 'live '? _liveOpDB!.setCodes("100 : DRONE FAILURE") :  _trainingOpDB!.setCodes("100 : DRONE FAILURE");
               } else if (codeName == "TECH FAILURE") {
-                trainingDB.setCodes("200 : TECH FAILURE");
+                operationType == 'live '? _liveOpDB!.setCodes("200 : TECH FAILURE") :  _trainingOpDB!.setCodes("200 : TECH FAILURE");
               } else if (codeName == "LOW BATTERY") {
-                trainingDB.setCodes("300 : LOW BATTERY");
+                operationType == 'live '? _liveOpDB!.setCodes("300 : LOW BATTERY") :  _trainingOpDB!.setCodes("300 : LOW BATTERY");
               } else if (codeName == "DROP PROBLEM") {
-                trainingDB.setCodes("400 : DROP PROBLEM");
+                operationType == 'live '? _liveOpDB!.setCodes("400 : DROP PROBLEM") :  _trainingOpDB!.setCodes("400 : DROP PROBLEM");
               }
 
               //Goes to firebase
@@ -54,6 +68,14 @@ class CodeTile extends StatelessWidget {
               play.RPI_Recorded_Audio_03();
             } else {
               play.RPI_Recorded_Audio_04();
+            }
+          },
+          onLongPress: (){
+            if(endpoint=="alarm01"){
+              //Goes to RPI
+              print('herer');
+              play.RPI_Recorded_Audio_01();
+              this.operationType=='live' ? _liveOpDB!.emmitAudio() : _trainingOpDB!.emmitAudio(stopWatchTimer!.rawTime.value);
             }
           },
           child: ListTile(

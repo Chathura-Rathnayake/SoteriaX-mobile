@@ -11,6 +11,7 @@ import 'package:soteriax/screens/custom_widgets/drawer_widgets/drop_resttube_dra
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/emmit_audio_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/training_timelap_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
+import 'package:soteriax/screens/home/training_overview.dart';
 import 'package:soteriax/services/webrtc_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
@@ -30,8 +31,10 @@ class _TrainingOperationState extends State<TrainingOperation> {
   RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   Timer? stopWatchTimeStampTimer;
   bool isWaitingStopWatchPing = false;
+  late TrainingOperationsDBServices trainingOpDB;
 
   void pingStopWatchTime() {
+    print('operation Id: ${widget.trainingOpId}');
     stopWatchTimeStampTimer =
         Timer.periodic(Duration(seconds: 5), (timer) async {
       if (!isWaitingStopWatchPing) {
@@ -74,6 +77,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
 
   @override
   void initState() {
+    trainingOpDB=TrainingOperationsDBServices(operationId: widget.trainingOpId);
     print('training op id: ${widget.trainingOpId}');
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -125,20 +129,31 @@ class _TrainingOperationState extends State<TrainingOperation> {
       endDrawer: type == 2
           ? DropRTDrawer(
               operationId: widget.trainingOpId,
+              operationType: 'training',
+              stopWatchTimer: _stopWatchTimer,
             )
           : type == 1
-              ? AudioStreamDrawer(operationId: widget.trainingOpId)
+              ? AudioStreamDrawer(
+                  operationId: widget.trainingOpId,
+                  operationType: 'training',
+                  stopWatchTimer: _stopWatchTimer,
+                  )
               : type == 4
                   ? AlertCodeDrawer(
                       operationId: widget.trainingOpId,
+                      operationType: 'training',
                     )
                   : type == 5
                       ? TimeLapDrawer(
+                          operationId: widget.trainingOpId,
                           stopWatchTimer: _stopWatchTimer,
                         )
                       : EmmitAudioDrawer(
                           isEmmitSuccesful: true,
-                          operationId: widget.trainingOpId),
+                          operationId: widget.trainingOpId,
+                          operationType: 'training',
+                          stopWatchTimer: _stopWatchTimer,
+                            ),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -196,51 +211,166 @@ class _TrainingOperationState extends State<TrainingOperation> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                      width: double.infinity,
-                      height: 25,
-                      color: Colors.red[300],
-                      child: Text(
-                        "Current Status: Reached Victim",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    CounterTile(
-                      onClicked: showDrawerWithBtns,
-                      setType: setType,
-                      type: 5,
-                      stopWatchTimer: _stopWatchTimer,
-                    ),
-                    OperationBtn(
-                      btnText: "EMMIT AUDIO",
-                      btnImage: "sound_icon",
-                      onClicked: showDrawerWithBtns,
-                      setType: setType,
-                      type: 3,
-                    ),
-                    OperationBtn(
-                      btnText: "DROP REST-TUBE",
-                      btnImage: "lb_drop_icon",
-                      onClicked: showDrawerWithBtns,
-                      setType: setType,
-                      type: 2,
-                    ),
-                    OperationBtn(
-                      btnText: "AUDIO STREAM",
-                      btnImage: "mic_icon",
-                      onClicked: showDrawerWithBtns,
-                      setType: setType,
-                      type: 1,
-                    ),
-                    OperationBtn(
-                      btnText: "CONTACT HEAD \nLIFEGUARD",
-                      btnImage: "alarm_bulb_icon",
-                      onClicked: showDrawerWithBtns,
-                      setType: setType,
-                      type: 4,
+                    StreamBuilder<DocumentSnapshot?>(
+                      stream: TrainingOperationsDBServices(operationId: widget.trainingOpId).getTrainingOp,
+                      builder: (context, snapshot) {
+                        if(snapshot.hasData){
+                          if(snapshot.data!=null){
+                            var operationStatus=snapshot.data!.get("operationStatus");
+                            var currentStage=snapshot.data!.get("currentStage");
+                            if(operationStatus=='pending'){
+                              return Column(
+                                children: [
+                                  Container(
+                                    padding:
+                                    EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                    width: double.infinity,
+                                    height: 25,
+                                    color: Colors.red[300],
+                                    child: Text(
+                                      "Current Status: ${snapshot.data!.get('currentStage')}",
+                                      style: TextStyle(
+                                          color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  CounterTile(
+                                    onClicked: showDrawerWithBtns,
+                                    setType: setType,
+                                    type: 5,
+                                    stopWatchTimer: _stopWatchTimer,
+                                    trainingOperationId: widget.trainingOpId,
+                                  ),
+                                  Container(child: Text("Please start the training operation"),),
+                                ],
+                              );
+                            }else if(operationStatus=='live'){
+                              if(currentStage<5){
+                                return Column(
+                                  children: [
+                                    Container(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                      width: double.infinity,
+                                      height: 25,
+                                      color: Colors.red[300],
+                                      child: Text(
+                                        "Current Status: ${snapshot.data!.get("currentStatus")}",
+                                        style: TextStyle(
+                                            color: Colors.white, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    CounterTile(
+                                      onClicked: showDrawerWithBtns,
+                                      setType: setType,
+                                      type: 5,
+                                      stopWatchTimer: _stopWatchTimer,
+                                      trainingOperationId: widget.trainingOpId,
+                                    ),
+                                    if(snapshot.data!.get('currentStage')==4)
+                                      MaterialButton(
+                                        onPressed: () async {
+                                          await trainingOpDB.endOperation(_stopWatchTimer.rawTime.value);
+                                          _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                                          Navigator.pop(context);
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>TrainingOverview()));
+                                        },
+                                        color: Colors.red[800],
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(10)),
+                                        child: Text("End Mission", style: TextStyle(color: Colors.white),),
+                                      ),
+                                    OperationBtn(
+                                      btnText: "EMMIT AUDIO",
+                                      btnImage: "sound_icon",
+                                      onClicked: showDrawerWithBtns,
+                                      setType: setType,
+                                      type: 3,
+                                    ),OperationBtn(
+                                      btnText: "DROP REST-TUBE",
+                                      btnImage: "lb_drop_icon",
+                                      onClicked: showDrawerWithBtns,
+                                      setType: setType,
+                                      type: 2,
+                                    ),
+                                    OperationBtn(
+                                      btnText: "AUDIO STREAM",
+                                      btnImage: "mic_icon",
+                                      onClicked: showDrawerWithBtns,
+                                      setType: setType,
+                                      type: 1,
+                                    ),
+                                    OperationBtn(
+                                      btnText: "CONTACT HEAD \nLIFEGUARD",
+                                      btnImage: "alarm_bulb_icon",
+                                      onClicked: showDrawerWithBtns,
+                                      setType: setType,
+                                      type: 4,
+                                    ),
+                                  ],
+                                );
+                              }else{
+                                return Column(
+                                  children: [
+                                    Container(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                      width: double.infinity,
+                                      height: 25,
+                                      color: Colors.red[300],
+                                      child: Text(
+                                        "Current Status: ${snapshot.data!.get('currentStage')}",
+                                        style: TextStyle(
+                                            color: Colors.white, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    CounterTile(
+                                      onClicked: showDrawerWithBtns,
+                                      setType: setType,
+                                      type: 5,
+                                      stopWatchTimer: _stopWatchTimer,
+                                      trainingOperationId: widget.trainingOpId,
+                                    ),
+                                    Container(child: Text("Training operation recording is being uploaded.."),),
+                                  ],
+                                );
+                              }
+                            }else{
+                              _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                              return Column(
+                                children: [
+                                  Container(
+                                    padding:
+                                    EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                    width: double.infinity,
+                                    height: 25,
+                                    color: Colors.red[300],
+                                    child: Text(
+                                      "Current Status: ${snapshot.data!.get('currentStage')}",
+                                      style: TextStyle(
+                                          color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  CounterTile(
+                                    onClicked: showDrawerWithBtns,
+                                    setType: setType,
+                                    type: 5,
+                                    stopWatchTimer: _stopWatchTimer,
+                                    trainingOperationId: widget.trainingOpId,
+                                  ),
+                                  Container(child: Text("Training operation has ended"),),
+                                ],
+                              );
+                            }
+                          }else{
+                            return Container(child: Text("Training operation has been removed"),);
+                          }
+                        }else if(snapshot.hasError){
+                          return Container(child: Text("Error occurred while retrieving data"),);
+                        }else{
+                          return Container(child: Text("No training data"),);
+                        }
+                      }
                     ),
                   ],
                 ),

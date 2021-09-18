@@ -2,10 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soteriax/database/live_operations_database_services.dart';
 import 'package:soteriax/screens/custom_widgets/list_widgets/tiles/code_tile.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class EmmitAudioDrawer extends StatefulWidget {
-  EmmitAudioDrawer({this.isEmmitSuccesful, required this.operationId});
+  EmmitAudioDrawer({this.isEmmitSuccesful, required this.operationId, required this.operationType, this.stopWatchTimer});
+  final String operationType;
   final String operationId;
+  StopWatchTimer? stopWatchTimer;
+
   bool? isEmmitSuccesful = false;
   @override
   _EmmitAudioDrawerState createState() => _EmmitAudioDrawerState();
@@ -56,28 +60,36 @@ class _EmmitAudioDrawerState extends State<EmmitAudioDrawer> {
               code: "01",
               subTitle: " Get attention",
               endpoint: "alarm01",
-              operationID: "0",
+              operationID: widget.operationId,
+              operationType: widget.operationType,
+              stopWatchTimer: widget.stopWatchTimer,
             ),
             CodeTile(
               codeName: "Alarm",
               code: "02",
               subTitle: "Victim is under water",
               endpoint: "alarm02",
-              operationID: "0",
+              operationID: widget.operationId,
+              operationType: widget.operationType,
+              stopWatchTimer: widget.stopWatchTimer,
             ),
             CodeTile(
               codeName: "Alarm",
               code: "03",
               subTitle: "Victim missed the Restube",
               endpoint: "alarm03",
-              operationID: "0",
+              operationID: widget.operationId,
+              operationType: widget.operationType,
+              stopWatchTimer: widget.stopWatchTimer,
             ),
             CodeTile(
               codeName: "Alarm",
               code: "04",
               subTitle: "Victim has the Restube",
               endpoint: "alarm04",
-              operationID: "0",
+              operationID: widget.operationId,
+              operationType: widget.operationType,
+              stopWatchTimer: widget.stopWatchTimer,
             ),
           ],
         ),

@@ -7,10 +7,9 @@ import 'package:soteriax/models/lifeguardSingleton.dart';
 import 'package:soteriax/screens/home/engage_mission.dart';
 import 'package:soteriax/screens/home/lock_relock.dart';
 import 'package:soteriax/screens/home/profiles.dart';
-// import 'package:soteriax/screens/home/training_overview.dart';
+import 'package:soteriax/screens/home/training_overview.dart';
 import 'package:soteriax/screens/home/view_operation.dart';
 import 'package:soteriax/services/auth_services.dart';
-import 'package:soteriax/screens/home/training_operation.dart';
 import 'help_request.dart';
 
 class MainMenu extends StatefulWidget {
@@ -34,7 +33,7 @@ class _MainMenuState extends State<MainMenu> {
         Duration(seconds: 1),
         () => _prefs.then((SharedPreferences prefs) {
               return (prefs.getString("lifeguardData"));
-            }));
+        }));
     _lifeguardMap = jsonDecode(lifeguardDetails!) as Map<String, dynamic>;
     lifeguard = Lifeguard.fromJson(_lifeguardMap);
     lifeguardSingleton.uid = lifeguard!.uid!;
@@ -42,6 +41,7 @@ class _MainMenuState extends State<MainMenu> {
     lifeguardSingleton.company = lifeguard!.company!;
     lifeguardSingleton.firstname = lifeguard!.firstname!;
     lifeguardSingleton.lastname = lifeguard!.lastname!;
+    lifeguardSingleton.designation=lifeguard!.designation!;
 
     print('got singleton of ${lifeguardSingleton.firstname}');
   }
@@ -210,9 +210,7 @@ class _MainMenuState extends State<MainMenu> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TrainingOperation(
-                                        trainingOpId: "WuAArb3cGaHTWpMMxrdG",
-                                      )),
+                                  builder: (context) => TrainingOverview()),
                             );
                           },
                           height: 20,
