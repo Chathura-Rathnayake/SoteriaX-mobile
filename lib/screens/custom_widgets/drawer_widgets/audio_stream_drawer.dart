@@ -26,8 +26,8 @@ class AudioStreamDrawer extends StatefulWidget {
 
 class _AudioStreamDrawerState extends State<AudioStreamDrawer> {
    bool isRecording=false;
-   WebRTCAudioStream webRTCAudioStream=WebRTCAudioStream();
-
+   // WebRTCAudioStream webRTCAudioStream=WebRTCAudioStream();
+   late WebRTCAudioStream webRTCAudioStream;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +54,7 @@ class _AudioStreamDrawerState extends State<AudioStreamDrawer> {
                 setState(() {
                   isRecording=!isRecording;
                   if(isRecording){
+                    webRTCAudioStream=WebRTCAudioStream();
                     webRTCAudioStream.startAudioStream();
                     widget.operationType == 'live' ? widget.liveOpDB!.streamAudio() : widget.trainingOpDB!
                         .streamAudio(widget.stopWatchTimer!.rawTime.value);

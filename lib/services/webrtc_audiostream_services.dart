@@ -44,10 +44,11 @@ class WebRTCAudioStream{
     var d=await peerConnection!.getLocalDescription();
     Map<String, dynamic> payLoad={
       'sdp': jsonEncode(d!.toMap()),
+      'isAudio' : "true",
     };
     
     log('audio payload: $payLoad');
-    var url=Uri.parse('http://192.168.43.5:4000/audioBroadcaster');
+    var url=Uri.parse('http://192.168.43.5:5000/audioBroadcaster');
     http.Response uriResponse=await http.post(url, body: payLoad);
 
     RTCSessionDescription description=RTCSessionDescription(jsonDecode(uriResponse.body)['sdp']['sdp'], jsonDecode(uriResponse.body)['sdp']['type']);
@@ -61,7 +62,8 @@ class WebRTCAudioStream{
     tracks.forEach((track) {
       track.stop();
     });
-
+    // localStream!.dispose();
+    peerConnection!.close();
   }
 
 
