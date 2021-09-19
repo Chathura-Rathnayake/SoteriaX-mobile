@@ -15,6 +15,8 @@ import 'package:soteriax/screens/home/training_overview.dart';
 import 'package:soteriax/services/webrtc_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
+import 'main_menu.dart';
+
 class TrainingOperation extends StatefulWidget {
   TrainingOperation({required this.trainingOpId, this.startTime});
   final String trainingOpId;
@@ -162,7 +164,24 @@ class _TrainingOperationState extends State<TrainingOperation> {
           icon: Icon(Icons.arrow_back),
         ),
         actions: [
-          Container(),
+          Container(
+            child: PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == "ForceEnd") {
+                await trainingOpDB.forceEndOperation(_stopWatchTimer.rawTime.value);
+                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainMenu()));
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                    value: "ForceEnd", child: Text("Force End Mission"))
+              ];
+            },
+          ),
+          ),
         ],
         title: Text("Training Operation"),
         elevation: 0.0,
