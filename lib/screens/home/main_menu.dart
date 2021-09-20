@@ -315,7 +315,7 @@ class _MainMenuState extends State<MainMenu> {
                               height: 20,
                             ),
                             Image(
-                              image: AssetImage('assets/icons/user.png'),
+                              image: AssetImage('assets/icons/maintenance.png'),
                               width: 200,
                               height: 70,
                             ),
@@ -323,7 +323,7 @@ class _MainMenuState extends State<MainMenu> {
                               height: 15,
                             ),
                             Text(
-                              'User Profile',
+                              'Re-arm\n Module',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -336,8 +336,8 @@ class _MainMenuState extends State<MainMenu> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       child: (MaterialButton(
-                        onPressed: () async {
-                          await _auth.signOut();
+                        onPressed: () {
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=>helpRequest()));
                         },
                         height: 20,
                         minWidth: 20,
@@ -352,7 +352,7 @@ class _MainMenuState extends State<MainMenu> {
                               height: 20,
                             ),
                             Image(
-                              image: AssetImage('assets/icons/log-out.png'),
+                              image: AssetImage('assets/icons/call_center_agent.png'),
                               width: 300,
                               height: 70,
                             ),
@@ -360,7 +360,7 @@ class _MainMenuState extends State<MainMenu> {
                               height: 15,
                             ),
                             Text(
-                              'Logout',
+                              'Support',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -373,8 +373,8 @@ class _MainMenuState extends State<MainMenu> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       child: (MaterialButton(
-                        onPressed: () async {
-                          await _auth.signOut();
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Profiles()));
                         },
                         height: 20,
                         minWidth: 20,
@@ -397,7 +397,7 @@ class _MainMenuState extends State<MainMenu> {
                               height: 15,
                             ),
                             Text(
-                              'Logout',
+                              'User Profile',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
