@@ -8,7 +8,7 @@ class Sys_user{
 class Lifeguard{
 
   Lifeguard({this.uid, this.email, this.firstname, this.lastname, this.birthDate, this.designation,
-    this.noOfOperations, this.isPilot, this.certificateLevel, this.company, this.mobileNo, this.nic});
+    this.noOfOperations, this.isPilot, this.certificateLevel, this.company, this.mobileNo, this.nic, this.gender});
 
   String? uid;
   String? firstname;
@@ -22,6 +22,7 @@ class Lifeguard{
   bool? isPilot=false;
   String? designation="";
   Company? company;
+  String? gender;
 
   Lifeguard.fromJson(Map<String, dynamic> json){
     uid=json['uid'];
@@ -33,13 +34,14 @@ class Lifeguard{
     noOfOperations=json['noOfOperations'];
     isPilot=json['isPilot'];
     designation=json['designation'];
+    gender=json['gender'];
     company= json['company'] == null ? null : Company.fromJson(json['company']);
   }
 
   @override
   String toString() {
     // TODO: implement toString
-    return '{"uid": "$uid","firstName": "$firstname", "lastName": "$lastname", "email": "$email", "certificateLevel": "$certificateLevel",'
+    return '{"uid": "$uid","firstName": "$firstname", "lastName": "$lastname", "email": "$email", "certificateLevel": "$certificateLevel", "gender": "$gender"'
         ' "birthDate": "$birthDate", "noOfOperations": $noOfOperations, "isPilot": $isPilot,"designation": "$designation", "company": ${company.toString()}}';
   }
 

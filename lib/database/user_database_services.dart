@@ -30,6 +30,7 @@ class UserDatabaseService{
             mobileNo: documentSnapshot.get('phone_number'),
             certificateLevel: documentSnapshot.get("certificateLevel"),
             birthDate: documentSnapshot.get("birthDate"),
+            gender: documentSnapshot.get("gender"),
             designation: "Lifeguard",
             company: company
         );
@@ -54,6 +55,8 @@ class UserDatabaseService{
             email: documentSnapshot.get("userEmail"),
             birthDate: documentSnapshot.get("birthday"),
             company: company,
+            gender: documentSnapshot.get("gender"),
+            mobileNo: documentSnapshot.get("userPhone"),
             designation: "Head Lifeguard"
         );
         await prefs.setString("lifeguardData", lifeguard.toString());
