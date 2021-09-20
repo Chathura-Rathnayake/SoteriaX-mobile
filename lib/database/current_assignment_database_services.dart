@@ -5,6 +5,7 @@ import 'package:soteriax/models/lifeguardSingleton.dart';
 
 class CurrentAssignmentDB{
   CollectionReference trainingOperations=FirebaseFirestore.instance.collection('trainingOperations');
+  CollectionReference operations=FirebaseFirestore.instance.collection('operations');
   LifeguardSingleton lifeguardSingleton=LifeguardSingleton();
 
   Stream<QuerySnapshot?> get getCurrentAssignments{
@@ -45,6 +46,10 @@ class CurrentAssignmentDB{
     }
 
     return latestAssignment;
+  }
+  
+  Stream<QuerySnapshot?> get ongoingLiveOperations{
+    return operations.where('companyId', isEqualTo: lifeguardSingleton.company.companyId).where('operationStatus', isEqualTo: 'live').snapshots();
   }
 
 
