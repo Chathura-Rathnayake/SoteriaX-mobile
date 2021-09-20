@@ -12,6 +12,7 @@ import 'package:soteriax/screens/custom_widgets/drawer_widgets/emmit_audio_drawe
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
 import 'package:soteriax/screens/home/engage_mission.dart';
 import 'package:soteriax/screens/home/main_menu.dart';
+import 'package:soteriax/services/webrtc_audiostream_services.dart';
 import 'package:soteriax/services/webrtc_services.dart';
 
 class LiveOperations extends StatefulWidget {
@@ -30,6 +31,7 @@ class _LiveOperationsState extends State<LiveOperations> {
   late LiveOperationDBServices liveOpDB;
   Timer? operationPing;
   bool waitingForOperationPing = false;
+  late WebRTCAudioStream webRTCAudioStream;
 
   void sendOperationPing() {
     operationPing?.cancel();
@@ -55,6 +57,7 @@ class _LiveOperationsState extends State<LiveOperations> {
     liveOpDB = LiveOperationDBServices(operationId: widget.operationID);
     liveOpDB.setEngaged();
     webRTC=WebRTCServices(operationId: widget.operationID, operationType: 'operation');
+    webRTCAudioStream=WebRTCAudioStream();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -115,6 +118,7 @@ class _LiveOperationsState extends State<LiveOperations> {
                 ? AudioStreamDrawer(
                     operationId: widget.operationID,
                     operationType: 'live',
+                    webRTCAudioStream: webRTCAudioStream,
                   )
                 : type == 4
                     ? AlertCodeDrawer(
@@ -227,7 +231,7 @@ class _LiveOperationsState extends State<LiveOperations> {
                                                 color: Colors.white, fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        if(currentStage==4)
+                                        if(currentStage>=3)
                                           MaterialButton(
                                             onPressed: () async {
                                               await liveOpDB.endOperation();

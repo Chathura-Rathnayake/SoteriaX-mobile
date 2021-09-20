@@ -12,6 +12,7 @@ import 'package:soteriax/screens/custom_widgets/drawer_widgets/emmit_audio_drawe
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/training_timelap_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
 import 'package:soteriax/screens/home/training_overview.dart';
+import 'package:soteriax/services/webrtc_audiostream_services.dart';
 import 'package:soteriax/services/webrtc_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
@@ -30,6 +31,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int? type;
   late WebRTCServices webRTCServices;
+  late WebRTCAudioStream webRTCAudioStream;
   RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   Timer? stopWatchTimeStampTimer;
   bool isWaitingStopWatchPing = false;
@@ -95,6 +97,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
     });
     pingStopWatchTime();
     super.initState();
+    webRTCAudioStream=WebRTCAudioStream();
     webRTCServices.startConnection(remoteRenderer);
   }
 
@@ -138,6 +141,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
               ? AudioStreamDrawer(
                   operationId: widget.trainingOpId,
                   operationType: 'training',
+                  webRTCAudioStream: webRTCAudioStream,
                   stopWatchTimer: _stopWatchTimer,
                   )
               : type == 4
@@ -285,7 +289,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                       stopWatchTimer: _stopWatchTimer,
                                       trainingOperationId: widget.trainingOpId,
                                     ),
-                                    if(snapshot.data!.get('currentStage')==4)
+                                    if(snapshot.data!.get('currentStage')>=3)
                                       MaterialButton(
                                         onPressed: () async {
                                           await trainingOpDB.endOperation(_stopWatchTimer.rawTime.value);

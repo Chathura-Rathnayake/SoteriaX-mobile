@@ -259,5 +259,9 @@ class TrainingOperationsDBServices {
     return trainingOperations.doc(operationId).snapshots();
   }
 
+  Stream<QuerySnapshot> get getLiveTrainingOperationData{
+    return trainingOperations .where('companyId', isEqualTo: this.companyId).where('operationStatus', isEqualTo: 'live').snapshots();
+  }
+
 
 }

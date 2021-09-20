@@ -6,7 +6,7 @@ import 'package:soteriax/services/webrtc_audiostream_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class AudioStreamDrawer extends StatefulWidget {
-  AudioStreamDrawer({required this.operationId, required this.operationType, this.stopWatchTimer}){
+  AudioStreamDrawer({required this.operationId, required this.operationType, required this.webRTCAudioStream, this.stopWatchTimer}){
     if(operationType=='live'){
       liveOpDB=LiveOperationDBServices(operationId: operationId);
     }else{
@@ -15,6 +15,7 @@ class AudioStreamDrawer extends StatefulWidget {
   }
   LiveOperationDBServices? liveOpDB;
   TrainingOperationsDBServices? trainingOpDB;
+  WebRTCAudioStream webRTCAudioStream;
   final String operationId;
   final String operationType;
   StopWatchTimer? stopWatchTimer;
@@ -27,7 +28,22 @@ class AudioStreamDrawer extends StatefulWidget {
 class _AudioStreamDrawerState extends State<AudioStreamDrawer> {
    bool isRecording=false;
    // WebRTCAudioStream webRTCAudioStream=WebRTCAudioStream();
-   late WebRTCAudioStream webRTCAudioStream;
+
+   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    // widget.webRTCAudioStream.muteAudioStream();
+    super.dispose();
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,38 +62,40 @@ class _AudioStreamDrawerState extends State<AudioStreamDrawer> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50.0),
               child:Container(
-
               ),
             ),
             IconButton(
               onPressed: (){
                 setState(() {
-                  isRecording=!isRecording;
-                  if(isRecording){
-                    webRTCAudioStream=WebRTCAudioStream();
-                    webRTCAudioStream.startAudioStream();
+                  if(!widget.webRTCAudioStream.connected || widget.webRTCAudioStream.muted){
+                    if(!widget.webRTCAudioStream.connected){
+                      widget.webRTCAudioStream.startAudioStream();
+                    }else{
+                      if(widget.webRTCAudioStream.muted){
+                        widget.webRTCAudioStream.unMuteAudioStream();
+                      }
+                    }
                     widget.operationType == 'live' ? widget.liveOpDB!.streamAudio() : widget.trainingOpDB!
                         .streamAudio(widget.stopWatchTimer!.rawTime.value);
                   }else{
-                    webRTCAudioStream.stopAudioStream();
+                    if(!widget.webRTCAudioStream.muted){
+                      widget.webRTCAudioStream.muteAudioStream();
+                    }
                   }
                 });
               },
-              color: isRecording ? Colors.lightBlue[200] : Colors.lightBlue,
+              color: widget.webRTCAudioStream.muted==false ? Colors.red[900]: Colors.blue[900],
               iconSize: 60,
-              icon: Icon(Icons.mic, size: 60,)
+              icon: Icon(widget.webRTCAudioStream.muted==false ? Icons.stop : Icons.mic, size: 60,)
             ),
             SizedBox(height: 20,),
-            if(!isRecording)
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text("Please press the mic to start recording", textAlign: TextAlign.center, style: TextStyle(fontSize: 16),),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                widget.webRTCAudioStream.muted==false ? "Stop Audio Stream": "Start Audio Stream",
+                textAlign: TextAlign.center, style: TextStyle(fontSize: 16),
               ),
-            if(isRecording)
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text("Recording in progress...", textAlign: TextAlign.center, style: TextStyle(fontSize: 16),),
-              ),
+            ),
             MaterialButton(
               child: Text("BACK", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),),
               onPressed: (){
