@@ -104,7 +104,7 @@ class _LiveOperationsState extends State<LiveOperations> {
     }
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: type==2 ? DropRTDrawer() : type==1 ? AudioStreamDrawer() : type==4 ? AlertCodeDrawer() : EmmitAudioDrawer(isEmmitSuccesful: true) ,
+      endDrawer: type==2 ? DropRTDrawer() : type==1 ? AudioStreamDrawer() : type==4 ? AlertCodeDrawer(operationId: "asdas",) : EmmitAudioDrawer(isEmmitSuccesful: true) ,
         appBar: AppBar(
           leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back)),
           actions: [

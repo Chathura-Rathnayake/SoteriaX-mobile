@@ -49,6 +49,7 @@ class HelpRequestDBServices{
             "accountType": '${designation}',
             "companyID":'${lifeguardSingleton.company.companyId}',
             "companyName":'${lifeguardSingleton.company.companyName}',
+            "userID":'${lifeguardSingleton.uid}',
           }
       ).then((value) => print(value.id))
           .catchError((e) => print(e.toString()));
@@ -64,6 +65,7 @@ class HelpRequestDBServices{
             "accountType": '${designation}',
             "companyID":'${lifeguardSingleton.company.companyId}',
             "companyName":'${lifeguardSingleton.company.companyName}',
+            "userID":'${lifeguardSingleton.uid}',
           }
       ).then((value) => print(value.id))
           .catchError((e) => print(e.toString()));

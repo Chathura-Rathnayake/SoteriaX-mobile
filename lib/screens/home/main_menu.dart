@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soteriax/models/lifeguard.dart';
 import 'package:soteriax/models/lifeguardSingleton.dart';
+// import 'package:soteriax/screens/custom_widgets/lists/tiles/info_tile.dart';
 import 'package:soteriax/screens/home/engage_mission.dart';
 import 'package:soteriax/screens/home/profiles.dart';
 import 'package:soteriax/screens/home/training_overview.dart';
+// import 'package:soteriax/screens/home/viewOp/view_complaints.dart';
+import 'package:soteriax/screens/home/view_helprequests.dart';
+import 'package:soteriax/screens/home/view_complaints.dart';
 import 'package:soteriax/screens/home/view_operation.dart';
+import 'package:soteriax/screens/home/view_suggestions.dart';
 import 'package:soteriax/services/auth_services.dart';
-
+import 'package:flutter/material.dart';
 import 'help_request.dart';
 
 class MainMenu extends StatefulWidget {
