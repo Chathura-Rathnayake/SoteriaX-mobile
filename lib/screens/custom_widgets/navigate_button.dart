@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:soteriax/screens/home/current_assignments.dart';
 import 'package:soteriax/screens/home/emergency_call.dart';
 import 'package:soteriax/screens/home/past_assignments.dart';
+import 'package:soteriax/screens/home/view_complaints.dart';
+import 'package:soteriax/screens/home/view_helprequests.dart';
+import 'package:soteriax/screens/home/view_suggestions.dart';
 
 class NavigationButton extends StatelessWidget {
   String? title="";
@@ -37,6 +40,24 @@ class NavigationButton extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => EmergencyCall()),
+                  );
+                  break;
+                case 4:
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ViewSuggestions()),
+                  );
+                  break;
+                case 5:
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ViewComplaints()),
+                  );
+                  break;
+                case 6:
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ViewHelpRequests()),
                   );
                   break;
               }

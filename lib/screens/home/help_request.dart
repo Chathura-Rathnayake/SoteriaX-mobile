@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:soteriax/database/help_request_database.dart';
+import 'package:soteriax/screens/custom_widgets/navigate_button.dart';
 import 'package:soteriax/screens/home/view_complaints.dart';
 import 'package:soteriax/screens/home/view_helprequests.dart';
 import 'package:soteriax/screens/home/view_suggestions.dart';
@@ -149,58 +150,10 @@ class _helpRequestState extends State<helpRequest> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                SizedBox(height: 20,),
-                MaterialButton(onPressed: (){
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ViewSuggestions()),
-                  );
-                },
-                  child: Text("View Suggestions",
-                    style: TextStyle(color: Colors.white,fontSize: 20,),
-                  ),
-                  height: 50,
-                  minWidth: double.maxFinite,
-                  color: Colors.orange.shade800,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                SizedBox(height: 20,),
-                MaterialButton(onPressed: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ViewComplaints()),
-                  );
-                },
-                  child: Text("View Complaints",
-                    style: TextStyle(color: Colors.white,fontSize: 20,),
-                  ),
-                  height: 50,
-                  minWidth: double.maxFinite,
-                  color: Colors.orange.shade800,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                SizedBox(height: 20,),
-                MaterialButton(onPressed: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ViewHelpRequests()),
-                  );
-                },
-                  child: Text("View Help Requests",
-                    style: TextStyle(color: Colors.white,fontSize: 20,),
-                  ),
-                  height: 50,
-                  minWidth: double.maxFinite,
-                  color: Colors.orange.shade800,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                SizedBox(height: 20,),
+                SizedBox(height: 5,),
+                NavigationButton(title: "View Suggestions", image: "Help Request", onPressedFunFlag: 4),
+                NavigationButton(title: "View Complaints", image: "Complaint", onPressedFunFlag: 5),
+                NavigationButton(title: "View Help Requests", image: "Suggestion", onPressedFunFlag: 6),
               ]),
             ),
           ),
