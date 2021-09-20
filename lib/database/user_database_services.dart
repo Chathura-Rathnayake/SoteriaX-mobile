@@ -93,7 +93,7 @@ class UserDatabaseService{
     Company company=await headLifeguards.doc(id).get().then((DocumentSnapshot snapshot){
       if(snapshot.exists){
         return Company(companyName: snapshot.get("companyName"), companyEmail: snapshot.get("companyEmail"),
-          companyAddress: snapshot.get("companyAddress"), companyId: id);
+          companyAddress: snapshot.get("companyAddress"), staticIP: snapshot.get("staticIP"), companyId: id);
       }else{
         return Company();
       }

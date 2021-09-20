@@ -49,24 +49,26 @@ class Lifeguard{
 }
 
 class Company{
-  Company({this.companyId, this.companyEmail, this.companyAddress, this.companyName});
+  Company({this.companyId, this.companyEmail, this.companyAddress, this.companyName, this.staticIP});
 
   String? companyId="";
   String? companyEmail="";
   String? companyAddress="";
   String? companyName="";
+  String? staticIP="";
 
   Company.fromJson(Map<String, dynamic> json){
     companyId=json['companyId'];
     companyName=json['companyName'];
     companyAddress=json['companyAddress'];
     companyEmail=json['companyEmail'];
+    staticIP=json['staticIP'];
   }
 
   @override
   String toString() {
-    // TODO: implement toString
-    return '{"companyId": "$companyId", "companyEmail": "$companyEmail", "companyAddress": "$companyAddress", "companyName": "$companyName"}';
+    return '{"companyId": "$companyId", "companyEmail": "$companyEmail", "staticIP": "$staticIP", '
+        ' "companyAddress": "$companyAddress", "companyName": "$companyName"}';
   }
 
 }
