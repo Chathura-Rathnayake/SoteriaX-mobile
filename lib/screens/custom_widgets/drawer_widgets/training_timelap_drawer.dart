@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:soteriax/database/training_operations_database_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class TimeLapDrawer extends StatefulWidget {
-  TimeLapDrawer({this.stopWatchTimer});
+  TimeLapDrawer({this.stopWatchTimer, required this.operationId});
   StopWatchTimer? stopWatchTimer;
+  String operationId;
 
   @override
   _TimeLapDrawerState createState() => _TimeLapDrawerState();
@@ -32,44 +35,55 @@ class _TimeLapDrawerState extends State<TimeLapDrawer> {
               Container(
                 height: MediaQuery.of(context).size.height-80,
                 margin: EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-                child: StreamBuilder<List<StopWatchRecord>>(
-                  stream: widget.stopWatchTimer!.records,
-                  initialData: widget.stopWatchTimer!.records.value,
+                child: StreamBuilder<DocumentSnapshot?>(
+                  stream: TrainingOperationsDBServices(operationId: widget.operationId).getTrainingOp,
                   builder: (context, snap){
-                    final value=snap.data!;
-                    if(value.isEmpty){
+                    if(snap.hasError){
+                      return Container(child: Text("Error occurred while connecting to db"));
+                    }else if(snap.hasData){
+                      if(snap.data==null){
+                        return Container();
+                      }else{
+                        var trainingTimes=snap.data!.get('trainingTimes');
+                        return ListView.builder(
+                          controller: _scrollController,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (BuildContext context, int index){
+                            final data=trainingTimes[index];
+                            if(data!=""){
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(3),
+                                      child: Text(
+                                        '${index+1}. ${stages[index]} ${StopWatchTimer.getDisplayTime(data, hours: false)}',
+                                      ),
+                                    ),
+                                    const Divider(height: 1,),
+                                  ],
+                                ),
+                              );
+                            }else{
+                              return Container();
+                            }
+                          },
+                          itemCount: trainingTimes.length,
+                        );
+                      }
+                    }else{
                       return Container();
                     }
-                    Future.delayed(const Duration(microseconds: 100), (){
-                      _scrollController.animateTo(
-                        _scrollController.position.maxScrollExtent,
-                        duration: const Duration(microseconds: 200),
-                        curve: Curves.easeOut
-                      );
-                    });
+                    // Future.delayed(const Duration(microseconds: 100), (){
+                    //   _scrollController.animateTo(
+                    //     _scrollController.position.maxScrollExtent,
+                    //     duration: const Duration(microseconds: 200),
+                    //     curve: Curves.easeOut
+                    //   );
+                    // });
                     // return Container();
-                    return ListView.builder(
-                      controller: _scrollController,
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (BuildContext context, int index){
-                        final data=value[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Text(
-                                  '${index+1}. ${stages[index]} ${data.displayTime}',
-                                ),
-                              ),
-                              const Divider(height: 1,),
-                            ],
-                          ),
-                        );
-                      },
-                      itemCount: value.length,
-                    );
+
                   },
                 ),
               ),

@@ -39,13 +39,14 @@ class OperationDatabaseService{
         'currentStage': 1,
         'currentStatus': _processes[0],
         'date': DateFormat('yMd').format(now),
+        'emergencyCode': [],
         'engaged':true,
         'engagedLifeguard': {'userFlag': lifeguardSingleton.designation, 'userId': lifeguardSingleton.uid},
         'engagementPing': Timestamp.now(),
         'operationStatus':'live',
         'startDate': DateFormat('yMd').format(now),
         'startTime': DateFormat('kk:mm:ss').format(now),
-        'timeline': ["","","","",""],
+        'timeline': [Timestamp.now().millisecondsSinceEpoch,"","","",""],
       }).then((value) =>  value.id)
           .catchError((e) {
         print(e.toString());

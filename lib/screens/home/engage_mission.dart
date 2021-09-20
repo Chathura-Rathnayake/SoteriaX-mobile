@@ -34,7 +34,8 @@ class _EngageMissionState extends State<EngageMission> {
       if(!waitingForRpiStatus){
         waitingForRpiStatus=true;
         int rpiLastOnlineTimestamp=await _opDB.getRPILastTimestamp();
-        if(Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp<3000){
+        print('diff: ${Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp}');
+        if(Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp<6000){
           if(rpiStatus=='off-line'){
             setState(() {
               rpiStatus='live';
@@ -162,7 +163,7 @@ class _EngageMissionState extends State<EngageMission> {
                                        padding: const EdgeInsets.all(8.0),
                                        child: ListTile(
                                          leading: Image(image: AssetImage("assets/icons/mobile_engagement.png"),),
-                                         title: Text(liveOpSnapshot.data!.docs.isEmpty ? "No Current life operations" :
+                                         title: Text(liveOpSnapshot.data!.docs.isEmpty ? "No Current live operations" :
                                                         liveOpSnapshot.data!.docs[0].get('engaged') ? "Engaged"
                                                             : "Not Engaged" ),
                                          subtitle: Text("Engagement Status"),

@@ -9,6 +9,7 @@ import 'package:soteriax/screens/custom_widgets/list_widgets/tiles/info_tile.dar
 import 'package:soteriax/screens/custom_widgets/navigate_button.dart';
 import 'package:soteriax/screens/custom_widgets/trainingOverview_button_section.dart';
 import 'package:soteriax/screens/home/training_operation.dart';
+
 class TrainingOverview extends StatefulWidget {
   const TrainingOverview({Key? key}) : super(key: key);
 
@@ -16,19 +17,14 @@ class TrainingOverview extends StatefulWidget {
   _TrainingOverviewState createState() => _TrainingOverviewState();
 }
 
-
 class _TrainingOverviewState extends State<TrainingOverview> {
   Timestamp? trainingTimeStamp;
-  bool isTrainingTime=false;
-
-
+  bool isTrainingTime = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-
   }
 
   @override
@@ -42,7 +38,7 @@ class _TrainingOverviewState extends State<TrainingOverview> {
     // TODO: implement deactivate
     super.deactivate();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +48,9 @@ class _TrainingOverviewState extends State<TrainingOverview> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 20,),
+          padding: EdgeInsets.symmetric(
+            vertical: 20,
+          ),
           child: Column(
             children: [
               Container(
@@ -63,54 +61,120 @@ class _TrainingOverviewState extends State<TrainingOverview> {
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
-              FutureBuilder<DocumentSnapshot?>( //get the latest assignment for display (next most assignment)
-                future: CurrentAssignmentDB().getLatestAssignment(),
-                builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot?> snapshot){
-                  switch(snapshot.connectionState){
-                    case ConnectionState.waiting:
-                      return const CircularProgressIndicator();
-                    default:
-                      if(snapshot.hasError){
-                        return Text('Error getting latest Training assignment');
-                      }else if(snapshot.hasData){
-                        // print(snapshot.data!.data());
-                        if(snapshot.data==null || snapshot.data!.data()==null){
-                          return Text("No current assignments");
-                        }else{
-                          var assignment=snapshot.data!;
-                          var roleNo=assignment.get('participantIDs').indexOf(LifeguardSingleton().uid);
-                          trainingTimeStamp=snapshot.data!.get('dateTime');  //get the training start timestamp
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                InfoTile(title: assignment.get('date'), subtitle: "Date",image: "calendar"),
-                                InfoTile(title: assignment.get('startTime'), subtitle: "Time",image: "clock"),
-                                InfoTile(
-                                  title:  roleNo== 0 ? "Mobile Handler" : roleNo==1 ? "Drone Pilot" : roleNo==2 ? "Swimmer" : "No Role",
-                                  subtitle: "Role",image: "role"),
-                                SizedBox(height: 5),
-                                if(roleNo==0) //only show if the user is the mobile handler only that assigned user can engage
-                                  TrainingButtonSection(trainingTimeStamp: trainingTimeStamp!),
-                                Text("Button will be automatically activated at the aforementioned time",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.grey[600]),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
+              SizedBox(
+                height: 10,
+              ),
+              StreamBuilder<QuerySnapshot?>(
+                stream: CurrentAssignmentDB().ongoingLiveOperations,
+                builder: (context, liveOpSnap) {
+                  if(liveOpSnap.hasError){
+                    return Container(
+                      child: Text(
+                        "Error retrieving ongoing live operations",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,),
+                      ),
+                    );
+                  }else if(liveOpSnap.hasData){
+                    if(liveOpSnap.data==null){
+                      return Container(child: Text("Null Data Retrieved"),);
                     }else{
-                        return Text("No current assignments");
+                      if(liveOpSnap.data!.size==0){
+                        return FutureBuilder<DocumentSnapshot?>(
+                          //get the latest assignment for display (next most assignment)
+                            future: CurrentAssignmentDB().getLatestAssignment(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<DocumentSnapshot?> snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.waiting:
+                                  return const CircularProgressIndicator();
+                                default:
+                                  if (snapshot.hasError) {
+                                    return Text(
+                                        'Error getting latest Training assignment');
+                                  } else if (snapshot.hasData) {
+                                    // print(snapshot.data!.data());
+                                    if (snapshot.data == null ||
+                                        snapshot.data!.data() == null) {
+                                      return Text("No current assignments");
+                                    } else {
+                                      var assignment = snapshot.data!;
+                                      var roleNo = assignment
+                                          .get('participantIDs')
+                                          .indexOf(LifeguardSingleton().uid);
+                                      trainingTimeStamp = snapshot.data!.get(
+                                          'dateTime'); //get the training start timestamp
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          children: [
+                                            InfoTile(
+                                                title: assignment.get('date'),
+                                                subtitle: "Date",
+                                                image: "calendar"),
+                                            InfoTile(
+                                                title: assignment.get('startTime'),
+                                                subtitle: "Time",
+                                                image: "clock"),
+                                            InfoTile(
+                                                title: roleNo == 0
+                                                    ? "Mobile Handler"
+                                                    : roleNo == 1
+                                                    ? "Drone Pilot"
+                                                    : roleNo == 2
+                                                    ? "Swimmer"
+                                                    : "No Role",
+                                                subtitle: "Role",
+                                                image: "role"),
+                                            SizedBox(height: 5),
+                                            if (roleNo ==
+                                                0) //only show if the user is the mobile handler only that assigned user can engage
+                                              TrainingButtonSection(
+                                                  trainingOpID: assignment.id,
+                                                  trainingTimeStamp: trainingTimeStamp!),
+                                            Text(
+                                              "Button will be automatically activated at the aforementioned time",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(color: Colors.grey[600]),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    return Text("No current assignments");
+                                  }
+                              }
+                            });
+                      }else{
+                        return Container(
+                          child: Text(
+                            "Currently there is an ongoing live operation",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red[900]),
+                          ),
+                        );
                       }
+                    }
+                  }else{
+                    return Container(child: Text("No Data Retrieved"),);
                   }
                 }
               ),
-              SizedBox(height: 20,),
-              NavigationButton(title: "Current Assignments", image: "swimming-trainer", onPressedFunFlag: 1,),
-              SizedBox(height: 5,),
-              NavigationButton(title: "Past Assignments", image: "stat",  onPressedFunFlag: 2,),
+              SizedBox(
+                height: 20,
+              ),
+              NavigationButton(
+                title: "Current Assignments",
+                image: "swimming-trainer",
+                onPressedFunFlag: 1,
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              NavigationButton(
+                title: "Past Assignments",
+                image: "stat",
+                onPressedFunFlag: 2,
+              ),
             ],
           ),
         ),

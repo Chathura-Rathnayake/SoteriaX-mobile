@@ -1,9 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:soteriax/database/live_operations_database_services.dart';
+import 'package:soteriax/database/training_operations_database_services.dart';
 import 'package:soteriax/services/raspberryPi/drop_package.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class DropRTDrawer extends StatefulWidget {
-  DropRTDrawer({this.title, this.type});
+  DropRTDrawer({this.title, this.type, required this.operationId, required this.operationType, this.stopWatchTimer }){
+    if(operationType=='live'){
+      liveOpDB=LiveOperationDBServices(operationId: operationId);
+    }else{
+      trainingOpDB=TrainingOperationsDBServices(operationId: operationId);
+    }
+  }
+  LiveOperationDBServices? liveOpDB;
+  TrainingOperationsDBServices? trainingOpDB;
+  StopWatchTimer? stopWatchTimer;
+  final String operationType;
+  final String operationId;
   String? title = '';
   int? type;
 
@@ -94,7 +108,8 @@ class _DropRTDrawerState extends State<DropRTDrawer> {
             if (dropVal == 900)
               RaisedButton.icon(
                   onPressed: () {
-                    var status = lock.RPiUnlock();
+                    lock.RPiUnlock();
+                    widget.operationType == 'live' ? widget.liveOpDB!.dropPackage() : widget.trainingOpDB!.dropPackage(widget.stopWatchTimer!.rawTime.value);
                   },
                   color: Colors.lightGreen[900],
                   icon: Icon(

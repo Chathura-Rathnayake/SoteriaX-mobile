@@ -1,17 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:soteriax/database/live_operations_database_services.dart';
+import 'package:soteriax/database/training_operations_database_services.dart';
+import 'package:soteriax/services/webrtc_audiostream_services.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class AudioStreamDrawer extends StatefulWidget {
-  const AudioStreamDrawer({Key? key}) : super(key: key);
+  AudioStreamDrawer({required this.operationId, required this.operationType, this.stopWatchTimer}){
+    if(operationType=='live'){
+      liveOpDB=LiveOperationDBServices(operationId: operationId);
+    }else{
+      trainingOpDB=TrainingOperationsDBServices(operationId: operationId);
+    }
+  }
+  LiveOperationDBServices? liveOpDB;
+  TrainingOperationsDBServices? trainingOpDB;
+  final String operationId;
+  final String operationType;
+  StopWatchTimer? stopWatchTimer;
 
   @override
   _AudioStreamDrawerState createState() => _AudioStreamDrawerState();
-
 
 }
 
 class _AudioStreamDrawerState extends State<AudioStreamDrawer> {
    bool isRecording=false;
+   // WebRTCAudioStream webRTCAudioStream=WebRTCAudioStream();
+   late WebRTCAudioStream webRTCAudioStream;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +53,14 @@ class _AudioStreamDrawerState extends State<AudioStreamDrawer> {
               onPressed: (){
                 setState(() {
                   isRecording=!isRecording;
+                  if(isRecording){
+                    webRTCAudioStream=WebRTCAudioStream();
+                    webRTCAudioStream.startAudioStream();
+                    widget.operationType == 'live' ? widget.liveOpDB!.streamAudio() : widget.trainingOpDB!
+                        .streamAudio(widget.stopWatchTimer!.rawTime.value);
+                  }else{
+                    webRTCAudioStream.stopAudioStream();
+                  }
                 });
               },
               color: isRecording ? Colors.lightBlue[200] : Colors.lightBlue,

@@ -1,42 +1,43 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:soteriax/database/live_operations_database_services.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/alert_code_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/audio_stream_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/drop_resttube_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/emmit_audio_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
-import 'package:video_player/video_player.dart';
+import 'package:soteriax/screens/home/engage_mission.dart';
+import 'package:soteriax/screens/home/main_menu.dart';
+import 'package:soteriax/services/webrtc_services.dart';
 
 class LiveOperations extends StatefulWidget {
   LiveOperations({required this.operationID});
   final String operationID;
 
-
   @override
   _LiveOperationsState createState() => _LiveOperationsState();
-
 }
 
-
-
 class _LiveOperationsState extends State<LiveOperations> {
-  final GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
-  late VideoPlayerController _videoPlayerController;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late WebRTCServices webRTC;
+  RTCVideoRenderer remoteRenderer=RTCVideoRenderer();
   int? type;
   late LiveOperationDBServices liveOpDB;
   Timer? operationPing;
-  bool waitingForOperationPing=false;
+  bool waitingForOperationPing = false;
 
-  void sendOperationPing(){
+  void sendOperationPing() {
     operationPing?.cancel();
-    operationPing=Timer.periodic(Duration(seconds: 10), (timer) async{
-      if(!waitingForOperationPing){
-       waitingForOperationPing=true;
-       liveOpDB.pingEngagement();
-       waitingForOperationPing=false;
+    operationPing = Timer.periodic(Duration(seconds: 10), (timer) async {
+      if (!waitingForOperationPing) {
+        waitingForOperationPing = true;
+        liveOpDB.pingEngagement();
+        waitingForOperationPing = false;
       }
     });
   }
@@ -48,34 +49,33 @@ class _LiveOperationsState extends State<LiveOperations> {
     super.deactivate();
   }
 
-
-
   @override
   void initState() {
     // TODO: implement initState
-    liveOpDB=LiveOperationDBServices(operationId: widget.operationID);
+    liveOpDB = LiveOperationDBServices(operationId: widget.operationID);
+    liveOpDB.setEngaged();
+    webRTC=WebRTCServices(operationId: widget.operationID, operationType: 'operation');
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    _videoPlayerController=VideoPlayerController.network(
-        'https://github.com/husseyhh/soteriaX_videos/raw/main/example_footage/soteriaX_trimmed_2.mp4'
-    )..initialize().then((_){
-      _videoPlayerController.play();
-      _videoPlayerController.setLooping(true);
-      setState(() {
 
-      });
+    remoteRenderer.initialize();
+    webRTC.onAddRemoteStream=((stream){
+      remoteRenderer.srcObject=stream;
+      setState(() {});
     });
+    webRTC.startConnection(remoteRenderer);
     sendOperationPing();
     super.initState();
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
+  void dispose() async{
     operationPing?.cancel();
+    await remoteRenderer.dispose();
+    await webRTC.endConnection();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -84,6 +84,7 @@ class _LiveOperationsState extends State<LiveOperations> {
     ]);
     super.dispose();
   }
+
   // final _formkey=GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -93,23 +94,64 @@ class _LiveOperationsState extends State<LiveOperations> {
     ]);
 
     // Widget dr=DropRTDrawer as Widget;
-    void showDrawerWithBtns(){
+    void showDrawerWithBtns() {
       _scaffoldKey.currentState!.openEndDrawer();
     }
 
-    void setType(int type){
+    void setType(int type) {
       setState(() {
-        this.type=type;
+        this.type = type;
       });
     }
+
     return Scaffold(
-      key: _scaffoldKey,
-      endDrawer: type==2 ? DropRTDrawer() : type==1 ? AudioStreamDrawer() : type==4 ? AlertCodeDrawer(operationId: "asdas",) : EmmitAudioDrawer(isEmmitSuccesful: true) ,
+        key: _scaffoldKey,
+        endDrawer: type == 2
+            ? DropRTDrawer(
+                operationId: widget.operationID,
+                operationType: 'live',
+              )
+            : type == 1
+                ? AudioStreamDrawer(
+                    operationId: widget.operationID,
+                    operationType: 'live',
+                  )
+                : type == 4
+                    ? AlertCodeDrawer(
+                        operationId: widget.operationID,
+                        operationType: 'live',
+                      )
+                    : EmmitAudioDrawer(
+                        isEmmitSuccesful: true,
+                        operationId: widget.operationID,
+                        operationType: 'live',
+                          ),
         appBar: AppBar(
-          leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back)),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back)),
           actions: [
-            Container(),
-            ],
+            Container(
+              child: PopupMenuButton<String>(
+                onSelected: (value) async {
+                  if (value == "ForceEnd") {
+                    await liveOpDB.forceEndOperation();
+                    Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MainMenu()));
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return [
+                    PopupMenuItem(
+                        value: "ForceEnd", child: Text("Force End Mission"))
+                  ];
+                },
+              ),
+            ),
+          ],
           elevation: 0.0,
           flexibleSpace: Container(
             decoration: BoxDecoration(
@@ -128,11 +170,11 @@ class _LiveOperationsState extends State<LiveOperations> {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width * 0.60,
-                color: Colors.black,
                 child: Column(
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                       height: 20,
                       width: double.infinity,
                       color: Colors.grey[300],
@@ -142,11 +184,8 @@ class _LiveOperationsState extends State<LiveOperations> {
                       ),
                     ),
                     Container(
-                      child: Center(
-                        child: _videoPlayerController.value.isInitialized ? AspectRatio(
-                          aspectRatio: _videoPlayerController.value.aspectRatio,
-                          child: VideoPlayer(_videoPlayerController),)
-                            : Container(),
+                      child: Expanded(
+                        child: RTCVideoView(remoteRenderer, objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,),
                       ),
                     )
                   ],
@@ -158,27 +197,135 @@ class _LiveOperationsState extends State<LiveOperations> {
                   width: MediaQuery.of(context).size.width * 0.40,
                   child: Column(
                     children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                        height: 25,
-                        width: double.infinity,
-                        color: Colors.red[300],
-                        child: Text(
-                          "Current Status: Reached Victim",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      OperationBtn(btnText: "EMMIT AUDIO", btnImage: "sound_icon", onClicked: showDrawerWithBtns, setType: setType, type: 3,),
-                      OperationBtn(btnText: "DROP REST-TUBE", btnImage: "lb_drop_icon", onClicked: showDrawerWithBtns, setType: setType, type: 2,),
-                      OperationBtn(btnText: "AUDIO STREAM", btnImage: "mic_icon", onClicked: showDrawerWithBtns, setType: setType, type: 1,),
-                      OperationBtn(btnText: "CONTACT HEAD \nLIFEGUARD", btnImage: "alarm_bulb_icon", onClicked: showDrawerWithBtns, setType: setType, type: 4,),
+                      StreamBuilder<DocumentSnapshot?>(
+                          stream: liveOpDB.getOperation,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Container();
+                            } else if (snapshot.hasData) {
+                              if (snapshot.data == null) {
+                                return Container(
+                                  child: Text("Something went wrong.. no data"),
+                                );
+                              } else {
+                                var operationStatus=snapshot.data!.get('operationStatus');
+                                var currentStage=snapshot.data!.get('currentStage');
+                                var currentStatus=snapshot.data!.get('currentStatus');
+                                if (operationStatus=='live') {
+                                  if(currentStage<5){
+                                    return Column(
+                                      children: [
+                                        Container(
+                                          padding:
+                                          EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                          height: 25,
+                                          width: double.infinity,
+                                          color: Colors.red[300],
+                                          child: Text(
+                                            "Current Status: $currentStatus",
+                                            style: TextStyle(
+                                                color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        if(currentStage==4)
+                                          MaterialButton(
+                                            onPressed: () async {
+                                              await liveOpDB.endOperation();
+                                            },
+                                            color: Colors.red[800],
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.circular(10)),
+                                            child: Text("End Mission", style: TextStyle(color: Colors.white),),
+                                          ),
+                                        OperationBtn(
+                                          btnText: "EMMIT AUDIO",
+                                          btnImage: "sound_icon",
+                                          onClicked: showDrawerWithBtns,
+                                          setType: setType,
+                                          type: 3,
+                                        ),
+                                        OperationBtn(
+                                          btnText: "DROP REST-TUBE",
+                                          btnImage: "lb_drop_icon",
+                                          onClicked: showDrawerWithBtns,
+                                          setType: setType,
+                                          type: 2,
+                                        ),
+                                        OperationBtn(
+                                          btnText: "AUDIO STREAM",
+                                          btnImage: "mic_icon",
+                                          onClicked: showDrawerWithBtns,
+                                          setType: setType,
+                                          type: 1,
+                                        ),
+                                        OperationBtn(
+                                          btnText: "CONTACT HEAD \nLIFEGUARD",
+                                          btnImage: "alarm_bulb_icon",
+                                          onClicked: showDrawerWithBtns,
+                                          setType: setType,
+                                          type: 4,
+                                        ),
+                                      ],
+                                    );
+                                  }else{ //mission completed recording stages 6, 7
+                                    return Column(
+                                      children: [
+                                        Container(
+                                          padding:
+                                          EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                          height: 25,
+                                          width: double.infinity,
+                                          color: Colors.red[300],
+                                          child: Text(
+                                            "Current Status: $currentStatus",
+                                            style: TextStyle(
+                                                color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Container(child: Text("Recorded Operation Video is being uploaded")),
+                                      ],
+                                    );
+                                  }
+                                } else { //mission has somehow ended
+                                  return Column(
+                                    children: [
+                                      Container(
+                                        padding:
+                                        EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                        height: 25,
+                                        width: double.infinity,
+                                        color: Colors.red[300],
+                                        child: Text(
+                                          "Current Status: $currentStatus",
+                                          style: TextStyle(
+                                              color: Colors.white, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Container(child: Text("Operation has been ended")),
+                                      MaterialButton(
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>EngageMission()));
+                                        },
+                                        color: Colors.red[800],
+                                        child: Text('Back', style: TextStyle(color: Colors.white),),
+                                      ),
+                                    ],
+                                  );
+                                }
+                              }
+                            } else {
+                              return Container(child: Text("No data to display"),);
+                            }
+                          }),
                     ],
                   ),
                 ),
               ),
             ],
           ),
-        )
-    );
+        ));
   }
 }

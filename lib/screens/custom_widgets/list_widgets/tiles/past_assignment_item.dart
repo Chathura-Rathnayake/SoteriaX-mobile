@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:soteriax/screens/home/past_assignment_report.dart';
 
 class PastAssignmentItem extends StatelessWidget {
-  PastAssignmentItem({this.date, this.time, this.roleNo, this.assignmentId}){
+  PastAssignmentItem({this.date, this.time, this.roleNo,required this.assignmentId}){
     if(roleNo!=null){
       switch(roleNo){
         case 0:
@@ -20,7 +21,7 @@ class PastAssignmentItem extends StatelessWidget {
   String? time;
   int? roleNo;
   String? role;
-  String? assignmentId;
+  String assignmentId;
   String? image;
 
 
@@ -34,13 +35,15 @@ class PastAssignmentItem extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
           child: MaterialButton(
-            onPressed: (){},
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>PastAssignmentReport(assignmentId: assignmentId,)));
+            },
             child: ListTile(
               leading: Image(
                 image: AssetImage('assets/icons/assignment_checked.png'),
               ),
               title: Text("Date: ${date ?? "Unknown"} |\nTime: ${time ?? "Unknown"} |\nRole: ${role ?? "Unknown"}\n", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-              subtitle: Text("Assignment Id: ${assignmentId ?? "Unknown"}", style: TextStyle(fontSize: 12),),
+              subtitle: Text("Assignment Id: ${assignmentId}", style: TextStyle(fontSize: 12),),
             ),
           ),
         ),

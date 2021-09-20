@@ -1,15 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:soteriax/database/training_operations_database_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class CounterTile extends StatefulWidget {
-  CounterTile({this.tileImage, this.tileText, this.onClicked, this.setType, this.type, this.height, required this.stopWatchTimer});
+  CounterTile({this.tileImage, this.tileText, this.onClicked, this.setType, this.type, this.height, required this.stopWatchTimer, required this.trainingOperationId});
   String? tileImage;
   String? tileText;
   int? type=0;
   Function? onClicked;
   Function? setType;
   double? height;
+  String trainingOperationId;
   StopWatchTimer stopWatchTimer;
 
 
@@ -22,21 +24,15 @@ class _CounterTileState extends State<CounterTile> {
   bool _isHours=false;
   bool started=false;
 
-  final StopWatchTimer _stopWatchTimer=StopWatchTimer(
-    mode: StopWatchMode.countUp,
-    onChangeRawSecond: (val)=> print('onChangedRawSecond: $val'),
-  );
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     widget.stopWatchTimer.secondTime.listen((val)=>print('secondTime: $val'));
   }
 
   @override
   void dispose() async {
-    // TODO: implement dispose
     super.dispose();
     await widget.stopWatchTimer.dispose();
   }
@@ -61,6 +57,14 @@ class _CounterTileState extends State<CounterTile> {
           initialData: widget.stopWatchTimer.rawTime.value,
           builder: (context, snap){
             final value=snap.data!;
+            if(!started){
+              if(value>0){
+                print('restarted stopwatch'); //automatically restart of continuing after a network error so the previously recorded times wont be affected
+                widget.stopWatchTimer.onExecute
+                    .add(StopWatchExecute.start);
+                started=true;
+              }
+            }
             final displayTime=StopWatchTimer.getDisplayTime(value, hours: _isHours);
             return ListTile(
               leading: Image(
@@ -70,7 +74,7 @@ class _CounterTileState extends State<CounterTile> {
               subtitle:  !started ? Text('Start training'):Text('Recorded Times'),
               trailing: started ? IconButton(
                 onPressed: (){
-                  widget.stopWatchTimer.onExecute.add(StopWatchExecute.lap);
+                  // widget.stopWatchTimer.onExecute.add(StopWatchExecute.lap);
                   widget.setType!(widget.type);
                   widget.onClicked!();
                 },
@@ -81,13 +85,17 @@ class _CounterTileState extends State<CounterTile> {
                 ),
               ) : IconButton(
                   icon: Icon(Icons.not_started, color: Colors.green[300],),
-                  onPressed: (){
+                  onPressed: () async{
                     if(!started){
-                      widget.stopWatchTimer.onExecute
-                          .add(StopWatchExecute.start);
-                      setState(() {
-                        started=true;
-                      });
+                      bool wasInitiated=await TrainingOperationsDBServices(operationId: widget.trainingOperationId).
+                          initiateOperation(widget.stopWatchTimer.rawTime.value);
+                      if(wasInitiated){
+                        widget.stopWatchTimer.onExecute
+                            .add(StopWatchExecute.start);
+                        setState(() {
+                          started=true;
+                        });
+                      }
                     }
                   }
               ),

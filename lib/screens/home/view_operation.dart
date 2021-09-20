@@ -14,6 +14,7 @@ import 'package:soteriax/screens/home/main_menu.dart';
 import 'package:soteriax/screens/home/viewOp/no_current_operation.dart';
 import 'package:soteriax/screens/home/viewOp/waiting_operation_response.dart';
 import 'package:soteriax/screens/shared/timeline.dart';
+import 'package:soteriax/services/webrtc_services.dart';
 import 'package:video_player/video_player.dart';
 
 
@@ -27,112 +28,43 @@ class ViewOperation extends StatefulWidget {
 class _ViewOperationState extends State<ViewOperation> {
   final _remoteRenderer=new RTCVideoRenderer();
   final _localRenderer=new RTCVideoRenderer();
-  late VideoPlayerController _videoPlayerController;
   late Future<Map?> _currentLiveOp;
-  RTCPeerConnection? _peerConnection;
   MediaStream? remoteStream;
   MediaStream? _localStream;
+  late WebRTCServices webRTCServices;
 
   void initRenderers() async{
     // await _localRenderer.initialize();
     await _remoteRenderer.initialize();
   }
 
-  Future<RTCPeerConnection> _createPeerConnection(String missionId, String missionType) async{
-
-    Map<String, dynamic> configuration = {
-      'iceServers': [
-        {'url': 'stun:stun1.l.google.com:19302'},
-        {'url': 'stun:stun2.l.google.com:19302'},
-        {'url': "stun:stun.stunprotocol.org:3478"},
-        {'url': "stun:stun1.l.google.com:19302"},
-        {'url': "stun:stun2.l.google.com:19302"},
-        {'url': "stun:stun3.l.google.com:19302"},
-        {'url': "stun:stun4.l.google.com:19302"},
-      ],
-      'sdpSemantics': 'unified-plan'
-    };
-
-    final Map<String,dynamic> offerSdpConstraints={
-      'mandatory':{
-        'OfferToReceiveAudio':false,
-        'OfferToReceiveVideo': true,
-      },
-      'optional':[],
-    };
-    RTCPeerConnection peerConnection=await createPeerConnection(configuration, offerSdpConstraints);
-    // peerConnection.onTrack=handleTrackEvent;
-    peerConnection.onRenegotiationNeeded=()=>handleNegotiationNeededEvent(peerConnection, missionId, missionType);
-    peerConnection.onConnectionState=(con)=>{print("on Connection State: $con")};
-    peerConnection.onAddStream=(stream){
-      print('here on add stream: ${stream.id}');
-      _remoteRenderer.srcObject=stream;
-      print('Stream on add track: $stream');
-      print('srcpbject on add track: ${_remoteRenderer.srcObject}');
-      setState(() {});
-    };
-
-
-    return peerConnection;
-
-  }
-
-
-
-  void handleNegotiationNeededEvent(RTCPeerConnection peer, String missionId, String missionType) async{
-    RTCSessionDescription offer=await peer.createOffer();
-    await peer.setLocalDescription(offer);
-    var d=await peer.getLocalDescription();
-    Map<String, dynamic> payLoad={
-      'sdp': jsonEncode(d!.toMap()),
-      'missionType': missionType,
-      'missionId': missionId,
-    };
-    var url=Uri.parse("http://192.168.43.5:5000/consumer");
-    http.Response uriResponse=await http.post(url, body: payLoad);
-    print(jsonDecode(uriResponse.body)['sdp']['type']);
-    RTCSessionDescription description=RTCSessionDescription(jsonDecode(uriResponse.body)['sdp']['sdp'], jsonDecode(uriResponse.body)['sdp']['type']);
-    peer.setRemoteDescription(description).catchError((e)=>print('error: ${e.toString()}'));
-    var r=await peer.getRemoteDescription();
-    log('remote sdp: ${r!.sdp}');
-
-
-  }
-  void handleTrackEvent(RTCTrackEvent e){
-    print(e.streams[0]);
-    _remoteRenderer.srcObject=e.streams[0];
-    setState(() {});
-  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initRenderers();
+    // initRenderers();
     // initWebrtc();
+    _remoteRenderer.initialize();
+    webRTCServices=WebRTCServices(operationId: '', operationType: '');
+    webRTCServices.onAddRemoteStream=((stream){
+      _remoteRenderer.srcObject=stream;
+      setState(() {});
+    });
+    webRTCServices.startConnection(_remoteRenderer);
     _currentLiveOp=ViewOperationDBServices().getCurrentLiveOp();
   }
 
-  void initWebrtc(String missionId, String missionType)async{
-    RTCPeerConnection peer=await _createPeerConnection(missionId, missionType);
-    await peer.addTransceiver(kind: RTCRtpMediaType.RTCRtpMediaTypeVideo, init: RTCRtpTransceiverInit(direction: TransceiverDirection.RecvOnly));
-  }
 
   @override
   void dispose() async {
     // TODO: implement dispose
-    _remoteRenderer.dispose();
+    await _remoteRenderer.dispose();
+    await webRTCServices.endConnection();
     super.dispose();
-    // _remoteRenderer.dispose();
-
-    // _videoPlayerController.dispose();
-    // _localStream?.dispose();
   }
 
-
-
-  // disconnect
-
+  
 
   _getUserMedia() async {
     print('getusermeadia');
@@ -172,7 +104,6 @@ class _ViewOperationState extends State<ViewOperation> {
                   print("hera");
                   print(snapshot.data!["currentOp"].id);
                   print(snapshot.data!['currentOp'].data().toString());
-                  initWebrtc(snapshot.data!["currentOp"].id, snapshot.data!['opFlag'] == 'live' ? 'operation' : 'training' );
                   return Scaffold(
                     key: _scaffoldKey,
                     drawer: Drawer(
