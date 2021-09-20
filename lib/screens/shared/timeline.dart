@@ -252,6 +252,8 @@ class _BrezierPainter extends CustomPainter {
     'Rest-Tube \nDropped',
     'Lifeguard \nReached',
     'Mission \nCompleted',
+    'Video being \nUploaded',
+    'Mission \nEnded'
   ];
 
 

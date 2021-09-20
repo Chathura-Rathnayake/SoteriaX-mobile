@@ -24,9 +24,13 @@ class WebRTCServices{
     ]
   };
 
+  WebRTCServices({required this.operationId,required this.operationType});
+
   RTCPeerConnection? peerConnection;
   MediaStream? remoteStream;
   StreamStateCallback? onAddRemoteStream;
+  String operationId;
+  String operationType;
 
   void startConnection(RTCVideoRenderer remoteRenderer) async{
     peerConnection=await createPeerConnection(configuration);
@@ -39,8 +43,8 @@ class WebRTCServices{
     var d=await peerConnection!.getLocalDescription();
     Map<String, dynamic> payLoad={
       'sdp': jsonEncode(d!.toMap()),
-      'missionType': 'operation',
-      'missionId': 'JvUvMTG1U6N5thjQcztI',
+      'missionType': operationType,
+      'missionId': operationId,
     };
 
     log('payload: $payLoad');

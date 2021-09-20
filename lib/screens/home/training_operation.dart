@@ -15,6 +15,8 @@ import 'package:soteriax/screens/home/training_overview.dart';
 import 'package:soteriax/services/webrtc_services.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
+import 'main_menu.dart';
+
 class TrainingOperation extends StatefulWidget {
   TrainingOperation({required this.trainingOpId, this.startTime});
   final String trainingOpId;
@@ -27,7 +29,7 @@ class TrainingOperation extends StatefulWidget {
 class _TrainingOperationState extends State<TrainingOperation> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int? type;
-  WebRTCServices webRTCServices = WebRTCServices();
+  late WebRTCServices webRTCServices;
   RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   Timer? stopWatchTimeStampTimer;
   bool isWaitingStopWatchPing = false;
@@ -78,6 +80,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
   @override
   void initState() {
     trainingOpDB=TrainingOperationsDBServices(operationId: widget.trainingOpId);
+    webRTCServices = WebRTCServices(operationId: widget.trainingOpId, operationType: 'training');
     print('training op id: ${widget.trainingOpId}');
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -97,7 +100,6 @@ class _TrainingOperationState extends State<TrainingOperation> {
 
   @override
   void deactivate() {
-    // TODO: implement deactivate
     super.deactivate();
     stopWatchTimeStampTimer?.cancel();
   }
@@ -162,7 +164,24 @@ class _TrainingOperationState extends State<TrainingOperation> {
           icon: Icon(Icons.arrow_back),
         ),
         actions: [
-          Container(),
+          Container(
+            child: PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == "ForceEnd") {
+                await trainingOpDB.forceEndOperation(_stopWatchTimer.rawTime.value);
+                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainMenu()));
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                    value: "ForceEnd", child: Text("Force End Mission"))
+              ];
+            },
+          ),
+          ),
         ],
         title: Text("Training Operation"),
         elevation: 0.0,
@@ -218,7 +237,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
                           if(snapshot.data!=null){
                             var operationStatus=snapshot.data!.get("operationStatus");
                             var currentStage=snapshot.data!.get("currentStage");
-                            if(operationStatus=='pending'){
+                            if(operationStatus=='pending'){ //hasn't been initiated  yet
                               return Column(
                                 children: [
                                   Container(
@@ -243,8 +262,8 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                   Container(child: Text("Please start the training operation"),),
                                 ],
                               );
-                            }else if(operationStatus=='live'){
-                              if(currentStage<5){
+                            }else if(operationStatus=='live'){ //live ongoing
+                              if(currentStage<5){  //ongoing
                                 return Column(
                                   children: [
                                     Container(
@@ -309,7 +328,10 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                     ),
                                   ],
                                 );
-                              }else{
+                              }else{ //being uploaded
+                                if(_stopWatchTimer.isRunning){
+                                  _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                                }
                                 return Column(
                                   children: [
                                     Container(
@@ -336,7 +358,9 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                 );
                               }
                             }else{
-                              _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                              if(_stopWatchTimer.isRunning){
+                                _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                              }
                               return Column(
                                 children: [
                                   Container(
@@ -363,11 +387,20 @@ class _TrainingOperationState extends State<TrainingOperation> {
                               );
                             }
                           }else{
+                            if(_stopWatchTimer.isRunning){
+                              _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                            }
                             return Container(child: Text("Training operation has been removed"),);
                           }
                         }else if(snapshot.hasError){
+                          if(_stopWatchTimer.isRunning){
+                            _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                          }
                           return Container(child: Text("Error occurred while retrieving data"),);
                         }else{
+                          if(_stopWatchTimer.isRunning){
+                            _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                          }
                           return Container(child: Text("No training data"),);
                         }
                       }

@@ -12,4 +12,12 @@ class PastAssignmentDB{
         .orderBy('dateTime').snapshots();
   }
 
+  Future<DocumentSnapshot?> getPastAssignment(String assignmentId) async{
+    DocumentSnapshot? assignment=await trainingOperations.doc(assignmentId).get().then((DocumentSnapshot assignment){
+      return assignment;
+    });
+
+    return assignment;
+  }
+
 }

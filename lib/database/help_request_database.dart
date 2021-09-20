@@ -52,10 +52,11 @@ class HelpRequestDBServices {
             "viewed": 0,
             "date": formatted,
             "accountType": '${designation}',
-            "companyID": '${lifeguardSingleton.company.companyId}',
-            "companyName": '${lifeguardSingleton.company.companyName}',
-          })
-          .then((value) => print(value.id))
+            "companyID":'${lifeguardSingleton.company.companyId}',
+            "companyName":'${lifeguardSingleton.company.companyName}',
+            "userID":'${lifeguardSingleton.uid}',
+          }
+      ).then((value) => print(value.id))
           .catchError((e) => print(e.toString()));
     } else {
       return suggestion
@@ -68,10 +69,11 @@ class HelpRequestDBServices {
             "viewed": 0,
             "date": formatted,
             "accountType": '${designation}',
-            "companyID": '${lifeguardSingleton.company.companyId}',
-            "companyName": '${lifeguardSingleton.company.companyName}',
-          })
-          .then((value) => print(value.id))
+            "companyID":'${lifeguardSingleton.company.companyId}',
+            "companyName":'${lifeguardSingleton.company.companyName}',
+            "userID":'${lifeguardSingleton.uid}',
+          }
+      ).then((value) => print(value.id))
           .catchError((e) => print(e.toString()));
     }
   }
