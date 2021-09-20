@@ -59,12 +59,12 @@ class _ViewOperationState extends State<ViewOperation> {
   @override
   void dispose() async {
     // TODO: implement dispose
+    super.dispose();
     await _remoteRenderer.dispose();
     await webRTCServices.endConnection();
-    super.dispose();
   }
 
-  
+
 
   _getUserMedia() async {
     print('getusermeadia');
