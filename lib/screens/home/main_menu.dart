@@ -370,6 +370,80 @@ class _MainMenuState extends State<MainMenu> {
                         ),
                       )),
                     ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      child: (MaterialButton(
+                        onPressed: () async {
+                          await _auth.signOut();
+                        },
+                        height: 20,
+                        minWidth: 20,
+                        elevation: 10,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Container(
+                          child: Column(children: <Widget>[
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Image(
+                              image: AssetImage('assets/icons/user.png'),
+                              width: 300,
+                              height: 70,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              'Logout',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ]),
+                        ),
+                      )),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      child: (MaterialButton(
+                        onPressed: () async {
+                          await _auth.signOut();
+                        },
+                        height: 20,
+                        minWidth: 20,
+                        elevation: 10,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Container(
+                          child: Column(children: <Widget>[
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Image(
+                              image: AssetImage('assets/icons/log-out.png'),
+                              width: 300,
+                              height: 70,
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              'Logout',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ]),
+                        ),
+                      )),
+                    )
                   ],
                 ),
               ),
