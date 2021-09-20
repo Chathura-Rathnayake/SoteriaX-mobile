@@ -55,22 +55,6 @@ class _AlertCodeDrawerState extends State<AlertCodeDrawer> {
                 padding: const EdgeInsets.symmetric(horizontal: 1.0),
                 child: Container(
                   child: Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            hintText: "Search Codes...",
-                            prefixIcon: Icon(Icons.search),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            )),
-                        validator: (val) =>
-                            val == '' ? 'Please type in your email' : null,
-                        onChanged: (val) {
-                          searchCode = val;
-                        },
-                      ),
-                    ),
                     CodeTile(
                         codeName: "DRONE FAILURE",
                         code: "001",
