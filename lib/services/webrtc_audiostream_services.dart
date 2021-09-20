@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
+import 'package:soteriax/models/lifeguardSingleton.dart';
 
 class WebRTCAudioStream{
   Map<String,dynamic> configuration={
@@ -24,6 +25,8 @@ class WebRTCAudioStream{
 
   MediaStream? localStream;
   RTCPeerConnection? peerConnection;
+  bool muted=true;
+  bool connected=false;
 
   void startAudioStream() async{
     try {
@@ -33,6 +36,10 @@ class WebRTCAudioStream{
       localStream!.getTracks().forEach((track) {
         peerConnection!.addTrack(track, localStream!);
       });
+      localStream!.getTracks().forEach((track) {
+        track.enabled=true;
+      });
+      muted=false;
     } on Exception catch (e) {
       print('error occurred while audio transmission: ${e.toString()}');
     }
@@ -48,23 +55,45 @@ class WebRTCAudioStream{
     };
     
     log('audio payload: $payLoad');
-    var url=Uri.parse('http://192.168.43.5:5000/audioBroadcaster');
+    var url=Uri.parse('http://${LifeguardSingleton().company.staticIP}:5000/audioBroadcaster');
     http.Response uriResponse=await http.post(url, body: payLoad);
 
     RTCSessionDescription description=RTCSessionDescription(jsonDecode(uriResponse.body)['sdp']['sdp'], jsonDecode(uriResponse.body)['sdp']['type']);
     peerConnection!.setRemoteDescription(description);
+    this.connected=true;
     
   }
 
+  void muteAudioStream(){
+    if(connected){
+      var tracks=localStream!.getTracks();
+      tracks.forEach((track) {
+        track.enabled=false;
+      });
+      this.muted=true;
+    }
+  }
+
+
   void stopAudioStream(){
     var tracks=localStream!.getTracks();
-    
     tracks.forEach((track) {
       track.stop();
     });
-    // localStream!.dispose();
+    localStream!.dispose();
     peerConnection!.close();
   }
+
+  void unMuteAudioStream(){
+    var tracks=localStream!.getTracks();
+
+    tracks.forEach((track) {
+      track.enabled=true;
+    });
+    this.muted=false;
+  }
+
+
 
 
 

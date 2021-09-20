@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
+import 'package:soteriax/models/lifeguardSingleton.dart';
 
 typedef void StreamStateCallback(MediaStream stream);
 
@@ -48,7 +49,7 @@ class WebRTCServices{
     };
 
     log('payload: $payLoad');
-    var url=Uri.parse("http://192.168.43.5:5000/consumer");
+    var url=Uri.parse("http://${LifeguardSingleton().company.staticIP}:5000/consumer");
     http.Response uriResponse=await http.post(url, body: payLoad);
 
     peerConnection?.onTrack = (RTCTrackEvent event) {
