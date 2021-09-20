@@ -7,7 +7,6 @@ import 'package:soteriax/database/operations_database_services.dart';
 import 'package:soteriax/database/training_operations_database_services.dart';
 import 'package:soteriax/models/lifeguard.dart';
 import 'package:soteriax/screens/initialization/init_loading.dart';
-import 'package:soteriax/services/raspberryPi/drop_package.dart';
 
 class Lock extends StatefulWidget {
   @override
@@ -15,7 +14,7 @@ class Lock extends StatefulWidget {
 }
 
 class _LockState extends State<Lock> {
-  DropPackageRPI lock = DropPackageRPI();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -50,51 +49,27 @@ class _LockState extends State<Lock> {
         ),
         body: SafeArea(
           child: Container(
-            width: double.infinity,
-            margin: EdgeInsets.all(0),
-            color: Colors.white,
-            child: Container(
-              child: Column(
-                children: [
-                  Card(
-                    elevation: 0,
-                    margin: EdgeInsets.zero,
-                    child: Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.all(0),
-                        height: 80,
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.8),
-                                spreadRadius: 3,
-                                blurRadius: 3,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.orange.shade700,
-                                  Colors.orange.shade600,
-                                  // Colors.orange.shade400
-                                ]),
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(120),
-                            )),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              'Re-arming',
-                              style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+          width: double.infinity,
+          margin: EdgeInsets.all(0),
+          color: Colors.white,
+          child: Container(
+            child: Column(
+              children: [
+                Card(
+                  elevation: 0,
+                  margin: EdgeInsets.zero,
+                  child: Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.all(0),
+                      height: 80,
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.8),
+                              spreadRadius: 3,
+                              blurRadius: 3,
+                              offset: Offset(0,
+                                  3), // changes position of shadow
                             ),
                           ],
                           gradient: LinearGradient(
@@ -285,6 +260,7 @@ class _LockState extends State<Lock> {
               ],
             ),
           ),
-        ));
+        ),
+      ));
   }
 }
