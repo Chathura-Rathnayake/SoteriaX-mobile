@@ -15,7 +15,6 @@ import 'package:soteriax/screens/home/viewOp/no_current_operation.dart';
 import 'package:soteriax/screens/home/viewOp/waiting_operation_response.dart';
 import 'package:soteriax/screens/shared/timeline.dart';
 import 'package:soteriax/services/webrtc_services.dart';
-import 'package:video_player/video_player.dart';
 
 
 class ViewOperation extends StatefulWidget {
@@ -160,6 +159,7 @@ class _ViewOperationState extends State<ViewOperation> {
                                 stream: snapshot.data!["opFlag"]=="live" ? ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentLiveOpdata : ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentTrainingOpdata,
                                 builder: (context, snap){
                                   if(snap.hasData){
+                                    print(Timestamp.now().millisecondsSinceEpoch-snap.data!.get("engagementPing").millisecondsSinceEpoch);
                                     if (snap.data!.get("operationStatus")!="live") {
                                       return Container(
                                         padding: EdgeInsets.only(top: 5),
@@ -173,6 +173,7 @@ class _ViewOperationState extends State<ViewOperation> {
                                             MaterialButton(
                                               color: Colors.red.shade900,
                                               onPressed: () {
+                                                Navigator.pop(context);
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -208,15 +209,11 @@ class _ViewOperationState extends State<ViewOperation> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Text("Start Time: 01:32 PM"),
+                                  child: Text("Start Date: ${snapshot.data!['currentOp'].get("startDate")}"),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Text("Drone Pilot: Susantha perera"),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Text("Mobile Handler: Amal Dassanayake"),
+                                  child: Text("Start Time: ${snapshot.data!['currentOp'].get("startTime")}"),
                                 ),
                               ],
                             )
