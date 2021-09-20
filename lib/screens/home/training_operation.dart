@@ -9,6 +9,7 @@ import 'package:soteriax/screens/custom_widgets/drawer_widgets/alert_code_drawer
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/audio_stream_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/drop_resttube_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/emmit_audio_drawer.dart';
+import 'package:soteriax/screens/custom_widgets/drawer_widgets/flash_light_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/training_timelap_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
 import 'package:soteriax/screens/home/training_overview.dart';
@@ -154,12 +155,14 @@ class _TrainingOperationState extends State<TrainingOperation> {
                           operationId: widget.trainingOpId,
                           stopWatchTimer: _stopWatchTimer,
                         )
-                      : EmmitAudioDrawer(
-                          isEmmitSuccesful: true,
-                          operationId: widget.trainingOpId,
-                          operationType: 'training',
-                          stopWatchTimer: _stopWatchTimer,
-                            ),
+                    : type == 6
+                      ? FlashLightDrawer()
+                        : EmmitAudioDrawer(
+                            isEmmitSuccesful: true,
+                            operationId: widget.trainingOpId,
+                            operationType: 'training',
+                            stopWatchTimer: _stopWatchTimer,
+                              ),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -304,7 +307,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                         child: Text("End Mission", style: TextStyle(color: Colors.white),),
                                       ),
                                     OperationBtn(
-                                      btnText: "EMMIT AUDIO",
+                                      btnText: "EMMIT SIREN",
                                       btnImage: "sound_icon",
                                       onClicked: showDrawerWithBtns,
                                       setType: setType,
@@ -322,6 +325,13 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                       onClicked: showDrawerWithBtns,
                                       setType: setType,
                                       type: 1,
+                                    ),
+                                    OperationBtn(
+                                      btnText: "FLASH LIGHT",
+                                      btnImage: "torch",
+                                      onClicked: showDrawerWithBtns,
+                                      setType: setType,
+                                      type: 6,
                                     ),
                                     OperationBtn(
                                       btnText: "CONTACT HEAD \nLIFEGUARD",

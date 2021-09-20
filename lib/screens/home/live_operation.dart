@@ -9,6 +9,7 @@ import 'package:soteriax/screens/custom_widgets/drawer_widgets/alert_code_drawer
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/audio_stream_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/drop_resttube_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/drawer_widgets/emmit_audio_drawer.dart';
+import 'package:soteriax/screens/custom_widgets/drawer_widgets/flash_light_drawer.dart';
 import 'package:soteriax/screens/custom_widgets/operation_btn.dart';
 import 'package:soteriax/screens/home/engage_mission.dart';
 import 'package:soteriax/screens/home/main_menu.dart';
@@ -35,7 +36,7 @@ class _LiveOperationsState extends State<LiveOperations> {
 
   void sendOperationPing() {
     operationPing?.cancel();
-    operationPing = Timer.periodic(Duration(seconds: 10), (timer) async {
+    operationPing = Timer.periodic(Duration(seconds: 5), (timer) async {
       if (!waitingForOperationPing) {
         waitingForOperationPing = true;
         liveOpDB.pingEngagement();
@@ -125,6 +126,8 @@ class _LiveOperationsState extends State<LiveOperations> {
                         operationId: widget.operationID,
                         operationType: 'live',
                       )
+                  : type == 6
+                      ? FlashLightDrawer()
                     : EmmitAudioDrawer(
                         isEmmitSuccesful: true,
                         operationId: widget.operationID,
@@ -243,7 +246,7 @@ class _LiveOperationsState extends State<LiveOperations> {
                                             child: Text("End Mission", style: TextStyle(color: Colors.white),),
                                           ),
                                         OperationBtn(
-                                          btnText: "EMMIT AUDIO",
+                                          btnText: "EMMIT SIREN",
                                           btnImage: "sound_icon",
                                           onClicked: showDrawerWithBtns,
                                           setType: setType,
@@ -262,6 +265,13 @@ class _LiveOperationsState extends State<LiveOperations> {
                                           onClicked: showDrawerWithBtns,
                                           setType: setType,
                                           type: 1,
+                                        ),
+                                        OperationBtn(
+                                          btnText: "FLASH LIGHT",
+                                          btnImage: "torch",
+                                          onClicked: showDrawerWithBtns,
+                                          setType: setType,
+                                          type: 6,
                                         ),
                                         OperationBtn(
                                           btnText: "CONTACT HEAD \nLIFEGUARD",
