@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:soteriax/database/help_request_database.dart';
+import 'package:soteriax/screens/home/view_complaints.dart';
+import 'package:soteriax/screens/home/view_helprequests.dart';
 import 'package:soteriax/screens/home/view_suggestions.dart';
 
 class helpRequest extends StatefulWidget {
@@ -147,6 +149,7 @@ class _helpRequestState extends State<helpRequest> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
+                SizedBox(height: 20,),
                 MaterialButton(onPressed: (){
                   Navigator.push(
                   context,
@@ -156,13 +159,48 @@ class _helpRequestState extends State<helpRequest> {
                   child: Text("View Suggestions",
                     style: TextStyle(color: Colors.white,fontSize: 20,),
                   ),
-                  height: 20,
+                  height: 50,
                   minWidth: double.maxFinite,
                   color: Colors.orange.shade800,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
+                SizedBox(height: 20,),
+                MaterialButton(onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ViewComplaints()),
+                  );
+                },
+                  child: Text("View Complaints",
+                    style: TextStyle(color: Colors.white,fontSize: 20,),
+                  ),
+                  height: 50,
+                  minWidth: double.maxFinite,
+                  color: Colors.orange.shade800,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                SizedBox(height: 20,),
+                MaterialButton(onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ViewHelpRequests()),
+                  );
+                },
+                  child: Text("View Help Requests",
+                    style: TextStyle(color: Colors.white,fontSize: 20,),
+                  ),
+                  height: 50,
+                  minWidth: double.maxFinite,
+                  color: Colors.orange.shade800,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                SizedBox(height: 20,),
               ]),
             ),
           ),
