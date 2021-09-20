@@ -41,7 +41,7 @@ class Lifeguard{
   @override
   String toString() {
     // TODO: implement toString
-    return '{"uid": "$uid","firstName": "$firstname", "lastName": "$lastname", "email": "$email", "certificateLevel": "$certificateLevel", "gender": "$gender"'
+    return '{"uid": "$uid","firstName": "$firstname", "lastName": "$lastname", "email": "$email", "certificateLevel": "$certificateLevel", "gender": "$gender",'
         ' "birthDate": "$birthDate", "noOfOperations": $noOfOperations, "isPilot": $isPilot,"designation": "$designation", "company": ${company.toString()}}';
   }
 
