@@ -32,10 +32,12 @@ class LiveOperationDBServices {
   }
 
   Future<void> setEngaged() async {
+    print("setted");
     return operations
         .doc(operationId)
         .update({
           'isEngaged': true,
+          'engaged': true,
           'engagedLifeguard': {
             'userFlag': lifeguardSingleton.designation,
             'userId': lifeguardSingleton.uid

@@ -181,6 +181,7 @@ class _EngageMissionState extends State<EngageMission> {
                                             feedbackMessage="Something went wrong Couldn't create operation..";
                                           });
                                         }else{
+                                          _opDB.endExistingTrainingOps();
                                           Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations(operationID: opId,)));
                                         }
                                        },
@@ -202,6 +203,7 @@ class _EngageMissionState extends State<EngageMission> {
                                          feedbackMessage="Currently Engaged";
                                        }else{
                                          print('you can engage continuing engagement');
+                                         _opDB.endExistingTrainingOps();
                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>LiveOperations(operationID: operation['opId'])));
                                        }
                                      },

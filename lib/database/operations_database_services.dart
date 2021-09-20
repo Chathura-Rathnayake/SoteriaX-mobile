@@ -21,6 +21,7 @@ class OperationDatabaseService{
 
   final CollectionReference operations=FirebaseFirestore.instance.collection("operations");
   final CollectionReference headLifeguards=FirebaseFirestore.instance.collection("headLifeguards");
+  final CollectionReference trainingOperations=FirebaseFirestore.instance.collection("trainingOperations");
 
   DateTime now =new DateTime.now();
 
@@ -115,7 +116,7 @@ class OperationDatabaseService{
         print('Difference in seconds: ${diff.inSeconds}');
         print(snapshot.docs[0].get('engagementPing'));
         if(diff.inSeconds>30){
-          bool done=await operations.doc(snapshot.docs[0].id).update({'engaged': false}).
+          bool done=await operations.doc(snapshot.docs[0].id).update({'engaged': false, 'isEngaged': false}).
           then((value){
             print('disengaged');
             return true;
@@ -140,6 +141,16 @@ class OperationDatabaseService{
     });
 
     return rpiTimeStamp;
+  }
+  
+  Future<void> endExistingTrainingOps()async{
+    return trainingOperations.where("companyID", isEqualTo: lifeguardSingleton.company.companyId ).
+          where("operationStatus", isEqualTo: "live").get().then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((assignment) { 
+        trainingOperations.doc(assignment.id).update({'completed': true, 'operationStatus': 'ended'}).
+              then((value) => print("ended trainingOp")).onError((error, stackTrace) => print("error: $error"));
+      });
+    });
   }
 
 
