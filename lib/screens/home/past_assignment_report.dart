@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:soteriax/database/past_assignments_database_services.dart';
 import 'package:soteriax/screens/shared/display_timeline.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -32,7 +33,6 @@ class _PastAssignmentReportState extends State<PastAssignmentReport> {
     GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawer(child: DisplayTimeline()),
         appBar: AppBar(
           title: Text("Assignment Details"),
           backgroundColor: Colors.orange.shade700,
@@ -61,7 +61,7 @@ class _PastAssignmentReportState extends State<PastAssignmentReport> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SfCircularChart(
-                            title: ChartTitle(text: "Timing in training operation steps"),
+                            title: ChartTitle(text: "Timing in training operation steps", textStyle: TextStyle(fontWeight: FontWeight.bold)),
                             legend: Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
                             tooltipBehavior: _tooltipBehaviour,
                             series: <CircularSeries>[
@@ -75,53 +75,113 @@ class _PastAssignmentReportState extends State<PastAssignmentReport> {
                             ],
 
                           ),
-                          Row(
-                            children: [
-                              Text("Assignment Id: ${assignment.id}",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.clip,
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.id}",
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.code,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Assignment Id',
                               ),
-
-                            ],
+                            ),
                           ),
-                          SizedBox(height: 20,),
-                          Text("Title: ${assignment.get('title')}",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),SizedBox(height: 20,),
-                          Text("Summary: ${assignment.get('summary')}",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.get('title')}",
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.title,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Title',
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 20,),
-                          Text("Drone Pilot: ${assignment.get('participants')['dronePilotName']}",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.get('summary')}",
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.description,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Summary',
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 20,),
-                          Text("Package Handler: ${assignment.get('participants')['mobileHandelerName']}",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.get('participants')['dronePilotName']}",
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.flight_takeoff,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Drone Pilot',
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 20,),
-                          Text("Swimmer: ${assignment.get('participants')['swimmerName']}",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.get('participants')['mobileHandelerName']}",
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.send_to_mobile,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Package Handler',
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 20,),
-                          Text("Sea condition: ${assignment.get('seaCondition')}",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.get('participants')['swimmerName']}",
+                              decoration: InputDecoration(
+                                icon: Icon(FontAwesomeIcons.swimmer,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Swimmer',
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 20,),
-                          Text("Date: ${assignment.get('date')}",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.get('seaCondition')}",
+                              decoration: InputDecoration(
+                                icon: Icon(FontAwesomeIcons.cloud,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Sea condition',
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 20,),
-                          Text("Start time: ${assignment.get('startTime')}",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.get('date')}",
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.date_range_outlined,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Date',
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            child: TextFormField(
+                              readOnly: true,
+                              initialValue: "${assignment.get('startTime')}",
+                              decoration: InputDecoration(
+                                icon: Icon(Icons.timer,
+                                    size: 30, color: Colors.orange.shade900),
+                                labelText: 'Start Time',
+                              ),
+                            ),
                           ),
                         ],
                       ),
