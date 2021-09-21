@@ -23,7 +23,7 @@ class _ViewSuggestionsState extends State<ViewSuggestions> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange[800],
-        title: Text("All Help Requests"),
+        title: Text("All Suggestions"),
       ),
       body: Container(
         child: ViewSuggestionsList(),
