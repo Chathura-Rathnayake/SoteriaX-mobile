@@ -254,7 +254,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                     height: 25,
                                     color: Colors.red[300],
                                     child: Text(
-                                      "Current Status: ${snapshot.data!.get('currentStage')}",
+                                      "Current Status: ${snapshot.data!.get('currentStatus')}",
                                       style: TextStyle(
                                           color: Colors.white, fontWeight: FontWeight.bold),
                                     ),
@@ -355,10 +355,19 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                       height: 25,
                                       color: Colors.red[300],
                                       child: Text(
-                                        "Current Status: ${snapshot.data!.get('currentStage')}",
+                                        "Current Status: ${snapshot.data!.get('currentStatus')}",
                                         style: TextStyle(
                                             color: Colors.white, fontWeight: FontWeight.bold),
                                       ),
+                                    ),
+                                    MaterialButton(
+                                      onPressed: (){
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>TrainingOverview()));
+                                      },
+                                      color: Colors.red[800],
+                                      child: Text('Back', style: TextStyle(color: Colors.white),),
                                     ),
                                     CounterTile(
                                       onClicked: showDrawerWithBtns,
@@ -367,7 +376,10 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                       stopWatchTimer: _stopWatchTimer,
                                       trainingOperationId: widget.trainingOpId,
                                     ),
-                                    Container(child: Text("Training operation recording is being uploaded.."),),
+                                    if(snapshot.data!.get('currentStage')==6)
+                                      Container(child: Text("Training operation recording is being uploaded.."),),
+                                    if(snapshot.data!.get('currentStage')==7)
+                                      Container(child: Text("Training operation has successfully ended"),),
                                   ],
                                 );
                               }
@@ -384,7 +396,7 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                     height: 25,
                                     color: Colors.red[300],
                                     child: Text(
-                                      "Current Status: ${snapshot.data!.get('currentStage')}",
+                                      "Current Status: ${snapshot.data!.get('currentStatus')}",
                                       style: TextStyle(
                                           color: Colors.white, fontWeight: FontWeight.bold),
                                     ),

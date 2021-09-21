@@ -324,7 +324,7 @@ class _MainMenuState extends State<MainMenu> {
                               height: 15,
                             ),
                             Text(
-                              'Re-arm\n Module',
+                              'Rearming',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,

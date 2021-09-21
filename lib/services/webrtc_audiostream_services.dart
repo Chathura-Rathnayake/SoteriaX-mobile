@@ -6,6 +6,8 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:http/http.dart' as http;
 import 'package:soteriax/models/lifeguardSingleton.dart';
 
+typedef void ConnectionStateCallback(RTCPeerConnectionState state);
+
 class WebRTCAudioStream{
   Map<String,dynamic> configuration={
     'iceServers':[
@@ -27,9 +29,12 @@ class WebRTCAudioStream{
   RTCPeerConnection? peerConnection;
   bool muted=true;
   bool connected=false;
+  bool waiting=false;
+  ConnectionStateCallback? onConnectionStateCallback;
 
   void startAudioStream() async{
     try {
+      waiting=true;
       peerConnection= await createPeerConnection(configuration);
       peerConnection!.onRenegotiationNeeded=()=>handleAudioStreamReNegotiation();
       localStream=await navigator.mediaDevices.getUserMedia({'video': false, 'audio': true});
@@ -39,7 +44,9 @@ class WebRTCAudioStream{
       localStream!.getTracks().forEach((track) {
         track.enabled=true;
       });
-      muted=false;
+      peerConnection!.onConnectionState=(RTCPeerConnectionState state){
+        onConnectionStateCallback?.call(state);
+      };
     } on Exception catch (e) {
       print('error occurred while audio transmission: ${e.toString()}');
     }
@@ -61,6 +68,7 @@ class WebRTCAudioStream{
     RTCSessionDescription description=RTCSessionDescription(jsonDecode(uriResponse.body)['sdp']['sdp'], jsonDecode(uriResponse.body)['sdp']['type']);
     peerConnection!.setRemoteDescription(description);
     this.connected=true;
+    this.waiting=true;
     
   }
 
