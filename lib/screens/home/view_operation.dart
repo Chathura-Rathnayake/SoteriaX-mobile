@@ -159,7 +159,6 @@ class _ViewOperationState extends State<ViewOperation> {
                                 stream: snapshot.data!["opFlag"]=="live" ? ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentLiveOpdata : ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentTrainingOpdata,
                                 builder: (context, snap){
                                   if(snap.hasData){
-                                    print(Timestamp.now().millisecondsSinceEpoch-snap.data!.get("engagementPing").millisecondsSinceEpoch);
                                     if (snap.data!.get("operationStatus")!="live") {
                                       return Container(
                                         padding: EdgeInsets.only(top: 5),
@@ -209,7 +208,7 @@ class _ViewOperationState extends State<ViewOperation> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Text("Start Date: ${snapshot.data!['currentOp'].get("startDate")}"),
+                                  child: Text("Start Date: ${snapshot.data!['currentOp'].get("date")}"),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),

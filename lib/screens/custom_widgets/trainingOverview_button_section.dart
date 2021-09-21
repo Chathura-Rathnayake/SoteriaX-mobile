@@ -29,7 +29,7 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
       if(!waitingForRpiStatus){
         waitingForRpiStatus=true;
         int rpiLastOnlineTimestamp=await TrainingOperationsDBServices().getRPILastTimestamp();
-        if(Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp<5000){
+        if(Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp<25000){
           if(rpiStatus=='off-line'){
             setState(() {
               rpiStatus='live';

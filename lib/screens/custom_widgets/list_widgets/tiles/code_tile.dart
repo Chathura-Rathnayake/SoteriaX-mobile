@@ -44,13 +44,13 @@ class CodeTile extends StatelessWidget {
             if (endpoint == "0") {
               print("firebase call");
               if (codeName == "DRONE FAILURE") {
-                operationType == 'live '? _liveOpDB!.setCodes("100 : DRONE FAILURE") :  _trainingOpDB!.setCodes("100 : DRONE FAILURE");
+                operationType == 'live'? _liveOpDB!.setCodes("100 : DRONE FAILURE") :  _trainingOpDB!.setCodes("100 : DRONE FAILURE");
               } else if (codeName == "TECH FAILURE") {
-                operationType == 'live '? _liveOpDB!.setCodes("200 : TECH FAILURE") :  _trainingOpDB!.setCodes("200 : TECH FAILURE");
+                operationType == 'live'? _liveOpDB!.setCodes("200 : TECH FAILURE") :  _trainingOpDB!.setCodes("200 : TECH FAILURE");
               } else if (codeName == "LOW BATTERY") {
-                operationType == 'live '? _liveOpDB!.setCodes("300 : LOW BATTERY") :  _trainingOpDB!.setCodes("300 : LOW BATTERY");
+                operationType == 'live'? _liveOpDB!.setCodes("300 : LOW BATTERY") :  _trainingOpDB!.setCodes("300 : LOW BATTERY");
               } else if (codeName == "DROP PROBLEM") {
-                operationType == 'live '? _liveOpDB!.setCodes("400 : DROP PROBLEM") :  _trainingOpDB!.setCodes("400 : DROP PROBLEM");
+                operationType == 'live'? _liveOpDB!.setCodes("400 : DROP PROBLEM") :  _trainingOpDB!.setCodes("400 : DROP PROBLEM");
               }
 
               //Goes to firebase
