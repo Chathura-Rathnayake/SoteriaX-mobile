@@ -210,18 +210,6 @@ class _ProfilesState extends State<Profiles> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                              child: TextFormField(
-                                readOnly: true,
-                                initialValue: "${lifeguard!.noOfOperations}",
-                                decoration: InputDecoration(
-                                  icon: Icon(Icons.account_tree_outlined,
-                                      size: 30, color: Colors.orange.shade900),
-                                  labelText: 'Participated Operation count ',
-                                ),
-                              ),
-                            ),
                             SizedBox(
                               height: 10,
                             ),

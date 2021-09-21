@@ -64,7 +64,7 @@ class AuthService with ChangeNotifier{
       }
     }
     try{
-      UserCredential result=await _auth.signInWithEmailAndPassword(email: email, password: password);
+      UserCredential result=await _auth.signInWithEmailAndPassword(email: email.trim(), password: password.trim());
       if(userFlag=="l"){
         await UserDatabaseService(userId: result.user!.uid).getLifeguardData();
       }else{

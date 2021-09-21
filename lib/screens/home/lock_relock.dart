@@ -98,164 +98,160 @@ class _LockState extends State<Lock> {
                         ],
                       )),
                 ),
-                Column(
-                  children: [
-                    StreamBuilder<QuerySnapshot?>(
-                      stream: OperationDatabaseService().getLiveOperationData,
-                      builder: (context, snapshot) {
-                        if(snapshot.hasError){
-                          return Column(
-                            children: [
-                              SizedBox(height: 70,),
-                              Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
-                              SizedBox(height: 20,),
-                              Container(child: Text("Error occurred while connecting to Database", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),),
-                            ],
-                          );
-                        }else if(snapshot.hasData){
-                          if(snapshot.data!.size==0){
-                            return StreamBuilder<QuerySnapshot?>(
-                              stream: TrainingOperationsDBServices().getLiveTrainingOperationData,
-                              builder: (context, snapshot) {
-                               if(snapshot.hasError){
-                                 return Column(
-                                   children: [
-                                     SizedBox(height: 70,),
-                                     Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
-                                     SizedBox(height: 20,),
-                                     Container(child: Text("Error occurred while connecting to Database", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),),
-                                   ],
-                                 );
-                               }else if(snapshot.hasData){
-                                 if(snapshot.data!.size==0){
-                                   return Expanded(
-                                     child: GridView.count(
-                                       primary: false,
+                StreamBuilder<QuerySnapshot?>(
+                  stream: OperationDatabaseService().getLiveOperationData,
+                  builder: (context, snapshot) {
+                    if(snapshot.hasError){
+                      return Column(
+                        children: [
+                          SizedBox(height: 70,),
+                          Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
+                          SizedBox(height: 20,),
+                          Container(child: Text("Error occurred while connecting to Database", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),),
+                        ],
+                      );
+                    }else if(snapshot.hasData){
+                      if(snapshot.data!.size==0){
+                        return StreamBuilder<QuerySnapshot?>(
+                          stream: TrainingOperationsDBServices().getLiveTrainingOperationData,
+                          builder: (context, snapshot) {
+                           if(snapshot.hasError){
+                             return Column(
+                               children: [
+                                 SizedBox(height: 70,),
+                                 Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
+                                 SizedBox(height: 20,),
+                                 Container(child: Text("Error occurred while connecting to Database", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),),
+                               ],
+                             );
+                           }else if(snapshot.hasData){
+                             if(snapshot.data!.size==0){
+                               return Expanded(
+                                 child: GridView.count(
+                                   primary: false,
+                                   padding: const EdgeInsets.only(
+                                       top: 30, left: 80, right: 80, bottom: 10),
+                                   crossAxisSpacing: 0,
+                                   mainAxisSpacing: 20,
+                                   crossAxisCount: 1,
+                                   children: <Widget>[
+                                     Container(
                                        padding: const EdgeInsets.only(
-                                           top: 30, left: 80, right: 80, bottom: 10),
-                                       crossAxisSpacing: 0,
-                                       mainAxisSpacing: 20,
-                                       crossAxisCount: 1,
-                                       children: <Widget>[
-                                         Container(
-                                           padding: const EdgeInsets.only(
-                                               top: 0, left: 10, right: 10, bottom: 0),
-                                           child: (MaterialButton(
-                                             onPressed: () {},
-                                             height: 20,
-                                             minWidth: 20,
-                                             elevation: 10,
-                                             color: Colors.white,
-                                             shape: RoundedRectangleBorder(
-                                               borderRadius: BorderRadius.circular(10),
-                                             ),
-                                             child: Container(
-                                               child: Column(
-                                                   mainAxisAlignment: MainAxisAlignment.center,
-                                                   children: <Widget>[
-                                                     Image(
-                                                       image: AssetImage(
-                                                         'assets/icons/lock.png',
-                                                       ),
-                                                       height: 75,
-                                                     ),
-                                                     SizedBox(height: 20,),
-                                                     Text(
-                                                       'Engage Mission',
-                                                       textAlign: TextAlign.center,
-                                                       style: TextStyle(
-                                                         fontSize: 15,
-                                                         fontWeight: FontWeight.w700,
-                                                       ),
-                                                     ),
-                                                   ]),
-                                             ),
-                                           )),
+                                           top: 0, left: 10, right: 10, bottom: 0),
+                                       child: (MaterialButton(
+                                         onPressed: () {},
+                                         height: 20,
+                                         minWidth: 20,
+                                         elevation: 10,
+                                         color: Colors.white,
+                                         shape: RoundedRectangleBorder(
+                                           borderRadius: BorderRadius.circular(10),
                                          ),
-                                         Container(
-                                           padding: const EdgeInsets.only(
-                                               top: 0, left: 10, right: 10, bottom: 0),
-                                           child: (MaterialButton(
-                                             onPressed: () {},
-                                             height: 10,
-                                             minWidth: 20,
-                                             elevation: 10,
-                                             color: Colors.white,
-                                             shape: RoundedRectangleBorder(
-                                               borderRadius: BorderRadius.circular(10),
-                                             ),
-                                             child: Container(
-                                               child: Column(
-                                                   mainAxisAlignment: MainAxisAlignment.center,
-                                                   children: <Widget>[
-                                                     Image(
-                                                       image: AssetImage(
-                                                         'assets/icons/unlock.png',
-                                                       ),
-                                                       height: 75,
-                                                       alignment: Alignment.center,
-                                                     ),
-                                                     SizedBox(height: 20,),
-                                                     Text(
-                                                       'Engage Mission',
-                                                       textAlign: TextAlign.center,
-                                                       style: TextStyle(
-                                                         fontSize: 15,
-                                                         fontWeight: FontWeight.w700,
-                                                       ),
-                                                     ),
-                                                   ]),
-                                             ),
-                                           )),
+                                         child: Container(
+                                           child: Column(
+                                               mainAxisAlignment: MainAxisAlignment.center,
+                                               children: <Widget>[
+                                                 Image(
+                                                   image: AssetImage(
+                                                     'assets/icons/lock.png',
+                                                   ),
+                                                   height: 75,
+                                                 ),
+                                                 SizedBox(height: 20,),
+                                                 Text(
+                                                   'Engage Mission',
+                                                   textAlign: TextAlign.center,
+                                                   style: TextStyle(
+                                                     fontSize: 15,
+                                                     fontWeight: FontWeight.w700,
+                                                   ),
+                                                 ),
+                                               ]),
                                          ),
-                                       ],
+                                       )),
                                      ),
-                                   );
-                                 }else{
-                                   return Column(
-                                     children: [
-                                       SizedBox(height: 70,),
-                                       Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
-                                       SizedBox(height: 20,),
-                                       Container(child: Text("Ongoing training operation", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),) ,),
-                                     ],
-                                   );
-                                 }
-                               }else{
-                                 return Column(
-                                   children: [
-                                     SizedBox(height: 70,),
-                                     Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
-                                     SizedBox(height: 20,),
-                                     Container(child: Text("Something went wrong", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+                                     Container(
+                                       padding: const EdgeInsets.only(
+                                           top: 0, left: 10, right: 10, bottom: 0),
+                                       child: (MaterialButton(
+                                         onPressed: () {},
+                                         height: 10,
+                                         minWidth: 20,
+                                         elevation: 10,
+                                         color: Colors.white,
+                                         shape: RoundedRectangleBorder(
+                                           borderRadius: BorderRadius.circular(10),
+                                         ),
+                                         child: Container(
+                                           child: Column(
+                                               mainAxisAlignment: MainAxisAlignment.center,
+                                               children: <Widget>[
+                                                 Image(
+                                                   image: AssetImage(
+                                                     'assets/icons/unlock.png',
+                                                   ),
+                                                   height: 75,
+                                                   alignment: Alignment.center,
+                                                 ),
+                                                 SizedBox(height: 20,),
+                                                 Text(
+                                                   'Engage Mission',
+                                                   textAlign: TextAlign.center,
+                                                   style: TextStyle(
+                                                     fontSize: 15,
+                                                     fontWeight: FontWeight.w700,
+                                                   ),
+                                                 ),
+                                               ]),
+                                         ),
+                                       )),
+                                     ),
                                    ],
-                                 );
-                               }
-                              }
-                            );
-                          }else{
-                            return Column(
-                              children: [
-                                SizedBox(height: 70,),
-                                Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
-                                SizedBox(height: 20,),
-                                Container(child: Text("Ongoing live operation", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),) ,),
-                              ],
-                            );
+                                 ),
+                               );
+                             }else{
+                               return Column(
+                                 children: [
+                                   SizedBox(height: 70,),
+                                   Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
+                                   SizedBox(height: 20,),
+                                   Container(child: Text("Ongoing training operation", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),) ,),
+                                 ],
+                               );
+                             }
+                           }else{
+                             return Column(
+                               children: [
+                                 SizedBox(height: 70,),
+                                 Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
+                                 SizedBox(height: 20,),
+                                 Container(child: Text("Something went wrong", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+                               ],
+                             );
+                           }
                           }
-                        }else{
-                          return Column(
-                            children: [
-                              SizedBox(height: 70,),
-                              Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
-                              SizedBox(height: 20,),
-                              Container(child: Text("Something went wrong", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
-                            ],
-                          );
-                        }
+                        );
+                      }else{
+                        return Column(
+                          children: [
+                            SizedBox(height: 70,),
+                            Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
+                            SizedBox(height: 20,),
+                            Container(child: Text("Ongoing live operation", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),) ,),
+                          ],
+                        );
                       }
-                    ),
-                  ],
+                    }else{
+                      return Column(
+                        children: [
+                          SizedBox(height: 70,),
+                          Icon(Icons.not_interested_outlined, color: Colors.red, size: 50,),
+                          SizedBox(height: 20,),
+                          Container(child: Text("Something went wrong", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+                        ],
+                      );
+                    }
+                  }
                 ),
               ],
             ),

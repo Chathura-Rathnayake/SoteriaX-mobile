@@ -35,7 +35,7 @@ class _EngageMissionState extends State<EngageMission> {
         waitingForRpiStatus=true;
         int rpiLastOnlineTimestamp=await _opDB.getRPILastTimestamp();
         print('diff: ${Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp}');
-        if(Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp<6000){
+        if(Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp<20000){
           if(rpiStatus=='off-line'){
             setState(() {
               rpiStatus='live';
