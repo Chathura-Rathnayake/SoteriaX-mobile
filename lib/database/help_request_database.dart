@@ -11,10 +11,11 @@ class HelpRequestDBServices {
   final CollectionReference suggestion =
       FirebaseFirestore.instance.collection("suggestions");
 
-  Future<void> addRequest(String name, String age, String formType) {
+  Future<bool> addRequest(String name, String age, String formType) async{
     final DateTime now = DateTime.now();
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
     final String formatted = formatter.format(now);
+    bool didSubmit=false;
     print(formatted);
     final String designation;
     if ('${lifeguardSingleton.uid}' ==
@@ -25,7 +26,7 @@ class HelpRequestDBServices {
     }
 
     if (formType == "Help Request") {
-      return helpRequest
+      didSubmit= await helpRequest
           .add({
             "headline": name,
             "msg": age,
@@ -39,10 +40,12 @@ class HelpRequestDBServices {
             "companyName": '${lifeguardSingleton.company.companyName}',
             "userID": '${lifeguardSingleton.uid}',
           })
-          .then((value) => print(value.id))
-          .catchError((e) => print(e.toString()));
+          .then((value) {
+        print(value.id);
+        return true;
+      });
     } else if (formType == "Complaints") {
-      return complaints
+      didSubmit=await complaints
           .add({
             "headline": name,
             "msg": age,
@@ -56,10 +59,12 @@ class HelpRequestDBServices {
             "companyName":'${lifeguardSingleton.company.companyName}',
             "userID":'${lifeguardSingleton.uid}',
           }
-      ).then((value) => print(value.id))
-          .catchError((e) => print(e.toString()));
+      ).then((value){
+        print(value.id);
+        return true;
+      });
     } else {
-      return suggestion
+      didSubmit=await suggestion
           .add({
             "headline": name,
             "msg": age,
@@ -73,8 +78,12 @@ class HelpRequestDBServices {
             "companyName":'${lifeguardSingleton.company.companyName}',
             "userID":'${lifeguardSingleton.uid}',
           }
-      ).then((value) => print(value.id))
-          .catchError((e) => print(e.toString()));
+      ).then((value) {
+        print(value.id);
+        return true;
+      });
     }
+
+    return didSubmit;
   }
 }

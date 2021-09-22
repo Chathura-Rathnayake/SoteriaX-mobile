@@ -18,6 +18,8 @@ class _helpRequestState extends State<helpRequest> {
   String? name;
   String? age;
   String? formType;
+  String feedbackMsg="";
+  bool error=false;
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,11 +128,23 @@ class _helpRequestState extends State<helpRequest> {
                 //   ),
                 // ),
                 MaterialButton(
-                  onPressed: () {
+                  onPressed: () async{
                     if (_formKey.currentState!.validate()) {
                       print("Button pressed: $name $age");
-                      HelpRequestDBServices()
+                      var didSubmit;
+                      didSubmit=await HelpRequestDBServices()
                           .addRequest(name!, age!, formType!);
+                      if(didSubmit==true){
+                        setState(() {
+                          feedbackMsg="Form successfully submitted";
+                          error=false;
+                        });
+                      }else{
+                        setState(() {
+                          feedbackMsg="Something went wrong";
+                          error=true;
+                        });
+                      }
                     } else {
                       print("Not validated");
                     }
@@ -150,10 +164,30 @@ class _helpRequestState extends State<helpRequest> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
+                if(feedbackMsg!="")
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5 ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
+                    child: ListTile(
+                      title: Text(feedbackMsg, style: TextStyle(color: Colors.blue[900], fontSize: 14), ),
+                      leading: Icon(error ? Icons.error :Icons.notifications, color: error ? Colors.red[900]: Colors.blue[900],),
+                      trailing: IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: (){
+                          setState(() {
+                            feedbackMsg="";
+                          });
+                        },
+                      ),
+                    ),
+                  ),
                 SizedBox(height: 5,),
-                NavigationButton(title: "View Suggestions", image: "Help Request", onPressedFunFlag: 4),
+                NavigationButton(title: "View Suggestions", image: "Suggestion", onPressedFunFlag: 4),
                 NavigationButton(title: "View Complaints", image: "Complaint", onPressedFunFlag: 5),
-                NavigationButton(title: "View Help Requests", image: "Suggestion", onPressedFunFlag: 6),
+                NavigationButton(title: "View Help Requests", image: "Help Request", onPressedFunFlag: 6),
               ]),
             ),
           ),

@@ -6,6 +6,7 @@ import 'package:soteriax/screens/initialization/error_page.dart';
 import 'package:soteriax/screens/initialization/init_loading.dart';
 import 'package:soteriax/screens/wrapper.dart';
 import 'package:soteriax/services/auth_services.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 void main() {
   runApp(MyApp());
 }

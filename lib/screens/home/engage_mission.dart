@@ -205,6 +205,9 @@ class _EngageMissionState extends State<EngageMission> {
                                           });
                                         } else {
                                           _opDB.endExistingTrainingOps();
+                                          this.engageCheckTimer?.cancel();
+                                          this.rpiStatusCheckTimer?.cancel();
+                                          Navigator.pop(context);
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -248,6 +251,9 @@ class _EngageMissionState extends State<EngageMission> {
                                                 print(
                                                     'you can engage continuing engagement');
                                                 _opDB.endExistingTrainingOps();
+                                                this.engageCheckTimer?.cancel();
+                                                this.rpiStatusCheckTimer?.cancel();
+                                                Navigator.pop(context);
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(

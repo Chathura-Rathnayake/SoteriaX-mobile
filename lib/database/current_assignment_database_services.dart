@@ -11,7 +11,7 @@ class CurrentAssignmentDB{
   Stream<QuerySnapshot?> get getCurrentAssignments{
     return trainingOperations.where('companyID', isEqualTo: lifeguardSingleton.company.companyId).
       where("participantIDs", arrayContains: lifeguardSingleton.uid).where('operationStatus', isEqualTo: 'Pending')
-        .orderBy('dateTime').snapshots();
+       .where("dateTime", isGreaterThanOrEqualTo: Timestamp.now()).orderBy('dateTime').snapshots();
   }
 
   Future<DocumentSnapshot?> getLatestAssignment() async{

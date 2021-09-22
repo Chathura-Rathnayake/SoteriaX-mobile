@@ -9,7 +9,7 @@ class PastAssignmentDB{
     print('comp: ${lifeguardSingleton.company.companyId}, user: ${lifeguardSingleton.uid}');
     return trainingOperations.where('companyID', isEqualTo: lifeguardSingleton.company.companyId).
     where("participantIDs", arrayContains: lifeguardSingleton.uid).where('operationStatus', isEqualTo: 'ended')
-        .orderBy('dateTime').snapshots();
+        .orderBy('dateTime', descending: true).snapshots();
   }
 
   Future<DocumentSnapshot?> getPastAssignment(String assignmentId) async{
