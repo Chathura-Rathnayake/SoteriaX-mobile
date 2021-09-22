@@ -27,7 +27,7 @@ class LiveOperations extends StatefulWidget {
 class _LiveOperationsState extends State<LiveOperations> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late WebRTCServices webRTC;
-  RTCVideoRenderer remoteRenderer=RTCVideoRenderer();
+  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   int? type;
   late LiveOperationDBServices liveOpDB;
   Timer? operationPing;
@@ -57,8 +57,9 @@ class _LiveOperationsState extends State<LiveOperations> {
     // TODO: implement initState
     liveOpDB = LiveOperationDBServices(operationId: widget.operationID);
     liveOpDB.setEngaged();
-    webRTC=WebRTCServices(operationId: widget.operationID, operationType: 'operation');
-    webRTCAudioStream=WebRTCAudioStream();
+    webRTC = WebRTCServices(
+        operationId: widget.operationID, operationType: 'operation');
+    webRTCAudioStream = WebRTCAudioStream();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -66,8 +67,8 @@ class _LiveOperationsState extends State<LiveOperations> {
     ]);
 
     remoteRenderer.initialize();
-    webRTC.onAddRemoteStream=((stream){
-      remoteRenderer.srcObject=stream;
+    webRTC.onAddRemoteStream = ((stream) {
+      remoteRenderer.srcObject = stream;
       setState(() {});
     });
     webRTC.startConnection(remoteRenderer);
@@ -76,7 +77,7 @@ class _LiveOperationsState extends State<LiveOperations> {
   }
 
   @override
-  void dispose() async{
+  void dispose() async {
     operationPing?.cancel();
     await remoteRenderer.dispose();
     await webRTC.endConnection();
@@ -126,12 +127,12 @@ class _LiveOperationsState extends State<LiveOperations> {
                         operationId: widget.operationID,
                         operationType: 'live',
                       )
-                  : type == 6
-                      ? FlashLightDrawer()
-                    : EmmitAudioDrawer(
-                        isEmmitSuccesful: true,
-                        operationId: widget.operationID,
-                        operationType: 'live',
+                    : type == 6
+                        ? FlashLightDrawer()
+                        : EmmitAudioDrawer(
+                            isEmmitSuccesful: true,
+                            operationId: widget.operationID,
+                            operationType: 'live',
                           ),
         appBar: AppBar(
           leading: IconButton(
@@ -192,7 +193,11 @@ class _LiveOperationsState extends State<LiveOperations> {
                     ),
                     Container(
                       child: Expanded(
-                        child: RTCVideoView(remoteRenderer, objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,),
+                        child: RTCVideoView(
+                          remoteRenderer,
+                          objectFit:
+                              RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                        ),
                       ),
                     )
                   ],
@@ -215,26 +220,30 @@ class _LiveOperationsState extends State<LiveOperations> {
                                   child: Text("Something went wrong.. no data"),
                                 );
                               } else {
-                                var operationStatus=snapshot.data!.get('operationStatus');
-                                var currentStage=snapshot.data!.get('currentStage');
-                                var currentStatus=snapshot.data!.get('currentStatus');
-                                if (operationStatus=='live') {
-                                  if(currentStage<5){
+                                var operationStatus =
+                                    snapshot.data!.get('operationStatus');
+                                var currentStage =
+                                    snapshot.data!.get('currentStage');
+                                var currentStatus =
+                                    snapshot.data!.get('currentStatus');
+                                if (operationStatus == 'live') {
+                                  if (currentStage < 5) {
                                     return Column(
                                       children: [
                                         Container(
-                                          padding:
-                                          EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
                                           height: 25,
                                           width: double.infinity,
                                           color: Colors.red[300],
                                           child: Text(
                                             "Current Status: $currentStatus",
                                             style: TextStyle(
-                                                color: Colors.white, fontWeight: FontWeight.bold),
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        if(currentStage>=3)
+                                        if (currentStage >= 3)
                                           MaterialButton(
                                             onPressed: () async {
                                               await liveOpDB.endOperation();
@@ -242,11 +251,15 @@ class _LiveOperationsState extends State<LiveOperations> {
                                             color: Colors.red[800],
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                BorderRadius.circular(10)),
-                                            child: Text("End Mission", style: TextStyle(color: Colors.white),),
+                                                    BorderRadius.circular(10)),
+                                            child: Text(
+                                              "End Mission",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
                                           ),
                                         OperationBtn(
-                                          btnText: "EMMIT SIREN",
+                                          btnText: "EMIT SIREN",
                                           btnImage: "sound_icon",
                                           onClicked: showDrawerWithBtns,
                                           setType: setType,
@@ -282,56 +295,73 @@ class _LiveOperationsState extends State<LiveOperations> {
                                         ),
                                       ],
                                     );
-                                  }else{ //mission completed recording stages 6, 7
+                                  } else {
+                                    //mission completed recording stages 6, 7
                                     return Column(
                                       children: [
                                         Container(
-                                          padding:
-                                          EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
                                           height: 25,
                                           width: double.infinity,
                                           color: Colors.red[300],
                                           child: Text(
                                             "Current Status: $currentStatus",
                                             style: TextStyle(
-                                                color: Colors.white, fontWeight: FontWeight.bold),
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        Container(child: Text("Recorded Operation Video is being uploaded")),
+                                        Container(
+                                            child: Text(
+                                                "Recorded Operation Video is being uploaded")),
                                       ],
                                     );
                                   }
-                                } else { //mission has somehow ended
+                                } else {
+                                  //mission has somehow ended
                                   return Column(
                                     children: [
                                       Container(
-                                        padding:
-                                        EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 3),
                                         height: 25,
                                         width: double.infinity,
                                         color: Colors.red[300],
                                         child: Text(
                                           "Current Status: $currentStatus",
                                           style: TextStyle(
-                                              color: Colors.white, fontWeight: FontWeight.bold),
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
-                                      Container(child: Text("Operation has been ended")),
+                                      Container(
+                                          child:
+                                              Text("Operation has been ended")),
                                       MaterialButton(
-                                        onPressed: (){
+                                        onPressed: () {
                                           Navigator.pop(context);
                                           Navigator.pop(context);
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>EngageMission()));
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EngageMission()));
                                         },
                                         color: Colors.red[800],
-                                        child: Text('Back', style: TextStyle(color: Colors.white),),
+                                        child: Text(
+                                          'Back',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                       ),
                                     ],
                                   );
                                 }
                               }
                             } else {
-                              return Container(child: Text("No data to display"),);
+                              return Container(
+                                child: Text("No data to display"),
+                              );
                             }
                           }),
                     ],

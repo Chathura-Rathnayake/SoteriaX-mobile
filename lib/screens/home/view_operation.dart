@@ -170,15 +170,27 @@ class _ViewOperationState extends State<ViewOperation> {
                             Container(
                               key: new Key('remote'),
                               width: double.infinity,
-                              height: MediaQuery.of(context).size.height*0.30,
-                              child: RTCVideoView(_remoteRenderer, objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover, ),
+                              height: MediaQuery.of(context).size.height * 0.30,
+                              child: RTCVideoView(
+                                _remoteRenderer,
+                                objectFit: RTCVideoViewObjectFit
+                                    .RTCVideoViewObjectFitCover,
                               ),
                             ),
                             StreamBuilder<DocumentSnapshot?>(
-                                stream: snapshot.data!["opFlag"]=="live" ? ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentLiveOpdata : ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentTrainingOpdata,
-                                builder: (context, snap){
-                                  if(snap.hasData){
-                                    if (snap.data!.get("operationStatus")!="live") {
+                                stream: snapshot.data!["opFlag"] == "live"
+                                    ? ViewOperationDBServices(
+                                            operationId:
+                                                snapshot.data!["currentOp"].id)
+                                        .currentLiveOpdata
+                                    : ViewOperationDBServices(
+                                            operationId:
+                                                snapshot.data!["currentOp"].id)
+                                        .currentTrainingOpdata,
+                                builder: (context, snap) {
+                                  if (snap.hasData) {
+                                    if (snap.data!.get("operationStatus") !=
+                                        "live") {
                                       return Container(
                                         padding: EdgeInsets.only(top: 5),
                                         child: Column(
@@ -186,7 +198,10 @@ class _ViewOperationState extends State<ViewOperation> {
                                             Text(
                                               "Operation has ended",
                                               overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 20, color: Colors.red, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             MaterialButton(
                                               color: Colors.red.shade900,
@@ -242,7 +257,8 @@ class _ViewOperationState extends State<ViewOperation> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Text("Start Date: ${snapshot.data!['currentOp'].get("date")}"),
+                                  child: Text(
+                                      "Start Date: ${snapshot.data!['currentOp'].get("date")}"),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),

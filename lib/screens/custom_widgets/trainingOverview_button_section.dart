@@ -26,12 +26,14 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
 
   void checkRPIStatus() {
     rpiStatusCheckTimer?.cancel();
-    rpiStatusCheckTimer=Timer.periodic(Duration(seconds: 5), (timer) async{
-      if(!waitingForRpiStatus){
-        waitingForRpiStatus=true;
-        int rpiLastOnlineTimestamp=await TrainingOperationsDBServices().getRPILastTimestamp();
-        if(Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp<25000){
-          if(rpiStatus=='off-line'){
+    rpiStatusCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
+      if (!waitingForRpiStatus) {
+        waitingForRpiStatus = true;
+        int rpiLastOnlineTimestamp =
+            await TrainingOperationsDBServices().getRPILastTimestamp();
+        if (Timestamp.now().millisecondsSinceEpoch - rpiLastOnlineTimestamp <
+            25000) {
+          if (rpiStatus == 'off-line') {
             setState(() {
               rpiStatus = 'live';
             });
@@ -92,7 +94,7 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
       if (rpiStatus == 'live') {
         return MaterialButton(
           color: Colors.orange[600],
-          onPressed: (){
+          onPressed: () {
             this.trainingTimeChecker?.cancel();
             this.rpiStatusCheckTimer?.cancel();
             Navigator.pop(context);
@@ -113,7 +115,11 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
         );
       } else {
         return Container(
-          child: Text('Drone Module is not activated', style: TextStyle(color: Colors.red[900], fontWeight: FontWeight.bold),),
+          child: Text(
+            'Drone Module is not activated',
+            style:
+                TextStyle(color: Colors.red[900], fontWeight: FontWeight.bold),
+          ),
         );
       }
     } else {

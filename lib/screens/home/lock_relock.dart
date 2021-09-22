@@ -20,14 +20,15 @@ class _LockState extends State<Lock> {
   Timer? rpiStatusCheckTimer;
   String rpiStatus = 'off-line';
   bool waitingForRpiStatus = false;
-  bool waitingForResponse=true;
+  bool waitingForResponse = true;
 
   void checkRPIStatus() {
     rpiStatusCheckTimer?.cancel();
     rpiStatusCheckTimer = Timer.periodic(Duration(seconds: 3), (timer) async {
       if (!waitingForRpiStatus) {
         waitingForRpiStatus = true;
-        int rpiLastOnlineTimestamp = await OperationDatabaseService().getRPILastTimestamp();
+        int rpiLastOnlineTimestamp =
+            await OperationDatabaseService().getRPILastTimestamp();
         print(
             'diff: ${Timestamp.now().millisecondsSinceEpoch - rpiLastOnlineTimestamp}');
         if (Timestamp.now().millisecondsSinceEpoch - rpiLastOnlineTimestamp <
@@ -67,9 +68,9 @@ class _LockState extends State<Lock> {
   void initState() {
     // TODO: implement initState
     checkRPIStatus();
-    Future.delayed(Duration(seconds: 5),(){
+    Future.delayed(Duration(seconds: 5), () {
       setState(() {
-        waitingForResponse=false;
+        waitingForResponse = false;
       });
     });
     super.initState();
@@ -211,7 +212,7 @@ class _LockState extends State<Lock> {
                                     );
                                   } else if (snapshot.hasData) {
                                     if (snapshot.data!.size == 0) {
-                                      if(rpiStatus=='live'){
+                                      if (rpiStatus == 'live') {
                                         return Expanded(
                                           child: GridView.count(
                                             primary: false,
@@ -225,8 +226,7 @@ class _LockState extends State<Lock> {
                                             crossAxisCount: 1,
                                             children: <Widget>[
                                               Container(
-                                                padding:
-                                                const EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     top: 0,
                                                     left: 10,
                                                     right: 10,
@@ -239,17 +239,16 @@ class _LockState extends State<Lock> {
                                                   minWidth: 20,
                                                   elevation: 10,
                                                   color: Colors.white,
-                                                  shape:
-                                                  RoundedRectangleBorder(
+                                                  shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(
-                                                        10),
+                                                        BorderRadius.circular(
+                                                            10),
                                                   ),
                                                   child: Container(
                                                     child: Column(
                                                         mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                            MainAxisAlignment
+                                                                .center,
                                                         children: <Widget>[
                                                           Image(
                                                             image: AssetImage(
@@ -262,14 +261,13 @@ class _LockState extends State<Lock> {
                                                           ),
                                                           Text(
                                                             'Engage Mission',
-                                                            textAlign:
-                                                            TextAlign
+                                                            textAlign: TextAlign
                                                                 .center,
                                                             style: TextStyle(
                                                               fontSize: 15,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .w700,
+                                                                  FontWeight
+                                                                      .w700,
                                                             ),
                                                           ),
                                                         ]),
@@ -277,8 +275,7 @@ class _LockState extends State<Lock> {
                                                 )),
                                               ),
                                               Container(
-                                                padding:
-                                                const EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     top: 0,
                                                     left: 10,
                                                     right: 10,
@@ -291,25 +288,23 @@ class _LockState extends State<Lock> {
                                                   minWidth: 20,
                                                   elevation: 10,
                                                   color: Colors.white,
-                                                  shape:
-                                                  RoundedRectangleBorder(
+                                                  shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(
-                                                        10),
+                                                        BorderRadius.circular(
+                                                            10),
                                                   ),
                                                   child: Container(
                                                     child: Column(
                                                         mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
+                                                            MainAxisAlignment
+                                                                .center,
                                                         children: <Widget>[
                                                           Image(
                                                             image: AssetImage(
                                                               'assets/icons/unlock.png',
                                                             ),
                                                             height: 75,
-                                                            alignment:
-                                                            Alignment
+                                                            alignment: Alignment
                                                                 .center,
                                                           ),
                                                           SizedBox(
@@ -317,14 +312,13 @@ class _LockState extends State<Lock> {
                                                           ),
                                                           Text(
                                                             'Engage Mission',
-                                                            textAlign:
-                                                            TextAlign
+                                                            textAlign: TextAlign
                                                                 .center,
                                                             style: TextStyle(
                                                               fontSize: 15,
                                                               fontWeight:
-                                                              FontWeight
-                                                                  .w700,
+                                                                  FontWeight
+                                                                      .w700,
                                                             ),
                                                           ),
                                                         ]),
@@ -334,29 +328,34 @@ class _LockState extends State<Lock> {
                                             ],
                                           ),
                                         );
-                                      }else{
+                                      } else {
                                         return Column(
                                           children: [
                                             SizedBox(
                                               height: 70,
                                             ),
                                             Icon(
-                                              waitingForResponse? Icons.pending :Icons.not_interested_outlined,
-                                              color: waitingForResponse? Colors.blue[900]: Colors.red,
+                                              waitingForResponse
+                                                  ? Icons.pending
+                                                  : Icons
+                                                      .not_interested_outlined,
+                                              color: waitingForResponse
+                                                  ? Colors.blue[900]
+                                                  : Colors.red,
                                               size: 50,
                                             ),
                                             SizedBox(
                                               height: 20,
                                             ),
-                                            if(waitingForResponse)
+                                            if (waitingForResponse)
                                               CircularProgressIndicator(),
-                                            if(!waitingForResponse)
+                                            if (!waitingForResponse)
                                               Container(
                                                 child: Text(
                                                   "DroneModule Off-line",
                                                   style: TextStyle(
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 20),
                                                 ),
                                               ),
@@ -452,9 +451,9 @@ class _LockState extends State<Lock> {
                               SizedBox(
                                 height: 20,
                               ),
-                              if(waitingForResponse)
+                              if (waitingForResponse)
                                 CircularProgressIndicator(),
-                              if(!waitingForResponse)
+                              if (!waitingForResponse)
                                 Container(
                                     child: Text(
                                   "Something went wrong",
