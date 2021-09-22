@@ -91,6 +91,9 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
         return MaterialButton(
           color: Colors.orange[600],
           onPressed: (){
+            this.trainingTimeChecker?.cancel();
+            this.rpiStatusCheckTimer?.cancel();
+            Navigator.pop(context);
             Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context)=>TrainingOperation(trainingOpId: widget.trainingOpID,))
@@ -103,7 +106,7 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
         );
       }else{
         return Container(
-          child: Text('Drone Module is not activated'),
+          child: Text('Drone Module is not activated', style: TextStyle(color: Colors.red[900], fontWeight: FontWeight.bold),),
         );
       }
     }else{
