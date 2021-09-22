@@ -100,8 +100,7 @@ class _LockState extends State<Lock> {
                         )),
                   ),
                   StreamBuilder<QuerySnapshot?>(
-                      stream:
-                          OperationDatabaseService().getLiveOperationData,
+                      stream: OperationDatabaseService().getLiveOperationData,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return Column(
@@ -172,12 +171,11 @@ class _LockState extends State<Lock> {
                                           crossAxisCount: 1,
                                           children: <Widget>[
                                             Container(
-                                              padding:
-                                                  const EdgeInsets.only(
-                                                      top: 0,
-                                                      left: 10,
-                                                      right: 10,
-                                                      bottom: 0),
+                                              padding: const EdgeInsets.only(
+                                                  top: 0,
+                                                  left: 10,
+                                                  right: 10,
+                                                  bottom: 0),
                                               child: (MaterialButton(
                                                 onPressed: () {
                                                   lock.RPiLock();
@@ -186,11 +184,9 @@ class _LockState extends State<Lock> {
                                                 minWidth: 20,
                                                 elevation: 10,
                                                 color: Colors.white,
-                                                shape:
-                                                    RoundedRectangleBorder(
+                                                shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          10),
+                                                      BorderRadius.circular(10),
                                                 ),
                                                 child: Container(
                                                   child: Column(
@@ -208,15 +204,13 @@ class _LockState extends State<Lock> {
                                                           height: 20,
                                                         ),
                                                         Text(
-                                                          'Engage Mission',
+                                                          'Lock Device',
                                                           textAlign:
-                                                              TextAlign
-                                                                  .center,
+                                                              TextAlign.center,
                                                           style: TextStyle(
                                                             fontSize: 15,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w700,
+                                                                FontWeight.w700,
                                                           ),
                                                         ),
                                                       ]),
@@ -224,12 +218,11 @@ class _LockState extends State<Lock> {
                                               )),
                                             ),
                                             Container(
-                                              padding:
-                                                  const EdgeInsets.only(
-                                                      top: 0,
-                                                      left: 10,
-                                                      right: 10,
-                                                      bottom: 0),
+                                              padding: const EdgeInsets.only(
+                                                  top: 0,
+                                                  left: 10,
+                                                  right: 10,
+                                                  bottom: 0),
                                               child: (MaterialButton(
                                                 onPressed: () {
                                                   lock.RPiUnlock();
@@ -238,11 +231,9 @@ class _LockState extends State<Lock> {
                                                 minWidth: 20,
                                                 elevation: 10,
                                                 color: Colors.white,
-                                                shape:
-                                                    RoundedRectangleBorder(
+                                                shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          10),
+                                                      BorderRadius.circular(10),
                                                 ),
                                                 child: Container(
                                                   child: Column(
@@ -256,22 +247,19 @@ class _LockState extends State<Lock> {
                                                           ),
                                                           height: 75,
                                                           alignment:
-                                                              Alignment
-                                                                  .center,
+                                                              Alignment.center,
                                                         ),
                                                         SizedBox(
                                                           height: 20,
                                                         ),
                                                         Text(
-                                                          'Engage Mission',
+                                                          'Unlock Device',
                                                           textAlign:
-                                                              TextAlign
-                                                                  .center,
+                                                              TextAlign.center,
                                                           style: TextStyle(
                                                             fontSize: 15,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w700,
+                                                                FontWeight.w700,
                                                           ),
                                                         ),
                                                       ]),
@@ -299,8 +287,7 @@ class _LockState extends State<Lock> {
                                             child: Text(
                                               "Ongoing training operation",
                                               style: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.bold,
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 20),
                                             ),
                                           ),
@@ -375,8 +362,7 @@ class _LockState extends State<Lock> {
                                   child: Text(
                                 "Something went wrong",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
+                                    fontWeight: FontWeight.bold, fontSize: 20),
                               )),
                             ],
                           );

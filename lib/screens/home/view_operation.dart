@@ -16,7 +16,6 @@ import 'package:soteriax/screens/home/viewOp/waiting_operation_response.dart';
 import 'package:soteriax/screens/shared/timeline.dart';
 import 'package:soteriax/services/webrtc_services.dart';
 
-
 class ViewOperation extends StatefulWidget {
   const ViewOperation({Key? key}) : super(key: key);
 
@@ -25,18 +24,17 @@ class ViewOperation extends StatefulWidget {
 }
 
 class _ViewOperationState extends State<ViewOperation> {
-  final _remoteRenderer=new RTCVideoRenderer();
-  final _localRenderer=new RTCVideoRenderer();
+  final _remoteRenderer = new RTCVideoRenderer();
+  final _localRenderer = new RTCVideoRenderer();
   late Future<Map?> _currentLiveOp;
   MediaStream? remoteStream;
   MediaStream? _localStream;
   late WebRTCServices webRTCServices;
 
-  void initRenderers() async{
+  void initRenderers() async {
     // await _localRenderer.initialize();
     await _remoteRenderer.initialize();
   }
-
 
   @override
   void initState() {
@@ -45,15 +43,14 @@ class _ViewOperationState extends State<ViewOperation> {
     // initRenderers();
     // initWebrtc();
     _remoteRenderer.initialize();
-    webRTCServices=WebRTCServices(operationId: '', operationType: '');
-    webRTCServices.onAddRemoteStream=((stream){
-      _remoteRenderer.srcObject=stream;
+    webRTCServices = WebRTCServices(operationId: '', operationType: '');
+    webRTCServices.onAddRemoteStream = ((stream) {
+      _remoteRenderer.srcObject = stream;
       setState(() {});
     });
     webRTCServices.startConnection(_remoteRenderer);
-    _currentLiveOp=ViewOperationDBServices().getCurrentLiveOp();
+    _currentLiveOp = ViewOperationDBServices().getCurrentLiveOp();
   }
-
 
   @override
   void dispose() async {
@@ -62,8 +59,6 @@ class _ViewOperationState extends State<ViewOperation> {
     await _remoteRenderer.dispose();
     await webRTCServices.endConnection();
   }
-
-
 
   _getUserMedia() async {
     print('getusermeadia');
@@ -76,41 +71,53 @@ class _ViewOperationState extends State<ViewOperation> {
     _localRenderer.srcObject = _localStream;
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     // initWebrtc();
 
-
-    GlobalKey<ScaffoldState> _scaffoldKey=GlobalKey<ScaffoldState>();
+    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     return FutureBuilder<Map?>(
         future: _currentLiveOp,
-        builder: (BuildContext context, AsyncSnapshot<Map?> snapshot){
-          switch(snapshot.connectionState){
+        builder: (BuildContext context, AsyncSnapshot<Map?> snapshot) {
+          switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return WaitingOpResponse();
             default:
-              if(snapshot.hasError){
+              if (snapshot.hasError) {
                 return Scaffold(
-                  appBar: AppBar(backgroundColor: Colors.orange[800], title: Text("View Operation"),),
-                  body: Container(child: Center(child: Text("Error: ${snapshot.error}"))));
-              }else{
-                if(snapshot.data==null){
+                    appBar: AppBar(
+                      backgroundColor: Colors.orange[800],
+                      title: Text("View Operation"),
+                    ),
+                    body: Container(
+                        child:
+                            Center(child: Text("Error: ${snapshot.error}"))));
+              } else {
+                if (snapshot.data == null) {
                   return NoCurrentOP();
-                }else{
+                } else {
                   print("hera");
                   print(snapshot.data!["currentOp"].id);
                   print(snapshot.data!['currentOp'].data().toString());
                   return Scaffold(
                     key: _scaffoldKey,
                     drawer: Drawer(
-                      child: ProcessTimelinePage(operationId: snapshot.data!["currentOp"].id, operationFlag: snapshot.data!['opFlag']),
+                      child: ProcessTimelinePage(
+                          operationId: snapshot.data!["currentOp"].id,
+                          operationFlag: snapshot.data!['opFlag']),
                     ),
                     appBar: AppBar(
-                      leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);},),
-                      title: Center(child: Text("View Operation" ,style: TextStyle(fontWeight: FontWeight.bold),)),
+                      leading: IconButton(
+                        icon: Icon(Icons.arrow_back_ios),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      title: Center(
+                          child: Text(
+                        "View Operation",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )),
                       backgroundColor: Colors.orange[800],
                       elevation: 0,
                     ),
@@ -122,15 +129,20 @@ class _ViewOperationState extends State<ViewOperation> {
                             Container(
                               color: Colors.orange[800],
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 5.0, vertical: 5),
                                 child: MaterialButton(
-                                  onPressed: (){
+                                  onPressed: () {
                                     _scaffoldKey.currentState!.openDrawer();
                                   },
                                   child: Row(
                                     children: [
                                       Icon(Icons.arrow_back_ios),
-                                      Text("Mission Progress", style: TextStyle(fontWeight: FontWeight.bold),)
+                                      Text(
+                                        "Mission Progress",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -140,27 +152,45 @@ class _ViewOperationState extends State<ViewOperation> {
                               height: 20,
                               color: Colors.redAccent.shade700,
                             ),
-                            OperationStatusTile(operationId: snapshot.data!["currentOp"].id, operationFlag: snapshot.data!["opFlag"],),
+                            OperationStatusTile(
+                              operationId: snapshot.data!["currentOp"].id,
+                              operationFlag: snapshot.data!["opFlag"],
+                            ),
                             Container(
                               color: Colors.grey,
                               width: double.infinity,
                               child: Padding(
                                 padding: const EdgeInsets.all(4),
-                                child: Text("Live", style: TextStyle(fontWeight: FontWeight.bold),),
+                                child: Text(
+                                  "Live",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                             Container(
                               key: new Key('remote'),
                               width: double.infinity,
-                              height: MediaQuery.of(context).size.height*0.30,
-                              child: RTCVideoView(_remoteRenderer, objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover, ),
+                              height: MediaQuery.of(context).size.height * 0.30,
+                              child: RTCVideoView(
+                                _remoteRenderer,
+                                objectFit: RTCVideoViewObjectFit
+                                    .RTCVideoViewObjectFitCover,
                               ),
+                            ),
                             StreamBuilder<DocumentSnapshot?>(
-                                stream: snapshot.data!["opFlag"]=="live" ? ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentLiveOpdata : ViewOperationDBServices(operationId: snapshot.data!["currentOp"].id).currentTrainingOpdata,
-                                builder: (context, snap){
-                                  if(snap.hasData){
-                                    print(Timestamp.now().millisecondsSinceEpoch-snap.data!.get("engagementPing").millisecondsSinceEpoch);
-                                    if (snap.data!.get("operationStatus")!="live") {
+                                stream: snapshot.data!["opFlag"] == "live"
+                                    ? ViewOperationDBServices(
+                                            operationId:
+                                                snapshot.data!["currentOp"].id)
+                                        .currentLiveOpdata
+                                    : ViewOperationDBServices(
+                                            operationId:
+                                                snapshot.data!["currentOp"].id)
+                                        .currentTrainingOpdata,
+                                builder: (context, snap) {
+                                  if (snap.hasData) {
+                                    if (snap.data!.get("operationStatus") !=
+                                        "live") {
                                       return Container(
                                         padding: EdgeInsets.only(top: 5),
                                         child: Column(
@@ -168,7 +198,10 @@ class _ViewOperationState extends State<ViewOperation> {
                                             Text(
                                               "Operation has ended",
                                               overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 20, color: Colors.red, fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                             MaterialButton(
                                               color: Colors.red.shade900,
@@ -177,43 +210,60 @@ class _ViewOperationState extends State<ViewOperation> {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                      builder: (context) => MainMenu()),
+                                                      builder: (context) =>
+                                                          MainMenu()),
                                                 );
                                               },
                                               child: Text(
                                                 "Return Main Menu",
-                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
                                               ),
                                             )
                                           ],
                                         ),
                                       );
-                                    }else{
-                                      return Container();//empty container
+                                    } else {
+                                      return Container(); //empty container
                                     }
-                                  }else{
-                                    return Container();//empty container
+                                  } else {
+                                    return Container(); //empty container
                                   }
-                                }
+                                }),
+                            NavigationButton(
+                              image: "alarm_bulb_icon",
+                              title: "CONTACT EMERGENCY SERVICES",
+                              onPressedFunFlag: 3,
                             ),
-                            NavigationButton(image: "alarm_bulb_icon", title: "CONTACT EMERGENCY SERVICES", onPressedFunFlag: 3,),
-                            SizedBox(height: 20,),
+                            SizedBox(
+                              height: 20,
+                            ),
                             Container(
                                 padding: EdgeInsets.only(left: 50),
-                                alignment: Alignment.centerLeft ,
-                                child: Text("Mission details: ", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Mission details: ",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                            SizedBox(
+                              height: 10,
                             ),
-                            SizedBox(height: 10,),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Text("Start Date: ${snapshot.data!['currentOp'].get("startDate")}"),
+                                  child: Text(
+                                      "Start Date: ${snapshot.data!['currentOp'].get("date")}"),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Text("Start Time: ${snapshot.data!['currentOp'].get("startTime")}"),
+                                  child: Text(
+                                      "Start Time: ${snapshot.data!['currentOp'].get("startTime")}"),
                                 ),
                               ],
                             )
@@ -225,8 +275,7 @@ class _ViewOperationState extends State<ViewOperation> {
                 }
               }
           }
-        }
-      );
+        });
   }
 }
 

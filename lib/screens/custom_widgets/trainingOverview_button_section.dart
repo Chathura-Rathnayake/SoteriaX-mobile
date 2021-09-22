@@ -6,7 +6,8 @@ import 'package:soteriax/database/training_operations_database_services.dart';
 import 'package:soteriax/screens/home/training_operation.dart';
 
 class TrainingButtonSection extends StatefulWidget {
-  TrainingButtonSection({required this.trainingOpID, required this.trainingTimeStamp});
+  TrainingButtonSection(
+      {required this.trainingOpID, required this.trainingTimeStamp});
   Timestamp trainingTimeStamp; //when does training start
   String trainingOpID;
 
@@ -16,44 +17,47 @@ class TrainingButtonSection extends StatefulWidget {
 
 class _TrainingButtonSectionState extends State<TrainingButtonSection> {
   Timer? trainingTimeChecker;
-  Timestamp currentTimeStamp=Timestamp.now();
-  bool isTrainingTime=false;
+  Timestamp currentTimeStamp = Timestamp.now();
+  bool isTrainingTime = false;
 
   Timer? rpiStatusCheckTimer;
-  bool waitingForRpiStatus=false;
-  String rpiStatus='off-line';
+  bool waitingForRpiStatus = false;
+  String rpiStatus = 'off-line';
 
-  void checkRPIStatus(){
+  void checkRPIStatus() {
     rpiStatusCheckTimer?.cancel();
-    rpiStatusCheckTimer=Timer.periodic(Duration(seconds: 5), (timer) async{
-      if(!waitingForRpiStatus){
-        waitingForRpiStatus=true;
-        int rpiLastOnlineTimestamp=await TrainingOperationsDBServices().getRPILastTimestamp();
-        if(Timestamp.now().millisecondsSinceEpoch-rpiLastOnlineTimestamp<5000){
-          if(rpiStatus=='off-line'){
+    rpiStatusCheckTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
+      if (!waitingForRpiStatus) {
+        waitingForRpiStatus = true;
+        int rpiLastOnlineTimestamp =
+            await TrainingOperationsDBServices().getRPILastTimestamp();
+        if (Timestamp.now().millisecondsSinceEpoch - rpiLastOnlineTimestamp <
+            25000) {
+          if (rpiStatus == 'off-line') {
             setState(() {
-              rpiStatus='live';
+              rpiStatus = 'live';
             });
           }
-        }else{
-          if(rpiStatus=='live'){
+        } else {
+          if (rpiStatus == 'live') {
             setState(() {
-              rpiStatus='off-line';
+              rpiStatus = 'off-line';
             });
           }
         }
-        waitingForRpiStatus=false;
+        waitingForRpiStatus = false;
       }
     });
   }
 
-  void checkIfTrainingTimeReached(){
+  void checkIfTrainingTimeReached() {
     trainingTimeChecker = Timer.periodic(Duration(seconds: 5), (timer) {
-      currentTimeStamp= Timestamp.now();
-      if(currentTimeStamp.seconds-widget.trainingTimeStamp.seconds>=0){ //no difference training time has come
-        if(!isTrainingTime){
+      currentTimeStamp = Timestamp.now();
+      if (currentTimeStamp.seconds - widget.trainingTimeStamp.seconds >= 0) {
+        //no difference training time has come
+        if (!isTrainingTime) {
           setState(() {
-            isTrainingTime=true;
+            isTrainingTime = true;
           });
         }
       }
@@ -75,6 +79,7 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
     rpiStatusCheckTimer?.cancel();
     super.dispose();
   }
+
   @override
   void deactivate() {
     // TODO: implement deactivate
@@ -83,43 +88,41 @@ class _TrainingButtonSectionState extends State<TrainingButtonSection> {
     super.deactivate();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    if(isTrainingTime){
-      if(rpiStatus=='live'){
+    if (isTrainingTime) {
+      if (rpiStatus == 'live') {
         return MaterialButton(
           color: Colors.orange[600],
-          onPressed: (){
+          onPressed: () {
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context)=>TrainingOperation(trainingOpId: widget.trainingOpID,))
-            );
+                MaterialPageRoute(
+                    builder: (context) => TrainingOperation(
+                          trainingOpId: widget.trainingOpID,
+                        )));
           },
           disabledElevation: null,
           disabledTextColor: Colors.black,
           disabledColor: Colors.grey[500],
-          child: Text("Initiate Exercise", style: TextStyle(fontSize: 20, color: Colors.white),),
+          child: Text(
+            "Initiate Exercise",
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
         );
-      }else{
+      } else {
         return Container(
           child: Text('Drone Module is not activated'),
         );
       }
-    }else{
+    } else {
       return Container(
-        child: Text('You can start the Training after ${widget.trainingTimeStamp.toDate()}'),
+        child: Text(
+            'You can start the Training after ${widget.trainingTimeStamp.toDate()}'),
       ); //not yet reached
     }
   }
 }
-
-
-
-
-
-
-
 
 // return MaterialButton(
 // onPressed: () async {
