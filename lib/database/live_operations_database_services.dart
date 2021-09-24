@@ -118,7 +118,7 @@ class LiveOperationDBServices {
     var timeline = operationDoc.get("timeline");
     timeline[3] = Timestamp.now().millisecondsSinceEpoch;
 
-    if (operationDoc.get("currentStage") < 4) {
+    if (operationDoc.get("currentStage") == 3) {
       var timeline = operationDoc.get("timeline");
       timeline[3] = Timestamp.now().millisecondsSinceEpoch;
       operations

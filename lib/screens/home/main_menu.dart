@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soteriax/models/lifeguard.dart';
 import 'package:soteriax/models/lifeguardSingleton.dart';
@@ -30,6 +32,7 @@ class _MainMenuState extends State<MainMenu> {
   // final _formkey=GlobalKey<FormState>();
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Lifeguard? lifeguard;
+  bool isLoaded=false;
   late Map<String, dynamic> _lifeguardMap;
   LifeguardSingleton lifeguardSingleton = LifeguardSingleton();
 
@@ -37,8 +40,11 @@ class _MainMenuState extends State<MainMenu> {
 
   Future<String?> getSharedPrefLifeguard() async {
     String? lifeguardDetails = await Future<String?>.delayed(
-        Duration(seconds: 1),
+        Duration(seconds: 4),
         () => _prefs.then((SharedPreferences prefs) {
+              setState(() {
+                isLoaded=true;
+              });
               return (prefs.getString("lifeguardData"));
         }));
     _lifeguardMap = jsonDecode(lifeguardDetails!) as Map<String, dynamic>;
@@ -116,7 +122,7 @@ class _MainMenuState extends State<MainMenu> {
                           height: 15,
                         ),
                         Text(
-                          'Main Menu',
+                          isLoaded ? 'Main Menu' : 'SoteriaX',
                           style: TextStyle(
                               fontSize: 40,
                               fontWeight: FontWeight.bold,
@@ -125,7 +131,8 @@ class _MainMenuState extends State<MainMenu> {
                       ],
                     )),
               ),
-              Expanded(
+              if(isLoaded)
+                Expanded(
                 child: GridView.count(
                   primary: false,
                   padding: const EdgeInsets.all(30),
@@ -448,6 +455,31 @@ class _MainMenuState extends State<MainMenu> {
                   ],
                 ),
               ),
+              if(!isLoaded)
+                SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 30,),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 75,),
+                          child: Image(
+                            image: AssetImage( 'assets/logos/soteriax_logo.png'),
+                          ),
+                        ),
+                        SpinKitDoubleBounce(
+                          color: Colors.orange[700],
+                          size: 75,
+                        ),
+                        SizedBox(height: 20,),
+                        Text('Please wait',
+                          style: GoogleFonts.orbitron(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold,),)
+                      ],
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

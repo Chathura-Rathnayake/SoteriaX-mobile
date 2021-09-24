@@ -48,10 +48,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     if(_error){
-      return MaterialApp(home: Error_Page());
+        return MaterialApp(debugShowCheckedModeBanner: false, home: Error_Page());
     }
     if(!_initialized){
-      return MaterialApp(home: LoadingSpinner());
+      return MaterialApp(debugShowCheckedModeBanner: false, home: LoadingSpinner());
     }
 
     return MultiProvider(
@@ -63,7 +63,8 @@ class _MyAppState extends State<MyApp> {
           ),
       ],
           child: MaterialApp(
-              home: Wrapper()
+            debugShowCheckedModeBanner: false,
+            home: Wrapper()
           )
       );
 

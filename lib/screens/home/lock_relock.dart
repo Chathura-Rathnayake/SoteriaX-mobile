@@ -186,7 +186,7 @@ class _LockState extends State<Lock> {
                                 stream: TrainingOperationsDBServices()
                                     .getLiveTrainingOperationData,
                                 builder: (context, snapshot) {
-                                  if (snapshot.hasError) {
+                                  if (snapshot.hasError) {//error snapshot
                                     return Column(
                                       children: [
                                         SizedBox(
@@ -211,8 +211,9 @@ class _LockState extends State<Lock> {
                                       ],
                                     );
                                   } else if (snapshot.hasData) {
-                                    if (snapshot.data!.size == 0) {
-                                      if(rpiStatus=='live'){
+                                    print("training data: ${snapshot.data!.docs}");
+                                    if (snapshot.data!.size == 0) { //no training
+                                      if(rpiStatus=='live'){  //status live
                                         return Expanded(
                                           child: GridView.count(
                                             primary: false,
@@ -262,7 +263,7 @@ class _LockState extends State<Lock> {
                                                             height: 20,
                                                           ),
                                                           Text(
-                                                            'Engage Mission',
+                                                            'Lock',
                                                             textAlign:
                                                             TextAlign
                                                                 .center,
@@ -364,7 +365,7 @@ class _LockState extends State<Lock> {
                                           ],
                                         );
                                       }
-                                    } else {
+                                    } else { //ongoing training
                                       return Column(
                                         children: [
                                           SizedBox(
@@ -390,7 +391,7 @@ class _LockState extends State<Lock> {
                                         ],
                                       );
                                     }
-                                  } else {
+                                  } else { //something went wrong
                                     return Column(
                                       children: [
                                         SizedBox(
@@ -415,7 +416,7 @@ class _LockState extends State<Lock> {
                                     );
                                   }
                                 });
-                          } else {
+                          } else { //ongoing live op
                             return Column(
                               children: [
                                 SizedBox(
@@ -440,7 +441,7 @@ class _LockState extends State<Lock> {
                               ],
                             );
                           }
-                        } else {
+                        } else { //something went wrong
                           return Column(
                             children: [
                               SizedBox(

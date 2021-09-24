@@ -45,6 +45,7 @@ dependencies:
   http: ^0.13.3
   sdp_transform: ^0.3.2
   flutter_launcher_icons: ^0.9.2
+  google_fonts: ^2.1.0
 
 flutter_icons:
   #  image_path: "assets/images/icon-128x128.png"
@@ -77,6 +78,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/process_timeline/
+    - assets/logos/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

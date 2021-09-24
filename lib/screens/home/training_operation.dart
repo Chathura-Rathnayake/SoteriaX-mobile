@@ -408,7 +408,6 @@ class _TrainingOperationState extends State<TrainingOperation> {
                                     stopWatchTimer: _stopWatchTimer,
                                     trainingOperationId: widget.trainingOpId,
                                   ),
-                                  Container(child: Text("Training operation has ended"),),
                                 ],
                               );
                             }

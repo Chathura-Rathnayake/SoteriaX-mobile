@@ -260,7 +260,7 @@ class TrainingOperationsDBServices {
   }
 
   Stream<QuerySnapshot> get getLiveTrainingOperationData{
-    return trainingOperations .where('companyId', isEqualTo: this.companyId).where('operationStatus', isEqualTo: 'live').snapshots();
+    return trainingOperations .where('companyID', isEqualTo: this.companyId).where('operationStatus', isEqualTo: 'live').snapshots();
   }
 
 
