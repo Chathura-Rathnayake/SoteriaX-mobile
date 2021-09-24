@@ -260,7 +260,7 @@ class _LockState extends State<Lock> {
                                                             height: 20,
                                                           ),
                                                           Text(
-                                                            'Engage Mission',
+                                                            'Lock',
                                                             textAlign: TextAlign
                                                                 .center,
                                                             style: TextStyle(
