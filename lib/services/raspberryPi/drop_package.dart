@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:soteriax/models/lifeguardSingleton.dart';
 
 class DropPackageRPI {
   Future<bool> RPiLock() async {
     print("works");
-    final response = await http.get(Uri.parse('http://192.168.1.6:4000/lock'));
+    final response = await http.get(Uri.parse('http://${LifeguardSingleton().company.staticIP}:4000/lock'));
 
     if (response.statusCode == 200) {
       print("Reached RPI endpoint");
@@ -21,7 +22,7 @@ class DropPackageRPI {
 
   Future<bool> RPiUnlock() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.6:4000/unlock'));
+        await http.get(Uri.parse('http://${LifeguardSingleton().company.staticIP}:4000/unlock'));
 
     if (response.statusCode == 200) {
       print("works 1");

@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:soteriax/models/lifeguardSingleton.dart';
 
 class LightRPI {
   Future<bool> RPiLighton() async {
     print("works");
     final response =
-        await http.get(Uri.parse('http://192.168.1.6:4000/lighton'));
+        await http.get(Uri.parse('http://${LifeguardSingleton().company.staticIP}:4000/lighton'));
 
     if (response.statusCode == 200) {
       print("Reached RPI endpoint");
@@ -22,7 +23,7 @@ class LightRPI {
 
   Future<bool> RPiLightoff() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.6:4000/lightoff'));
+        await http.get(Uri.parse('http://${LifeguardSingleton().company.staticIP}:4000/lightoff'));
 
     if (response.statusCode == 200) {
       print("works 1");

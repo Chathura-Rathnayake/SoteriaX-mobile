@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:soteriax/models/lifeguardSingleton.dart';
 
 class RecordedAudioRPI {
   Future<bool> RPI_Recorded_Audio_01() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.6:4000/alarm01'));
+        await http.get(Uri.parse('http://${LifeguardSingleton().company.staticIP}:4000/alarm01'));
 
     if (response.statusCode == 200) {
       print("Reached RPI endpoint");
@@ -21,7 +22,7 @@ class RecordedAudioRPI {
 
   Future<bool> RPI_Recorded_Audio_02() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.6:4000/alarm02'));
+        await http.get(Uri.parse('http://${LifeguardSingleton().company.staticIP}:4000/alarm02'));
 
     if (response.statusCode == 200) {
       print("works 1");
@@ -38,7 +39,7 @@ class RecordedAudioRPI {
 
   Future<bool> RPI_Recorded_Audio_03() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.6:4000/alarm03'));
+        await http.get(Uri.parse('http://${LifeguardSingleton().company.staticIP}:4000/alarm03'));
 
     if (response.statusCode == 200) {
       print("works 1");
@@ -55,7 +56,7 @@ class RecordedAudioRPI {
 
   Future<bool> RPI_Recorded_Audio_04() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.6:4000/alarm04'));
+        await http.get(Uri.parse('http://${LifeguardSingleton().company.staticIP}:4000/alarm04'));
 
     if (response.statusCode == 200) {
       print("works 1");
